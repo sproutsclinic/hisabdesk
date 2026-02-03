@@ -7,6 +7,8 @@ import {
   getBestTaxOption
 } from "@/lib/tax"
 
+import { generateTaxPDF } from "@/lib/pdf"
+
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
@@ -58,6 +60,21 @@ export default function Dashboard() {
   const adaTax = calculateOldRegimeTax(calculate44ADA(income))
 
   const best = getBestTaxOption(oldTax, newTax, adaTax)
+
+  // ======================
+  // PDF DOWNLOAD FUNCTION (NEW)
+  // ======================
+  const downloadReport = () => {
+    generateTaxPDF({
+      income,
+      expense,
+      profit,
+      oldTax,
+      newTax,
+      adaTax,
+      best: best.label
+    })
+  }
 
   // ======================
   // UI
@@ -135,6 +152,14 @@ export default function Dashboard() {
         >
           Add Expense
         </a>
+
+        {/* NEW DOWNLOAD BUTTON */}
+        <button
+          onClick={downloadReport}
+          className="bg-blue-600 text-white px-4 py-2 cursor-pointer"
+        >
+          Download Report
+        </button>
       </div>
     </div>
   )
