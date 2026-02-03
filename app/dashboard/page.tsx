@@ -3,59 +3,66 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
-import Sidebar from "@/components/Sidebar"
 
 export default function Dashboard() {
   const router = useRouter()
-  const [email, setEmail] = useState("")
+
+  const [income, setIncome] = useState(0)
+  const [expense, setExpense] = useState(0)
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getUser()
-
-      if (!data.user) {
-        router.push("/login")
-      } else {
-        setEmail(data.user.email || "")
-      }
-    }
-
     checkUser()
-  }, [router])
+    loadData()
+  }, [])
+
+  const checkUser = async () => {
+    const { data } = await supabase.auth.getUser()
+    if (!data.user) router.push("/login")
+  }
+
+  const loadData = async () => {
+    const { data: incomes } = await supabase.from("incomes").select("amount")
+    const { data: expenses } = await supabase.from("expenses").select("amount")
+
+    const totalIncome =
+      incomes?.reduce((sum, i) => sum + Number(i.amount), 0) || 0
+
+    const totalExpense =
+      expenses?.reduce((sum, e) => sum + Number(e.amount), 0) || 0
+
+    setIncome(totalIncome)
+    setExpense(totalExpense)
+  }
+
+  const profit = income - expense
 
   return (
-    <div className="flex">
-      <Sidebar />
+    <div className="p-10 space-y-6">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
 
-      <main className="flex-1 p-10 bg-gray-50 min-h-screen">
-        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-        <p className="text-gray-600">Welcome {email}</p>
+      <div className="grid grid-cols-2 gap-4">
 
-        {/* ✅ Income Buttons (MOVED INSIDE) */}
-        <div className="flex gap-4 mt-6">
-          <a
-            href="/income/add"
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Add Income
-          </a>
-
-          <a
-            href="/income/list"
-            className="bg-gray-500 text-white px-4 py-2 rounded"
-          >
-            View Income
-          </a>
+        <div className="bg-green-100 p-4 rounded">
+          <p>Total Income</p>
+          <h2 className="text-xl font-bold">₹ {income}</h2>
         </div>
 
-        <div className="grid grid-cols-3 gap-6 mt-10">
-          <div className="bg-white p-6 rounded shadow">Total Sales</div>
-          <div className="bg-white p-6 rounded shadow">Expenses</div>
-          <div className="bg-white p-6 rounded shadow">Profit</div>
+        <div className="bg-red-100 p-4 rounded">
+          <p>Total Expense</p>
+          <h2 className="text-xl font-bold">₹ {expense}</h2>
         </div>
-      </main>
+
+        <div className="bg-blue-100 p-4 rounded col-span-2">
+          <p>Net Profit</p>
+          <h2 className="text-xl font-bold">₹ {profit}</h2>
+        </div>
+
+      </div>
+
+      <div className="space-x-3">
+        <a href="/income/add" className="bg-green-600 text-white px-4 py-2">Add Income</a>
+        <a href="/expense/add" className="bg-red-600 text-white px-4 py-2">Add Expense</a>
+      </div>
     </div>
   )
 }
-<a href="/expense/add" className="bg-red-500 text-white px-4 py-2 mr-2">Add Expense</a>
-<a href="/expense/list" className="bg-gray-600 text-white px-4 py-2">View Expenses</a>
