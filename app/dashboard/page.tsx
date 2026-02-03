@@ -1,5 +1,11 @@
 "use client"
 
+import {
+  calculateOldRegimeTax,
+  calculateNewRegimeTax,
+  calculate44ADA
+} from "@/lib/tax"
+
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
@@ -35,6 +41,10 @@ export default function Dashboard() {
   }
 
   const profit = income - expense
+const taxable = profit
+const oldTax = calculateOldRegimeTax(taxable)
+const newTax = calculateNewRegimeTax(taxable)
+const adaTax = calculateOldRegimeTax(calculate44ADA(income))
 
   return (
     <div className="p-10 space-y-6">
@@ -56,6 +66,27 @@ export default function Dashboard() {
           <p>Net Profit</p>
           <h2 className="text-xl font-bold">₹ {profit}</h2>
         </div>
+
+        <div className="bg-yellow-100 p-4 rounded">
+  <p>Taxable Income</p>
+  <h2 className="text-xl font-bold">₹ {taxable}</h2>
+</div>
+
+<div className="bg-purple-100 p-4 rounded">
+  <p>Old Regime Tax</p>
+  <h2 className="text-xl font-bold">₹ {oldTax}</h2>
+</div>
+
+<div className="bg-indigo-100 p-4 rounded">
+  <p>New Regime Tax</p>
+  <h2 className="text-xl font-bold">₹ {newTax}</h2>
+</div>
+
+<div className="bg-pink-100 p-4 rounded">
+  <p>44ADA (Professionals)</p>
+  <h2 className="text-xl font-bold">₹ {adaTax}</h2>
+</div>
+
 
       </div>
 
