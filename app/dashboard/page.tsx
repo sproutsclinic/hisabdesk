@@ -21,7 +21,7 @@ export default function Dashboard() {
     }
 
     checkUser()
-  }, [])
+  }, [router])
 
   return (
     <div className="flex">
@@ -30,6 +30,23 @@ export default function Dashboard() {
       <main className="flex-1 p-10 bg-gray-50 min-h-screen">
         <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-gray-600">Welcome {email}</p>
+
+        {/* ✅ Income Buttons (MOVED INSIDE) */}
+        <div className="flex gap-4 mt-6">
+          <a
+            href="/income/add"
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Add Income
+          </a>
+
+          <a
+            href="/income/list"
+            className="bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            View Income
+          </a>
+        </div>
 
         <div className="grid grid-cols-3 gap-6 mt-10">
           <div className="bg-white p-6 rounded shadow">Total Sales</div>
@@ -40,7 +57,5 @@ export default function Dashboard() {
     </div>
   )
 }
-
-
-<a href="/income/add" className="bg-blue-500 text-white px-4 py-2 mr-2">Add Income</a>
-<a href="/income/list" className="bg-gray-500 text-white px-4 py-2">View Income</a>
+<a href="/expense/add" className="bg-red-500 text-white px-4 py-2 mr-2">Add Expense</a>
+<a href="/expense/list" className="bg-gray-600 text-white px-4 py-2">View Expenses</a>
