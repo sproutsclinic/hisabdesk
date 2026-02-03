@@ -18,6 +18,8 @@ export default function Dashboard() {
 
   const [income, setIncome] = useState(0)
   const [expense, setExpense] = useState(0)
+const [aiTips, setAiTips] = useState("")
+const [loadingAI, setLoadingAI] = useState(false)
 
   // ======================
   // AUTH CHECK
@@ -60,6 +62,26 @@ export default function Dashboard() {
   const adaTax = calculateOldRegimeTax(calculate44ADA(income))
 
   const best = getBestTaxOption(oldTax, newTax, adaTax)
+const getAITips = async () => {
+  setLoadingAI(true)
+
+  const res = await fetch("/api/ai", {
+    method: "POST",
+    body: JSON.stringify({
+      income,
+      expense,
+      profit,
+      oldTax,
+      newTax,
+      adaTax
+    })
+  })
+
+  const data = await res.json()
+
+  setAiTips(data.advice)
+  setLoadingAI(false)
+}
 
   // ======================
   // PDF DOWNLOAD FUNCTION (NEW)
@@ -159,8 +181,29 @@ export default function Dashboard() {
           className="bg-blue-600 text-white px-4 py-2 cursor-pointer"
         >
           Download Report
+
+          <button
+  onClick={getAITips}
+  className="bg-purple-600 text-white px-4 py-2 cursor-pointer"
+>
+  {loadingAI ? "Analyzing..." : "Get AI Tax Tips"}
+</button>
+
         </button>
       </div>
     </div>
   )
 }
+{aiTips && (
+  <div className="mt-6 bg-purple-50 p-4 rounded whitespace-pre-line">
+    <h2 className="font-bold mb-2">🤖 AI Tax Advisor</h2>
+    {aiTips}
+  </div>
+)}
+
+<a
+  href="/billing"
+  className="bg-yellow-600 text-white px-4 py-2 cursor-pointer"
+>
+  Upgrade Plan
+</a>
