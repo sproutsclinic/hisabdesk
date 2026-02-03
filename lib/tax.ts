@@ -48,3 +48,10 @@ export function calculateNewRegimeTax(income: number) {
 export function calculate44ADA(income: number) {
   return income * 0.5
 }
+export function getBestTaxOption(oldTax: number, newTax: number, adaTax: number) {
+  const min = Math.min(oldTax, newTax, adaTax)
+
+  if (min === oldTax) return { label: "Old Regime", value: oldTax }
+  if (min === newTax) return { label: "New Regime", value: newTax }
+  return { label: "44ADA", value: adaTax }
+}

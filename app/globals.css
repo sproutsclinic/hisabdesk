@@ -24,3 +24,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+button {
+  cursor: pointer;
+}
+a {
+  cursor: pointer;
+}
+button, a {
+  cursor: pointer;
+}
