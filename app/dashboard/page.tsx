@@ -8,27 +8,47 @@ import {
 } from "@/lib/tax"
 
 import { generateTaxPDF } from "@/lib/pdf"
+import { isProUser } from "@/lib/isPro"
 
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 
+import IncomeExpenseChart from "@/components/IncomeExpenseChart"
+
 export default function Dashboard() {
   const router = useRouter()
 
-  const [income, setIncome] = useState(0)
-  const [expense, setExpense] = useState(0)
-const [aiTips, setAiTips] = useState("")
-const [loadingAI, setLoadingAI] = useState(false)
+  // ======================
+  // STATE
+  // ======================
+  const [income, setIncome] = useState<number>(0)
+  const [expense, setExpense] = useState<number>(0)
+  const [deductions, setDeductions] = useState<number>(0) // ✅ added
+
+  const [incomeRows, setIncomeRows] = useState<any[]>([])
+  const [expenseRows, setExpenseRows] = useState<any[]>([])
+
+  const [aiTips, setAiTips] = useState("")
+  const [loadingAI, setLoadingAI] = useState(false)
+  const [isPro, setIsPro] = useState(false)
 
   // ======================
-  // AUTH CHECK
+  // INIT
   // ======================
   useEffect(() => {
-    checkUser()
-    loadData()
+    init()
   }, [])
 
+  const init = async () => {
+    await checkUser()
+    await loadData()
+    await checkPro()
+  }
+
+  // ======================
+  // AUTH
+  // ======================
   const checkUser = async () => {
     const { data } = await supabase.auth.getUser()
     if (!data.user) router.push("/login")
@@ -38,58 +58,111 @@ const [loadingAI, setLoadingAI] = useState(false)
   // LOAD DATA
   // ======================
   const loadData = async () => {
-    const { data: incomes } = await supabase.from("incomes").select("amount")
-    const { data: expenses } = await supabase.from("expenses").select("amount")
+    const { data: incomes } = await supabase
+      .from("incomes")
+      .select("amount,date")
 
-    const totalIncome =
-      incomes?.reduce((sum, i) => sum + Number(i.amount), 0) || 0
+    const { data: expenses } = await supabase
+      .from("expenses")
+      .select("amount,date")
 
-    const totalExpense =
-      expenses?.reduce((sum, e) => sum + Number(e.amount), 0) || 0
+    // ✅ load deductions (same as tax page)
+    const { data: deductionRow } = await supabase
+      .from("deductions")
+      .select("total")
+      .single()
 
-    setIncome(totalIncome)
-    setExpense(totalExpense)
+    setIncomeRows(incomes || [])
+    setExpenseRows(expenses || [])
+
+    setIncome(incomes?.reduce((s, i) => s + Number(i.amount), 0) || 0)
+    setExpense(expenses?.reduce((s, e) => s + Number(e.amount), 0) || 0)
+    setDeductions(deductionRow?.total || 0) // ✅ set deductions
+  }
+
+  // ======================
+  // PRO CHECK
+  // ======================
+  const checkPro = async () => {
+    const { data } = await supabase.auth.getUser()
+    if (!data.user) return
+
+    const pro = await isProUser(data.user.id)
+    setIsPro(pro)
   }
 
   // ======================
   // CALCULATIONS
   // ======================
   const profit = income - expense
-  const taxable = profit
+  const taxable = profit - deductions // ✅ correct logic
 
   const oldTax = calculateOldRegimeTax(taxable)
   const newTax = calculateNewRegimeTax(taxable)
   const adaTax = calculateOldRegimeTax(calculate44ADA(income))
 
   const best = getBestTaxOption(oldTax, newTax, adaTax)
-const getAITips = async () => {
-  setLoadingAI(true)
 
-  const res = await fetch("/api/ai", {
-    method: "POST",
-    body: JSON.stringify({
-      income,
-      expense,
-      profit,
-      oldTax,
-      newTax,
-      adaTax
-    })
+  // ======================
+  // CHART DATA
+  // ======================
+  const monthMap: Record<string, { income: number; expense: number }> = {}
+
+  incomeRows.forEach((r: any) => {
+    const m = new Date(r.date).toLocaleDateString("en-IN", { month: "short" })
+    if (!monthMap[m]) monthMap[m] = { income: 0, expense: 0 }
+    monthMap[m].income += Number(r.amount)
   })
 
-  const data = await res.json()
+  expenseRows.forEach((r: any) => {
+    const m = new Date(r.date).toLocaleDateString("en-IN", { month: "short" })
+    if (!monthMap[m]) monthMap[m] = { income: 0, expense: 0 }
+    monthMap[m].expense += Number(r.amount)
+  })
 
-  setAiTips(data.advice)
-  setLoadingAI(false)
-}
+  const chartData = Object.entries(monthMap).map(([date, v]) => ({
+    date,
+    income: v.income,
+    expense: v.expense
+  }))
 
   // ======================
-  // PDF DOWNLOAD FUNCTION (NEW)
+  // AI
+  // ======================
+  const getAITips = async () => {
+    if (!isPro) return router.push("/billing")
+
+    setLoadingAI(true)
+
+    const res = await fetch("/api/ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        income,
+        expense,
+        deductions, // ✅ send deductions
+        profit,
+        oldTax,
+        newTax,
+        adaTax
+      })
+    })
+
+    const data = await res.json()
+    setAiTips(data.advice)
+    setLoadingAI(false)
+  }
+
+  // ======================
+  // PDF
   // ======================
   const downloadReport = () => {
+    if (!isPro) return router.push("/billing")
+
     generateTaxPDF({
       income,
       expense,
+      deductions, // ✅ now valid
       profit,
       oldTax,
       newTax,
@@ -102,108 +175,59 @@ const getAITips = async () => {
   // UI
   // ======================
   return (
-    <div className="p-10 space-y-6">
+    <div className="px-4 md:p-8 space-y-8 bg-gray-50 min-h-screen max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold">Dashboard</h1>
 
-      <div className="grid grid-cols-2 gap-4">
-
-        {/* INCOME */}
-        <div className="bg-green-100 p-4 rounded">
-          <p>Total Income</p>
-          <h2 className="text-xl font-bold">₹ {income}</h2>
-        </div>
-
-        {/* EXPENSE */}
-        <div className="bg-red-100 p-4 rounded">
-          <p>Total Expense</p>
-          <h2 className="text-xl font-bold">₹ {expense}</h2>
-        </div>
-
-        {/* PROFIT */}
-        <div className="bg-blue-100 p-4 rounded col-span-2">
-          <p>Net Profit</p>
-          <h2 className="text-xl font-bold">₹ {profit}</h2>
-        </div>
-
-        {/* TAXABLE */}
-        <div className="bg-yellow-100 p-4 rounded">
-          <p>Taxable Income</p>
-          <h2 className="text-xl font-bold">₹ {taxable}</h2>
-        </div>
-
-        {/* OLD REGIME */}
-        <div className={`p-4 rounded ${best.label === "Old Regime" ? "bg-green-200" : "bg-purple-100"}`}>
-          <p>Old Regime Tax</p>
-          <h2 className="text-xl font-bold">₹ {oldTax}</h2>
-          {best.label === "Old Regime" && <p>⭐ Best Option</p>}
-        </div>
-
-        {/* NEW REGIME */}
-        <div className={`p-4 rounded ${best.label === "New Regime" ? "bg-green-200" : "bg-indigo-100"}`}>
-          <p>New Regime Tax</p>
-          <h2 className="text-xl font-bold">₹ {newTax}</h2>
-          {best.label === "New Regime" && <p>⭐ Best Option</p>}
-        </div>
-
-        {/* 44ADA */}
-        <div className={`p-4 rounded ${best.label === "44ADA" ? "bg-green-200" : "bg-pink-100"}`}>
-          <p>44ADA (Professionals)</p>
-          <h2 className="text-xl font-bold">₹ {adaTax}</h2>
-          {best.label === "44ADA" && <p>⭐ Best Option</p>}
-        </div>
-
-        {/* BEST SUMMARY */}
-        <div className="col-span-2 bg-green-50 p-4 rounded font-semibold text-lg">
-          ✅ Best Choice: {best.label} — Pay ₹ {best.value}
-        </div>
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <Card title="Income" value={`₹ ${income.toLocaleString()}`} />
+        <Card title="Expense" value={`₹ ${expense.toLocaleString()}`} />
+        <Card title="Profit" value={`₹ ${profit.toLocaleString()}`} />
+        <Card title="Best Tax" value={`₹ ${best.value.toLocaleString()}`} />
       </div>
 
-      {/* ACTION BUTTONS */}
-      <div className="space-x-3">
-        <a
-          href="/income/add"
-          className="bg-green-600 text-white px-4 py-2 cursor-pointer"
-        >
-          Add Income
-        </a>
+      <IncomeExpenseChart data={chartData} />
 
-        <a
-          href="/expense/add"
-          className="bg-red-600 text-white px-4 py-2 cursor-pointer"
-        >
-          Add Expense
-        </a>
-
-        {/* NEW DOWNLOAD BUTTON */}
-        <button
-          onClick={downloadReport}
-          className="bg-blue-600 text-white px-4 py-2 cursor-pointer"
-        >
-          Download Report
-
-          <button
-  onClick={getAITips}
-  className="bg-purple-600 text-white px-4 py-2 cursor-pointer"
->
-  {loadingAI ? "Analyzing..." : "Get AI Tax Tips"}
-</button>
-
-        </button>
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3">
+        <Btn href="/tax">Tax Filing</Btn>
+        <Btn href="/income/add">Add Income</Btn>
+        <Btn href="/expense/add">Add Expense</Btn>
+        <Btn onClick={getAITips}>{loadingAI ? "Loading..." : "AI Advisor"}</Btn>
+        <Btn onClick={downloadReport}>Download PDF</Btn>
       </div>
+
+      {aiTips && (
+        <div className="bg-white p-6 rounded-2xl border">
+          <h2 className="font-bold mb-2">AI Suggestions</h2>
+          <p>{aiTips}</p>
+        </div>
+      )}
     </div>
   )
 }
-{aiTips && (
-  <div className="mt-6 bg-purple-50 p-4 rounded whitespace-pre-line">
-    <h2 className="font-bold mb-2">🤖 AI Tax Advisor</h2>
-    {aiTips}
-  </div>
-)}
 
-<a
-  href="/billing"
-  className="bg-yellow-600 text-white px-4 py-2 cursor-pointer"
->
-  Upgrade Plan
-</a>
+/* ====================== */
+
+function Card({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="bg-white border rounded-2xl p-6 shadow-sm">
+      <p className="text-sm text-gray-500">{title}</p>
+      <p className="text-2xl font-bold mt-2">{value}</p>
+    </div>
+  )
+}
+
+function Btn({
+  children,
+  href,
+  onClick
+}: {
+  children: React.ReactNode
+  href?: string
+  onClick?: () => void
+}) {
+  const base =
+    "text-center bg-black text-white px-4 py-3 rounded-xl text-sm font-medium w-full sm:w-auto hover:opacity-90 transition"
+
+  if (href) return <a href={href} className={base}>{children}</a>
+  return <button onClick={onClick} className={base}>{children}</button>
+}

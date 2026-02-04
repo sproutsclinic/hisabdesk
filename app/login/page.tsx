@@ -2,21 +2,25 @@
 
 import { useState } from "react"
 import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 
 export default function Login() {
+  const router = useRouter()
+
   const [email, setEmail] = useState("")
   const [otp, setOtp] = useState("")
   const [sent, setSent] = useState(false)
 
-  // STEP 1 — send OTP to email
+  // ======================
+  // SEND OTP
+  // ======================
   const sendOtp = async () => {
-   const { error } = await supabase.auth.signInWithOtp({
-  email,
-  options: {
-    shouldCreateUser: true,
-  },
-})
-
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true,
+      },
+    })
 
     if (error) {
       alert(error.message)
@@ -27,7 +31,9 @@ export default function Login() {
     setSent(true)
   }
 
-  // STEP 2 — verify OTP
+  // ======================
+  // VERIFY OTP
+  // ======================
   const verifyOtp = async () => {
     const { error } = await supabase.auth.verifyOtp({
       email,
@@ -40,16 +46,14 @@ export default function Login() {
       return
     }
 
-    alert("Login success")
-    window.location.href = "/dashboard"
-
+    // ✅ PROPER NEXT.JS REDIRECT
+    router.replace("/dashboard")
   }
 
   return (
     <div className="p-10 space-y-4 max-w-sm">
       <h1 className="text-2xl font-bold">HisabDesk Login</h1>
 
-      {/* Email input */}
       <input
         type="email"
         className="border p-2 w-full"
@@ -59,15 +63,13 @@ export default function Login() {
 
       {!sent ? (
         <button
-          type="button"                 // ✅ added
           onClick={sendOtp}
-          className="bg-blue-600 text-white p-2 w-full cursor-pointer" // ✅ added cursor
+          className="bg-blue-600 text-white p-2 w-full cursor-pointer"
         >
           Send OTP
         </button>
       ) : (
         <>
-          {/* OTP input */}
           <input
             className="border p-2 w-full"
             placeholder="Enter OTP"
@@ -75,9 +77,8 @@ export default function Login() {
           />
 
           <button
-            type="button"               // ✅ added
             onClick={verifyOtp}
-            className="bg-green-600 text-white p-2 w-full cursor-pointer" // ✅ added cursor
+            className="bg-green-600 text-white p-2 w-full cursor-pointer"
           >
             Verify OTP
           </button>

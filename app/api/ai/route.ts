@@ -1,16 +1,54 @@
+import { createClient } from "@supabase/supabase-js"
 import OpenAI from "openai"
 import { NextResponse } from "next/server"
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY!,
 })
 
 export async function POST(req: Request) {
-  const body = await req.json()
+  try {
+    // ======================
+    // Check logged in user
+    // ======================
+    const { data: userData } = await supabase.auth.getUser()
 
-  const { income, expense, profit, oldTax, newTax, adaTax } = body
+    if (!userData.user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
 
-  const prompt = `
+    // ======================
+    // Check subscription
+    // ======================
+    const { data: sub } = await supabase
+      .from("subscriptions")
+      .select("id")
+      .eq("user_id", userData.user.id)
+      .single()
+
+    if (!sub) {
+      return NextResponse.json(
+        { error: "Pro only feature" },
+        { status: 403 }
+      )
+    }
+
+    // ======================
+    // Get request data
+    // ======================
+    const body = await req.json()
+
+    const { income, expense, profit, oldTax, newTax, adaTax } = body
+
+    const prompt = `
 You are an Indian tax advisor.
 
 User data:
@@ -25,14 +63,23 @@ Give 5 short actionable tax saving tips.
 Be simple. Bullet points only.
 `
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      { role: "user", content: prompt }
-    ]
-  })
+    // ======================
+    // OpenAI call
+    // ======================
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+    })
 
-  const advice = response.choices[0].message.content
+    const advice = response.choices[0].message.content
 
-  return NextResponse.json({ advice })
+    return NextResponse.json({ advice })
+  } catch (error) {
+    console.error(error)
+
+    return NextResponse.json(
+      { error: "AI processing failed" },
+      { status: 500 }
+    )
+  }
 }

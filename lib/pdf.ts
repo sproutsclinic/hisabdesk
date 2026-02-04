@@ -3,6 +3,7 @@ import jsPDF from "jspdf"
 export function generateTaxPDF(data: {
   income: number
   expense: number
+   deductions: number
   profit: number
   oldTax: number
   newTax: number

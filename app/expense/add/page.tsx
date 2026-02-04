@@ -11,11 +11,7 @@ export default function AddExpense() {
   const router = useRouter()
 
   const saveExpense = async () => {
-    const { data } = await supabase.auth.getUser()
-    const user = data.user
-
     await supabase.from("expenses").insert({
-      user_id: user?.id,
       category,
       amount: Number(amount),
       notes,

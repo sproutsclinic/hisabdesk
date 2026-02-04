@@ -10,11 +10,7 @@ export default function AddIncome() {
   const router = useRouter()
 
   const saveIncome = async () => {
-    const { data } = await supabase.auth.getUser()
-    const user = data.user
-
     await supabase.from("incomes").insert({
-      user_id: user?.id,
       amount: Number(amount),
       notes,
       date: new Date()
