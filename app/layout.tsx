@@ -13,11 +13,50 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 })
 
+/* =========================
+   GLOBAL SEO METADATA
+========================= */
+
 export const metadata: Metadata = {
-  title: "HisabDesk – AI Tax Filing for India",
+  metadataBase: new URL("https://hisabdesk.com"),
+
+  title: {
+    default: "HisabDesk – AI Tax Filing & Calculator for India",
+    template: "%s | HisabDesk",
+  },
+
   description:
-    "Track income, calculate tax, import bank statements and file easily without CA.",
+    "Track income, expenses, calculate tax, import bank statements and file taxes easily. Built for Indian doctors, freelancers & professionals.",
+
+  keywords: [
+    "income tax calculator india",
+    "44ada calculator",
+    "freelancer tax filing",
+    "doctor tax saving india",
+    "tax software india",
+    "AI tax advisor india",
+  ],
+
+  openGraph: {
+    title: "HisabDesk – Smart Tax Filing for India",
+    description:
+      "Calculate tax instantly. Save money legally. No CA required.",
+    url: "https://hisabdesk.com",
+    siteName: "HisabDesk",
+    locale: "en_IN",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "HisabDesk – AI Tax Filing",
+    description: "Smart income tax calculator for Indian professionals",
+  },
 }
+
+/* =========================
+   LAYOUT
+========================= */
 
 export default function RootLayout({
   children,
@@ -30,11 +69,30 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable}`}
         style={{ fontFamily: "sans-serif" }}
       >
-        {/* Razorpay Script (correct way in App Router) */}
+        {/* Razorpay */}
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="beforeInteractive"
         />
+
+        {/* Google Analytics */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+              strategy="afterInteractive"
+            />
+
+            <Script id="ga-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+              `}
+            </Script>
+          </>
+        )}
 
         {children}
       </body>

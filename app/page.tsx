@@ -1,4 +1,6 @@
 import Link from "next/link"
+import Testimonials from "@/components/Testimonials"
+
 import {
   IndianRupee,
   FileText,
@@ -7,6 +9,12 @@ import {
   ShieldCheck,
   Upload
 } from "lucide-react"
+
+export const metadata = {
+  title: "Income Tax Calculator & Filing App for India",
+  description:
+    "Free income tax calculator with AI tax advisor. Designed for freelancers, doctors and small businesses in India."
+}
 
 export default function Page() {
   return (
@@ -107,6 +115,9 @@ export default function Page() {
           </Feature>
         </div>
       </section>
+      {/* TESTIMONIALS */}
+<Testimonials />
+
 
 
       {/* PRICING */}

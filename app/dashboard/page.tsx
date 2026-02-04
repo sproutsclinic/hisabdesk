@@ -7,6 +7,12 @@ import {
   getBestTaxOption
 } from "@/lib/tax"
 
+import Onboarding from "@/components/Onboarding"
+import { hasCompletedOnboarding } from "@/lib/onboarding"
+import ProgressChecklist from "@/components/ProgressChecklist"
+import { track } from "@/lib/analytics"
+
+
 import { generateTaxPDF } from "@/lib/pdf"
 import { isProUser } from "@/lib/isPro"
 
@@ -25,6 +31,7 @@ export default function Dashboard() {
   const [income, setIncome] = useState<number>(0)
   const [expense, setExpense] = useState<number>(0)
   const [deductions, setDeductions] = useState<number>(0) // ✅ added
+const [downloaded, setDownloaded] = useState(false)
 
   const [incomeRows, setIncomeRows] = useState<any[]>([])
   const [expenseRows, setExpenseRows] = useState<any[]>([])
@@ -32,19 +39,26 @@ export default function Dashboard() {
   const [aiTips, setAiTips] = useState("")
   const [loadingAI, setLoadingAI] = useState(false)
   const [isPro, setIsPro] = useState(false)
+const [showOnboarding, setShowOnboarding] = useState(false)
+
 
   // ======================
   // INIT
   // ======================
   useEffect(() => {
-    init()
-  }, [])
+  init()
+  track("dashboard_view")
+}, [])
+
 
   const init = async () => {
     await checkUser()
     await loadData()
     await checkPro()
   }
+if (!hasCompletedOnboarding()) {
+  setShowOnboarding(true)
+}
 
   // ======================
   // AUTH
@@ -53,6 +67,7 @@ export default function Dashboard() {
     const { data } = await supabase.auth.getUser()
     if (!data.user) router.push("/login")
   }
+track("signup")
 
   // ======================
   // LOAD DATA
@@ -156,7 +171,22 @@ export default function Dashboard() {
   // ======================
   // PDF
   // ======================
-  const downloadReport = () => {
+ const downloadReport = () => {
+  if (!isPro) return router.push("/billing")
+
+  setDownloaded(true)
+
+  generateTaxPDF({
+    income,
+    expense,
+    profit,
+    oldTax,
+    newTax,
+    adaTax,
+    best: best.label
+  })
+}
+
     if (!isPro) return router.push("/billing")
 
     generateTaxPDF({
@@ -174,9 +204,17 @@ export default function Dashboard() {
   // ======================
   // UI
   // ======================
+ 
+ if (showOnboarding) return <Onboarding />
   return (
     <div className="px-4 md:p-8 space-y-8 bg-gray-50 min-h-screen max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold">Dashboard</h1>
+
+<ProgressChecklist
+  hasIncome={income > 0}
+  hasExpense={expense > 0}
+  downloaded={downloaded}
+/>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <Card title="Income" value={`₹ ${income.toLocaleString()}`} />
