@@ -6,7 +6,10 @@ import {
   ShieldCheck,
   Plus,
   Bell,
-  LifeBuoy
+  LifeBuoy,
+  Cloud,
+  FileCheck,
+  Crown
 } from "lucide-react"
 
 import Link from "next/link"
@@ -25,7 +28,16 @@ const titles: Record<string, string> = {
 }
 
 /* ========================================
-   HEADER (TRUST + PLAN AWARE)
+   HEADER — TRUST DESIGN (Finance grade)
+
+   Added:
+   ✅ encrypted badge
+   ✅ secure cloud sync time
+   ✅ audit ready badge
+   ✅ billing status
+   ✅ support shortcut
+   ✅ mobile friendly
+   ✅ zero breaking changes
 ======================================== */
 
 export default function Header() {
@@ -42,13 +54,13 @@ export default function Header() {
       setSyncTime(
         now.toLocaleTimeString("en-IN", {
           hour: "2-digit",
-          minute: "2-digit"
+          minute: "2-digit",
         })
       )
     }
 
     update()
-    const t = setInterval(update, 30000) // every 30s
+    const t = setInterval(update, 30000)
 
     return () => clearInterval(t)
   }, [])
@@ -72,70 +84,133 @@ export default function Header() {
     loadPlan()
   }, [])
 
+  const raw = pathname.split("/")[1]
   const title =
     titles[pathname] ||
-    pathname.split("/")[1]?.charAt(0).toUpperCase() +
-      pathname.split("/")[1]?.slice(1)
+    (raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : "Dashboard")
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b">
-        <div className="h-14 px-4 md:px-8 flex items-center justify-between">
-
+      {/* ================= HEADER ================= */}
+      <header
+        className="
+          sticky top-0 z-40
+          bg-white/85 dark:bg-zinc-950/85
+          backdrop-blur
+          border-b border-zinc-200 dark:border-zinc-800
+        "
+      >
+        <div
+          className="
+            h-14
+            px-4 sm:px-6 lg:px-10
+            max-w-6xl mx-auto
+            flex items-center justify-between
+          "
+        >
           {/* ===== LEFT ===== */}
-          <div className="flex items-center gap-4">
-            <h1 className="text-sm md:text-base font-semibold">
+          <div className="flex items-center gap-4 min-w-0">
+            <h1 className="text-sm md:text-base font-semibold truncate">
               {title}
             </h1>
 
-            <span className="hidden md:block text-xs text-zinc-500">
+            {/* Secure cloud sync */}
+            <span className="hidden lg:flex items-center gap-1 text-xs text-zinc-500">
+              <Cloud size={12} />
               Synced {syncTime}
             </span>
           </div>
 
           {/* ===== RIGHT ===== */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
 
-            {/* Encrypted badge */}
-            <div className="hidden md:flex items-center gap-1 text-xs text-green-600 font-medium">
+            {/* 🔒 Encrypted */}
+            <div className="hidden lg:flex items-center gap-1 text-xs text-green-600 font-medium">
               <ShieldCheck size={14} />
               Encrypted
             </div>
 
+            {/* 📑 Audit Ready */}
+            <div className="hidden xl:flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
+              <FileCheck size={14} />
+              Audit Ready
+            </div>
+
             {/* Plan badge */}
-            <span
-              className={`hidden md:inline text-xs px-2 py-1 rounded-full font-medium
-              ${isPro ? "bg-green-100 text-green-700" : "bg-zinc-100 text-zinc-600"}`}
-            >
-              {isPro ? "Pro Plan" : "Free Plan"}
-            </span>
+            <Link href="/billing">
+              <span
+                className={`hidden md:inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium cursor-pointer
+                ${
+                  isPro
+                    ? "bg-green-100 text-green-700"
+                    : "bg-amber-100 text-amber-700"
+                }`}
+              >
+                {isPro ? (
+                  <>
+                    <Crown size={12} />
+                    Pro
+                  </>
+                ) : (
+                  "Free"
+                )}
+              </span>
+            </Link>
 
             {/* Quick Add */}
             <Link
               href="/transactions/new"
-              className="flex items-center gap-1 bg-black text-white px-3 py-1.5 rounded-lg text-xs hover:opacity-90"
+              className="
+                flex items-center gap-1.5
+                bg-zinc-900 text-white
+                px-3 py-2
+                rounded-lg text-xs font-medium
+                hover:opacity-90 transition
+              "
             >
               <Plus size={14} />
               Add
             </Link>
 
             {/* Notifications */}
-            <button className="p-2 rounded-lg hover:bg-zinc-100">
+            <button
+              className="
+                p-2 rounded-lg
+                hover:bg-zinc-100 dark:hover:bg-zinc-800
+                transition
+              "
+            >
               <Bell size={16} />
             </button>
 
             {/* Avatar */}
-            <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center text-xs font-medium">
+            <div
+              className="
+                w-8 h-8
+                rounded-full
+                bg-zinc-200 dark:bg-zinc-800
+                flex items-center justify-center
+                text-xs font-medium
+              "
+            >
               U
             </div>
           </div>
         </div>
       </header>
 
-      {/* Floating support */}
+      {/* ================= SUPPORT FLOATING BUTTON ================= */}
       <a
         href="mailto:support@hisabdesk.com"
-        className="fixed bottom-24 right-4 md:right-8 bg-black text-white w-11 h-11 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition z-50"
+        className="
+          fixed bottom-24 right-4 md:right-8
+          bg-zinc-900 text-white
+          w-11 h-11 rounded-full
+          flex items-center justify-center
+          shadow-lg
+          hover:scale-105 transition
+          z-50
+        "
       >
         <LifeBuoy size={18} />
       </a>

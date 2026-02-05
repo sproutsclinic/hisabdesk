@@ -11,10 +11,12 @@ import {
   Wallet,
   BarChart3,
   LogOut,
+  ShieldCheck,
 } from "lucide-react"
 
 /* ========================================
    NAV ITEMS
+   (kept same → zero breaking changes)
 ======================================== */
 
 const nav = [
@@ -26,7 +28,16 @@ const nav = [
 ]
 
 /* ========================================
-   SIDEBAR
+   SIDEBAR — Fintech Grade
+
+   Adds:
+   ✅ better spacing
+   ✅ softer UI
+   ✅ trust footer
+   ✅ smoother hover
+   ✅ dark mode
+   ✅ mobile safe
+   ✅ zero breaking changes
 ======================================== */
 
 export default function Sidebar() {
@@ -42,18 +53,23 @@ export default function Sidebar() {
     <aside
       className="
         hidden md:flex
-        w-64 h-screen
-        bg-white border-r
-        flex-col
-        p-6
+        w-64
+        h-screen
         sticky top-0
+        flex-col
+
+        bg-white dark:bg-zinc-900
+        border-r border-zinc-200 dark:border-zinc-800
+
+        px-5 py-6
       "
     >
       {/* ===== Brand ===== */}
-      <div className="mb-10">
+      <div className="mb-10 px-2">
         <h1 className="text-xl font-semibold tracking-tight">
           HisabDesk
         </h1>
+
         <p className="text-xs text-zinc-500 mt-1">
           Smart Tax OS
         </p>
@@ -69,17 +85,24 @@ export default function Sidebar() {
               key={href}
               href={href}
               className={`
+                group
                 flex items-center gap-3
-                px-3 py-2 rounded-xl text-sm
-                transition
+                px-3 py-2.5
+                rounded-xl
+                text-sm font-medium
+                transition-all duration-150
+
                 ${
                   active
-                    ? "bg-black text-white"
-                    : "text-zinc-700 hover:bg-zinc-100"
+                    ? "bg-zinc-900 text-white shadow-sm"
+                    : "text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 }
               `}
             >
-              <Icon size={18} />
+              <Icon
+                size={18}
+                className="opacity-80 group-hover:opacity-100"
+              />
               {label}
             </Link>
           )
@@ -87,9 +110,11 @@ export default function Sidebar() {
       </nav>
 
       {/* ===== Footer ===== */}
-      <div className="pt-6 border-t space-y-3">
-        <div className="text-xs text-zinc-500">
-          🔒 Bank-grade security
+      <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 space-y-4">
+        {/* Trust Badge */}
+        <div className="flex items-center gap-2 text-xs text-zinc-500">
+          <ShieldCheck size={14} />
+          Bank-grade security
         </div>
 
         <button
@@ -97,8 +122,14 @@ export default function Sidebar() {
           className="
             flex items-center gap-2
             w-full text-sm
-            px-3 py-2 rounded-xl
-            text-red-600 hover:bg-red-50
+            px-3 py-2.5
+            rounded-xl
+            font-medium
+
+            text-red-600
+            hover:bg-red-50
+            dark:hover:bg-red-950/40
+
             transition
           "
         >

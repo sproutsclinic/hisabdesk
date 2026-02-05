@@ -1,32 +1,32 @@
-/* =========================================
-   TAILWIND
-========================================= */
+/* ========================================
+   HISABDESK GLOBAL STYLES
+   Fintech-grade polish layer
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+   Adds:
+   ✅ smoother scroll
+   ✅ better typography
+   ✅ safe-area padding (mobile)
+   ✅ skeleton shimmer
+   ✅ page transitions
+   ✅ premium shadows
+   ✅ touch improvements
+   ✅ dark mode support
+======================================== */
 
 
-/* =========================================
-   ROOT TOKENS (Fintech theme)
-========================================= */
+/* ================= ROOT ================= */
 
 :root {
   --background: #fafafa;
   --foreground: #111111;
-
   --card: #ffffff;
   --border: #e5e5e5;
-
-  --primary: #000000;
-  --success: #16a34a;
-  --danger: #dc2626;
-
   --radius: 14px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 10px rgba(0,0,0,0.06);
 }
 
-
-/* Dark mode ready */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -37,148 +37,193 @@
 }
 
 
-/* =========================================
-   BASE RESET
-========================================= */
+/* ================= BASE RESET ================= */
 
 * {
-  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
-html,
-body {
-  height: 100%;
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-
-  font-family: var(--font-geist-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  overflow-x: hidden;
-}
-
-
-/* Better mobile scroll */
 html {
   scroll-behavior: smooth;
 }
 
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
 
-/* Pointer consistency */
-button,
-a {
-  cursor: pointer;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  min-height: 100vh;
+
+  /* smoother transitions */
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 
-/* =========================================
-   APP CONTAINER (main layout helper)
-========================================= */
+/* ================= LAYOUT ================= */
 
 .container-app {
-  @apply max-w-7xl mx-auto px-4 md:px-8;
+  max-width: 1280px;
+  margin: 0 auto;
+
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
 
-/* =========================================
-   CARDS (Stripe style)
-========================================= */
+/* ================= CARD ================= */
 
 .card {
-  @apply bg-white dark:bg-zinc-900
-         border border-zinc-200 dark:border-zinc-800
-         rounded-2xl shadow-sm p-5 transition;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+
+  box-shadow: var(--shadow-sm);
+
+  transition: box-shadow 0.15s ease, transform 0.05s ease;
 }
 
 .card:hover {
-  @apply shadow-md;
+  box-shadow: var(--shadow-md);
 }
 
 
-/* =========================================
-   BUTTON SYSTEM
-========================================= */
+/* ================= BUTTON ================= */
 
 .btn {
-  @apply bg-black text-white
-         px-5 py-3 rounded-xl text-sm font-medium
-         hover:opacity-90 active:scale-[0.98]
-         transition;
+  background: black;
+  color: white;
+
+  padding: 10px 16px;
+  border-radius: 12px;
+
+  border: none;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  transition: opacity 0.15s ease, transform 0.05s ease;
 }
 
-.btn-outline {
-  @apply border border-zinc-300 dark:border-zinc-700
-         rounded-xl px-5 py-3 text-sm
-         hover:bg-zinc-100 dark:hover:bg-zinc-800
-         transition;
+.btn:hover {
+  opacity: 0.92;
 }
 
-.btn-success {
-  @apply bg-green-600 text-white rounded-xl px-5 py-3
-         hover:bg-green-700 transition;
+.btn:active {
+  transform: scale(0.97);
 }
 
-.btn-danger {
-  @apply bg-red-600 text-white rounded-xl px-5 py-3
-         hover:bg-red-700 transition;
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 
-/* =========================================
-   INPUTS (mobile-first)
-========================================= */
+/* ================= INPUT ================= */
 
 .input {
-  @apply border border-zinc-300 dark:border-zinc-700
-         rounded-xl px-4 py-3 w-full text-sm
-         bg-white dark:bg-zinc-900
-         focus:outline-none focus:ring-2 focus:ring-black;
+  width: 100%;
+  padding: 10px 12px;
+
+  border-radius: 12px;
+  border: 1px solid var(--border);
+
+  background: var(--card);
+  color: var(--foreground);
+
+  transition: border 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #111;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
 }
 
 
-/* =========================================
-   TYPOGRAPHY
-========================================= */
-
-.heading-xl {
-  @apply text-3xl md:text-4xl font-semibold tracking-tight;
-}
+/* ================= TYPOGRAPHY ================= */
 
 .heading-lg {
-  @apply text-2xl font-semibold;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .muted {
-  @apply text-zinc-500;
+  color: #6b7280;
 }
 
 
-/* =========================================
-   SECTIONS
-========================================= */
-
-.section {
-  @apply py-14 md:py-20;
-}
-
-
-/* =========================================
-   SKELETON LOADER
-========================================= */
+/* ================= SKELETON (SHIMMER) ================= */
 
 .skeleton {
-  @apply animate-pulse bg-zinc-200 dark:bg-zinc-800 rounded-xl;
+  height: 20px;
+  border-radius: 8px;
+
+  background: linear-gradient(
+    90deg,
+    #e5e5e5 25%,
+    #f2f2f2 37%,
+    #e5e5e5 63%
+  );
+
+  background-size: 400% 100%;
+  animation: shimmer 1.3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 
-/* =========================================
-   SAFE AREA (mobile bottom nav support)
-========================================= */
+/* ================= TOUCH IMPROVEMENTS ================= */
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ================= PAGE TRANSITION ================= */
+
+.fade-in {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ================= SAFE AREAS ================= */
 
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+
+/* ================= SCROLLBAR (desktop polish) ================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c4c4c4;
 }

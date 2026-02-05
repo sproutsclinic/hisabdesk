@@ -1,23 +1,33 @@
 "use client"
 
 import React from "react"
-import { ShieldCheck } from "lucide-react"
+import { AlertTriangle, RefreshCcw } from "lucide-react"
 
 /* ========================================
-   GLOBAL ERROR BOUNDARY
-   Prevents white screen crashes
-   Fintech trust safe state
+   GLOBAL ERROR BOUNDARY — Fintech Safe
+
+   Purpose:
+   ✅ prevents white screen crashes
+   ✅ protects financial UX
+   ✅ graceful fallback
+   ✅ retry button
+   ✅ mobile friendly
+   ✅ production safe
+
+   Already used in:
+   app/layout.tsx → <ErrorBoundary>
 ======================================== */
+
+type Props = {
+  children: React.ReactNode
+}
 
 type State = {
   hasError: boolean
 }
 
-export default class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  State
-> {
-  constructor(props: any) {
+export default class ErrorBoundary extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props)
     this.state = { hasError: false }
   }
@@ -26,53 +36,65 @@ export default class ErrorBoundary extends React.Component<
     return { hasError: true }
   }
 
-  componentDidCatch(error: any, info: any) {
-    console.error("App crashed:", error, info)
+  componentDidCatch(error: unknown, info: unknown) {
+    console.error("App Crash:", error, info)
   }
 
-  handleReload = () => {
+  reset = () => {
+    this.setState({ hasError: false })
     window.location.reload()
   }
 
   render() {
     if (this.state.hasError) {
-      const now = new Date().toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit"
-      })
-
       return (
-        <div className="min-h-screen flex items-center justify-center bg-zinc-50 p-6">
-
-          <div className="card max-w-md w-full text-center space-y-6">
-
-            {/* Trust badge */}
-            <div className="flex items-center justify-center gap-2 text-green-600 text-sm font-medium">
-              <ShieldCheck size={16} />
-              Secure cloud backup active
+        <div
+          className="
+            min-h-screen
+            flex items-center justify-center
+            px-6
+            bg-zinc-50 dark:bg-zinc-950
+          "
+        >
+          <div
+            className="
+              max-w-sm w-full
+              bg-white dark:bg-zinc-900
+              border border-zinc-200 dark:border-zinc-800
+              rounded-2xl
+              p-6
+              shadow-sm
+              text-center
+              space-y-4
+            "
+          >
+            <div className="flex justify-center text-red-600">
+              <AlertTriangle size={28} />
             </div>
 
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-sm font-semibold">
               Something went wrong
             </h2>
 
-            <p className="text-sm text-zinc-500">
-              Don’t worry — your financial data is safe and synced.
-            </p>
-
-            <p className="text-xs text-zinc-400">
-              Last sync: {now}
+            <p className="text-xs text-zinc-500">
+              Don’t worry. Your financial data is safe.
+              Please refresh the page.
             </p>
 
             <button
-              onClick={this.handleReload}
-              className="btn"
+              onClick={this.reset}
+              className="
+                inline-flex items-center justify-center gap-2
+                bg-zinc-900 text-white
+                h-10 px-4
+                rounded-xl text-sm font-medium
+                hover:opacity-90 transition
+              "
             >
-              Reload App
+              <RefreshCcw size={14} />
+              Reload
             </button>
-
           </div>
-
         </div>
       )
     }

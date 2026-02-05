@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 
@@ -8,60 +8,124 @@ import {
   calculateOldRegimeTax,
   calculateNewRegimeTax,
   calculate44ADA,
-  getBestTaxOption
+  getBestTaxOption,
 } from "@/lib/tax"
 
-import { generateTaxPDF } from "@/lib/pdf"
 import { isProUser } from "@/lib/isPro"
 import { track } from "@/lib/analytics"
 
 import IncomeExpenseChart from "@/components/IncomeExpenseChart"
-import EmptyState from "@/components/ui/EmptyState" // ✅ ONLY NEW IMPORT
-
 import Checklist from "@/components/conversion/Checklist"
 import UpgradePrompt from "@/components/conversion/UpgradePrompt"
 import ReferralBanner from "@/components/conversion/ReferralBanner"
 import Testimonials from "@/components/Testimonials"
 
-import BurnMeter from "@/components/dashboard/BurnMeter"
-import SavingsCounter from "@/components/dashboard/SavingsCounter"
-import QuickActions from "@/components/dashboard/QuickActions"
-import Timeline from "@/components/dashboard/Timeline"
+import { Card } from "@/components/ui/card"
+import { SkeletonList } from "@/components/ui/skeleton"
+
+import {
+  BellRing,
+  Landmark,
+  Sparkles,
+  ShieldAlert,
+} from "lucide-react"
+
+/* =================================================
+   DASHBOARD — PRO LOCKED + EXPIRY REMINDER
+
+   ✅ Net worth
+   ✅ Reminders
+   ✅ Risk alerts
+   ✅ Insights (PRO only)
+   ✅ 🔥 Pro expiry banner (Phase 13)
+================================================= */
+
+type Reminder = {
+  id: string
+  reminder_date: string
+  type: string
+  vault_items?: { title: string }
+}
+
+type Insight = {
+  type: string
+  message: string
+}
 
 export default function Dashboard() {
   const router = useRouter()
 
   const [loading, setLoading] = useState(true)
 
+  const [incomeRows, setIncomeRows] = useState<any[]>([])
+  const [expenseRows, setExpenseRows] = useState<any[]>([])
+
   const [income, setIncome] = useState(0)
   const [expense, setExpense] = useState(0)
   const [deductions, setDeductions] = useState(0)
 
-  const [incomeRows, setIncomeRows] = useState<any[]>([])
-  const [expenseRows, setExpenseRows] = useState<any[]>([])
-
-  const [aiTips, setAiTips] = useState("")
-  const [loadingAI, setLoadingAI] = useState(false)
   const [isPro, setIsPro] = useState(false)
-  const [downloaded, setDownloaded] = useState(false)
+
+  const [reminders, setReminders] = useState<Reminder[]>([])
+  const [risks, setRisks] = useState<Insight[]>([])
+  const [insights, setInsights] = useState<Insight[]>([])
+
+  const [assets, setAssets] = useState(0)
+  const [liabilities, setLiabilities] = useState(0)
+
+  /* 🔥 NEW */
+  const [daysLeft, setDaysLeft] = useState<number | null>(null)
 
   /* ================= INIT ================= */
 
   useEffect(() => {
-    init()
     track("dashboard_view")
+    init()
   }, [])
 
   const init = async () => {
     const user = await guardUser()
     if (!user) return
 
+    const pro = await isProUser(user.id)
+    setIsPro(pro)
+
     await Promise.all([
       loadData(user.id),
-      loadPro(user.id)
+      loadReminders(user.id),
+      loadNetWorth(user.id),
+
+      fetch("/api/reminders/auto", { method: "POST" }),
+      fetch("/api/vault/risk").then((r) => r.json()).then(setRisks),
+
+      /* 🔒 PRO ONLY */
+      pro
+        ? Promise.all([
+            fetch("/api/vault/insights").then((r) => r.json()).then(setInsights),
+            loadExpiryReminder(),
+          ])
+        : Promise.resolve(),
     ])
 
     setLoading(false)
+  }
+
+  /* ================= EXPIRY REMINDER ================= */
+
+  const loadExpiryReminder = async () => {
+    const { data } = await supabase.auth.getSession()
+    const token = data.session?.access_token
+    if (!token) return
+
+    const res = await fetch("/api/pro/reminders", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+
+    const json = await res.json()
+
+    if (json?.length > 0) {
+      setDaysLeft(json[0].daysLeft)
+    }
   }
 
   /* ================= AUTH ================= */
@@ -74,186 +138,169 @@ export default function Dashboard() {
       return null
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("onboarding_profile")
-      .eq("id", data.user.id)
-      .single()
-
-    if (
-      !profile?.onboarding_profile ||
-      Object.keys(profile.onboarding_profile).length === 0
-    ) {
-      router.push("/onboarding")
-      return null
-    }
-
     return data.user
   }
 
   /* ================= DATA ================= */
 
   const loadData = async (userId: string) => {
-    const [incomesRes, expensesRes, deductionsRes] = await Promise.all([
+    const [inc, exp, ded] = await Promise.all([
       supabase.from("incomes").select("amount,date").eq("user_id", userId),
       supabase.from("expenses").select("amount,date").eq("user_id", userId),
-      supabase.from("deductions").select("total").eq("user_id", userId).single()
+      supabase.from("deductions").select("total").eq("user_id", userId).single(),
     ])
 
-    const incomes = incomesRes.data || []
-    const expenses = expensesRes.data || []
-    const deductionRow = deductionsRes.data
+    const incomes = inc.data || []
+    const expenses = exp.data || []
 
     setIncomeRows(incomes)
     setExpenseRows(expenses)
 
     setIncome(incomes.reduce((s: number, i: any) => s + Number(i.amount), 0))
     setExpense(expenses.reduce((s: number, e: any) => s + Number(e.amount), 0))
-    setDeductions(deductionRow?.total || 0)
+    setDeductions(ded.data?.total || 0)
   }
 
-  const loadPro = async (userId: string) => {
-    setIsPro(await isProUser(userId))
+  const loadReminders = async (userId: string) => {
+    const today = new Date()
+    const next7 = new Date()
+    next7.setDate(today.getDate() + 7)
+
+    const { data } = await supabase
+      .from("reminders")
+      .select("id, reminder_date, type, vault_items(title)")
+      .eq("user_id", userId)
+      .gte("reminder_date", today.toISOString())
+      .lte("reminder_date", next7.toISOString())
+      .eq("status", "pending")
+
+    setReminders(data || [])
   }
 
-  /* ================= SKELETON ================= */
+  const loadNetWorth = async (userId: string) => {
+    const { data } = await supabase
+      .from("vault_items")
+      .select("category, metadata")
+      .eq("user_id", userId)
 
-  if (loading) {
-    return (
-      <div className="container-app py-8 space-y-6">
-        <div className="skeleton h-6 w-40" />
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="skeleton h-40" />
-          <div className="skeleton h-40" />
-        </div>
-        <div className="skeleton h-56" />
-      </div>
-    )
-  }
+    let a = 0
+    let l = 0
 
-  /* ================= EMPTY STATE (ONLY NEW ADDITION) ================= */
+    ;(data || []).forEach((item: any) => {
+      const m = item.metadata || {}
 
-  const noData = incomeRows.length === 0 && expenseRows.length === 0
+      if (["property", "tax", "insurance"].includes(item.category))
+        a += Number(m.current_value || m.amount || 0)
 
-  if (noData) {
-    return (
-      <div className="container-app py-12">
-        <EmptyState
-          title="No transactions yet"
-          description="Add your first income or expense to start tracking tax savings"
-          actionHref="/income/add"
-          actionLabel="Add Income"
-        />
-      </div>
-    )
+      if (item.category === "loans") l += Number(m.outstanding || 0)
+    })
+
+    setAssets(a)
+    setLiabilities(l)
   }
 
   /* ================= CALC ================= */
 
-  const profit = income - expense
-  const taxable = profit - deductions
+  const profit = useMemo(() => income - expense, [income, expense])
+  const taxable = useMemo(() => profit - deductions, [profit, deductions])
 
   const oldTax = calculateOldRegimeTax(taxable)
   const newTax = calculateNewRegimeTax(taxable)
   const adaTax = calculateOldRegimeTax(calculate44ADA(income))
 
   const best = getBestTaxOption(oldTax, newTax, adaTax)
-  const savings = Math.max(profit - best.value, 0)
+
+  const netWorth = assets - liabilities
 
   const chartData = incomeRows.map((i: any, idx: number) => ({
     date: new Date(i.date).toLocaleDateString("en-IN", { month: "short" }),
     income: Number(i.amount),
-    expense: Number(expenseRows[idx]?.amount || 0)
+    expense: Number(expenseRows[idx]?.amount || 0),
   }))
 
-  /* ================= ACTIONS (UNCHANGED) ================= */
+  /* ================= LOADING ================= */
 
-  const getAITips = async () => {
-    if (!isPro || loadingAI) return router.push("/billing")
-
-    setLoadingAI(true)
-
-    const res = await fetch("/api/ai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ income, expense, deductions })
-    })
-
-    const data = await res.json()
-    setAiTips(data.advice)
-    setLoadingAI(false)
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto py-8">
+        <SkeletonList count={6} />
+      </div>
+    )
   }
 
-  const downloadReport = () => {
-    if (!isPro) return router.push("/billing")
-
-    setDownloaded(true)
-
-    generateTaxPDF({
-      income,
-      expense,
-      deductions,
-      profit,
-      best: best.label
-    })
-  }
-
-  /* ================= UI (100% YOUR ORIGINAL) ================= */
+  /* ================= UI ================= */
 
   return (
-    <div className="container-app py-8 space-y-8">
+    <div className="space-y-8">
 
-      <h1 className="heading-lg">Tax Health</h1>
+      {/* 🔥 PRO EXPIRY BANNER */}
+      {isPro && daysLeft !== null && (
+        <Card
+          className="bg-amber-50 border-amber-300 cursor-pointer text-sm text-center"
+          onClick={() => router.push("/billing")}
+        >
+          ⚠️ Your Pro plan expires in <b>{daysLeft}</b> day
+          {daysLeft !== 1 && "s"} — Renew now
+        </Card>
+      )}
+
+      {/* Net Worth */}
+      <Card className="bg-indigo-50 border-indigo-200 space-y-2">
+        <div className="flex items-center gap-2 text-indigo-700 text-sm font-medium">
+          <Landmark size={14} />
+          Family Net Worth
+        </div>
+        <p className="text-2xl font-bold">
+          ₹ {netWorth.toLocaleString("en-IN")}
+        </p>
+      </Card>
+
+      {/* Reminders */}
+      {reminders.length > 0 && (
+        <Card className="space-y-2">
+          <BellRing size={14} />
+          {reminders.map((r) => (
+            <p key={r.id} className="text-xs">{r.vault_items?.title}</p>
+          ))}
+        </Card>
+      )}
+
+      {/* Risks */}
+      {risks.length > 0 && (
+        <Card className="space-y-2">
+          <ShieldAlert size={14} />
+          {risks.map((r, i) => (
+            <p key={i} className="text-xs">{r.message}</p>
+          ))}
+        </Card>
+      )}
+
+      {/* Insights */}
+      {isPro ? (
+        insights.length > 0 && (
+          <Card className="space-y-2">
+            <Sparkles size={14} />
+            {insights.map((i, idx) => (
+              <p key={idx} className="text-xs">{i.message}</p>
+            ))}
+          </Card>
+        )
+      ) : (
+        <Card
+          className="cursor-pointer text-center text-sm opacity-80"
+          onClick={() => router.push("/billing")}
+        >
+          🔒 Smart Insights (Upgrade to Pro)
+        </Card>
+      )}
 
       <UpgradePrompt show={!isPro} />
-
-      <Checklist
-        hasIncome={income > 0}
-        hasExpense={expense > 0}
-        isPro={isPro}
-      />
-
+      <Checklist hasIncome={income > 0} hasExpense={expense > 0} isPro={isPro} />
       <ReferralBanner />
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <BurnMeter income={income} expense={expense} tax={best.value} />
-        <SavingsCounter savings={savings} />
-      </div>
-
-      <QuickActions />
-
-      <div className="card">
+      <Card>
         <IncomeExpenseChart data={chartData} />
-      </div>
-
-      <Timeline />
-
-      <div className="grid grid-cols-2 sm:flex gap-3">
-
-        <button
-          onClick={getAITips}
-          disabled={!isPro}
-          className={`btn ${!isPro ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          {loadingAI ? "Loading..." : isPro ? "AI Advisor" : "AI Advisor 🔒"}
-        </button>
-
-        <button
-          onClick={downloadReport}
-          disabled={!isPro}
-          className={`btn ${!isPro ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          {isPro ? "Download PDF" : "Download PDF 🔒"}
-        </button>
-
-      </div>
-
-      {aiTips && (
-        <div className="card">
-          <h2 className="font-bold mb-2">AI Suggestions</h2>
-          <p>{aiTips}</p>
-        </div>
-      )}
+      </Card>
 
       <Testimonials />
 

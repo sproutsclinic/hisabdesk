@@ -6,7 +6,8 @@ import "./globals.css"
 import AppShell from "@/components/layout/AppShell"
 import ToastProvider from "@/components/providers/ToastProvider"
 import ThemeProvider from "@/components/providers/ThemeProvider"
-import ErrorBoundary from "@/components/providers/ErrorBoundary" // ✅ NEW
+import ErrorBoundary from "@/components/providers/ErrorBoundary"
+import OnboardingGuard from "@/components/providers/OnboardingGuard"
 
 /* =========================
    FONTS
@@ -58,6 +59,13 @@ export const metadata: Metadata = {
 
 /* =========================
    ROOT LAYOUT
+   Fintech-grade foundation
+
+   Adds:
+   ✅ safe-area mobile padding
+   ✅ smoother fonts
+   ✅ container stability
+   ✅ layout ready for sidebar/bottom nav
 ========================= */
 
 export default function RootLayout({
@@ -68,6 +76,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body
@@ -76,6 +85,8 @@ export default function RootLayout({
           dark:bg-zinc-950 dark:text-zinc-100
           font-sans antialiased
           min-h-screen
+          overflow-x-hidden
+          selection:bg-zinc-900 selection:text-white
         "
       >
         {/* Razorpay */}
@@ -91,7 +102,6 @@ export default function RootLayout({
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
               strategy="afterInteractive"
             />
-
             <Script id="ga-init" strategy="afterInteractive">
               {`
                 window.dataLayer = window.dataLayer || [];
@@ -106,14 +116,18 @@ export default function RootLayout({
         {/* ================= APP WRAPPERS ================= */}
         <ThemeProvider>
           <ToastProvider>
-            <ErrorBoundary> {/* ✅ NEW crash safety */}
-              <AppShell>
-                {children}
-              </AppShell>
+            <ErrorBoundary>
+              <div className="flex min-h-screen flex-col">
+              <OnboardingGuard>
+                 <AppShell>
+                    {children}
+                 </AppShell>
+              </OnboardingGuard>
+
+              </div>
             </ErrorBoundary>
           </ToastProvider>
         </ThemeProvider>
-
       </body>
     </html>
   )
