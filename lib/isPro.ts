@@ -5,12 +5,17 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+/* ========================================
+   CHECK PRO STATUS
+   Reads profiles.is_pro (set by webhook)
+======================================== */
+
 export async function isProUser(userId: string) {
   const { data } = await supabase
-    .from("subscriptions")
-    .select("id")
-    .eq("user_id", userId)
+    .from("profiles")
+    .select("is_pro")
+    .eq("id", userId)
     .single()
 
-  return !!data
+  return data?.is_pro === true
 }

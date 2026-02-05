@@ -3,6 +3,15 @@ import Script from "next/script"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 
+import AppShell from "@/components/layout/AppShell"
+import ToastProvider from "@/components/providers/ToastProvider"
+import ThemeProvider from "@/components/providers/ThemeProvider"
+import ErrorBoundary from "@/components/providers/ErrorBoundary" // ✅ NEW
+
+/* =========================
+   FONTS
+========================= */
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -14,7 +23,7 @@ const geistMono = Geist_Mono({
 })
 
 /* =========================
-   GLOBAL SEO METADATA
+   METADATA
 ========================= */
 
 export const metadata: Metadata = {
@@ -28,14 +37,7 @@ export const metadata: Metadata = {
   description:
     "Track income, expenses, calculate tax, import bank statements and file taxes easily. Built for Indian doctors, freelancers & professionals.",
 
-  keywords: [
-    "income tax calculator india",
-    "44ada calculator",
-    "freelancer tax filing",
-    "doctor tax saving india",
-    "tax software india",
-    "AI tax advisor india",
-  ],
+  manifest: "/manifest.json",
 
   openGraph: {
     title: "HisabDesk – Smart Tax Filing for India",
@@ -55,7 +57,7 @@ export const metadata: Metadata = {
 }
 
 /* =========================
-   LAYOUT
+   ROOT LAYOUT
 ========================= */
 
 export default function RootLayout({
@@ -64,10 +66,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
       <body
-        className={`${geistSans.variable} ${geistMono.variable}`}
-        style={{ fontFamily: "sans-serif" }}
+        className="
+          bg-zinc-50 text-zinc-900
+          dark:bg-zinc-950 dark:text-zinc-100
+          font-sans antialiased
+          min-h-screen
+        "
       >
         {/* Razorpay */}
         <Script
@@ -94,7 +103,17 @@ export default function RootLayout({
           </>
         )}
 
-        {children}
+        {/* ================= APP WRAPPERS ================= */}
+        <ThemeProvider>
+          <ToastProvider>
+            <ErrorBoundary> {/* ✅ NEW crash safety */}
+              <AppShell>
+                {children}
+              </AppShell>
+            </ErrorBoundary>
+          </ToastProvider>
+        </ThemeProvider>
+
       </body>
     </html>
   )

@@ -18,152 +18,155 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-white text-gray-900">
+    <main className="bg-gray-50 text-gray-900 min-h-screen">
 
-      {/* NAVBAR */}
-      <nav className="flex items-center justify-between px-8 py-5 border-b">
-        <h1 className="text-2xl font-bold">HisabDesk</h1>
+      {/* ================= NAVBAR ================= */}
+      <nav className="sticky top-0 bg-white/80 backdrop-blur border-b z-50">
+        <div className="container-app flex items-center justify-between py-4">
+          <h1 className="text-xl font-bold">HisabDesk</h1>
 
-        <div className="flex gap-6 items-center text-sm font-medium">
-          <Link href="/login">Login</Link>
-
-          <Link
-            href="/login"
-            className="bg-black text-white px-4 py-2 rounded-xl"
-          >
-            Get Started
-          </Link>
+          <div className="flex gap-3">
+            <Link href="/login" className="btn-outline">Login</Link>
+            <Link href="/login" className="btn">Get Started</Link>
+          </div>
         </div>
       </nav>
 
 
-      {/* HERO */}
-      <section className="text-center py-28 px-6 max-w-4xl mx-auto">
-        <h2 className="text-5xl font-bold leading-tight mb-6">
-          File Your Taxes in Minutes.
-          <br />
-          <span className="text-gray-500">No CA Required.</span>
-        </h2>
+      {/* ================= HERO ================= */}
+      <section className="section text-center">
+        <div className="container-app max-w-4xl">
 
-        <p className="text-lg text-gray-600 mb-10">
-          Track income, import bank statements, calculate tax,
-          and generate reports automatically.
-        </p>
+          <h2 className="heading-xl mb-6">
+            File Your Taxes in Minutes.
+            <br />
+            <span className="text-gray-500">No CA Required.</span>
+          </h2>
 
-        <div className="flex justify-center gap-4">
-          <Link
-            href="/login"
-            className="bg-black text-white px-8 py-4 rounded-2xl font-semibold"
-          >
-            Start Free
-          </Link>
+          <p className="muted text-lg mb-10">
+            Track income, import bank statements, calculate tax,
+            and generate reports automatically — all in one dashboard.
+          </p>
 
-          <Link
-            href="/billing"
-            className="border px-8 py-4 rounded-2xl font-semibold"
-          >
-            View Pricing
-          </Link>
-        </div>
-      </section>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link href="/login" className="btn text-lg">
+              Start Free
+            </Link>
 
-
-      {/* PROBLEMS */}
-      <section className="py-20 bg-gray-50 text-center">
-        <h2 className="text-3xl font-bold mb-12">
-          Managing money shouldn’t be this hard
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-lg text-gray-700">
-          <div>❌ Manual Excel tracking</div>
-          <div>❌ Confusing tax regimes</div>
-          <div>❌ CA dependency for basics</div>
-          <div>❌ No instant reports</div>
-        </div>
-      </section>
-
-
-      {/* FEATURES */}
-      <section className="py-24 px-6">
-        <h2 className="text-3xl font-bold text-center mb-16">
-          Everything you need in one place
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <Feature icon={<BarChart3 />} title="Income & Expense Tracking">
-            Smart dashboard with totals & profit insights
-          </Feature>
-
-          <Feature icon={<IndianRupee />} title="Auto Tax Comparison">
-            Old vs New regime + 44ADA instantly
-          </Feature>
-
-          <Feature icon={<Brain />} title="AI Tax Advisor">
-            Suggestions to legally reduce tax
-          </Feature>
-
-          <Feature icon={<Upload />} title="Bank Statement Import">
-            Upload PDF → auto detect transactions
-          </Feature>
-
-          <Feature icon={<FileText />} title="PDF Reports">
-            Professional tax reports in one click
-          </Feature>
-
-          <Feature icon={<ShieldCheck />} title="Secure & Private">
-            Supabase auth + encrypted cloud storage
-          </Feature>
-        </div>
-      </section>
-      {/* TESTIMONIALS */}
-<Testimonials />
-
-
-
-      {/* PRICING */}
-      <section className="py-24 bg-gray-50 text-center">
-        <h2 className="text-3xl font-bold mb-14">
-          Simple pricing
-        </h2>
-
-        <div className="flex flex-col md:flex-row justify-center gap-10">
-
-          <div className="border p-8 rounded-2xl w-72 shadow-sm">
-            <h3 className="text-xl font-bold">Free</h3>
-            <p className="text-3xl my-4">₹0</p>
-            <p className="text-gray-600">
-              Income & expense tracking
-            </p>
+            <Link href="/billing" className="btn-outline text-lg">
+              View Pricing
+            </Link>
           </div>
 
-          <div className="border-2 border-black p-8 rounded-2xl w-72 shadow-lg scale-105">
-            <h3 className="text-xl font-bold">Pro</h3>
-            <p className="text-3xl my-4">₹499 / month</p>
-            <p className="text-gray-600">
-              Tax engine + reports + AI advisor
-            </p>
+          <p className="text-xs text-gray-400 mt-6">
+            Trusted by freelancers, doctors & consultants across India
+          </p>
+        </div>
+      </section>
+
+
+      {/* ================= PROBLEMS ================= */}
+      <section className="section bg-white text-center">
+        <div className="container-app">
+
+          <h2 className="heading-lg mb-10">
+            Managing money shouldn’t be this hard
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-gray-700">
+            <Problem>Manual Excel tracking</Problem>
+            <Problem>Confusing tax regimes</Problem>
+            <Problem>CA dependency for basics</Problem>
+            <Problem>No instant reports</Problem>
           </div>
 
         </div>
       </section>
 
 
-      {/* CTA */}
-      <section className="py-24 text-center">
-        <h2 className="text-3xl font-bold mb-6">
-          Stop wasting time on spreadsheets
-        </h2>
+      {/* ================= FEATURES ================= */}
+      <section className="section">
+        <div className="container-app">
 
-        <Link
-          href="/login"
-          className="bg-black text-white px-10 py-4 rounded-2xl text-lg font-semibold"
-        >
-          Create Free Account →
-        </Link>
+          <h2 className="heading-lg text-center mb-14">
+            Everything you need in one place
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Feature icon={<BarChart3 size={18} />} title="Income & Expense Tracking">
+              Smart dashboard with totals & profit insights
+            </Feature>
+
+            <Feature icon={<IndianRupee size={18} />} title="Auto Tax Comparison">
+              Old vs New regime + 44ADA instantly
+            </Feature>
+
+            <Feature icon={<Brain size={18} />} title="AI Tax Advisor">
+              Suggestions to legally reduce tax
+            </Feature>
+
+            <Feature icon={<Upload size={18} />} title="Bank Statement Import">
+              Upload PDF → auto detect transactions
+            </Feature>
+
+            <Feature icon={<FileText size={18} />} title="PDF Reports">
+              Professional tax reports in one click
+            </Feature>
+
+            <Feature icon={<ShieldCheck size={18} />} title="Secure & Private">
+              Encrypted cloud storage with Supabase auth
+            </Feature>
+          </div>
+
+        </div>
       </section>
 
 
-      {/* FOOTER */}
+      {/* ================= TESTIMONIALS ================= */}
+      <Testimonials />
+
+
+      {/* ================= PRICING ================= */}
+      <section className="section bg-white text-center">
+        <div className="container-app">
+
+          <h2 className="heading-lg mb-12">Simple pricing</h2>
+
+          <div className="flex flex-col md:flex-row justify-center gap-8">
+
+            <div className="card w-full md:w-80">
+              <h3 className="font-semibold">Free</h3>
+              <p className="text-3xl my-4 font-bold">₹0</p>
+              <p className="muted">Income & expense tracking</p>
+            </div>
+
+            <div className="card w-full md:w-80 border-2 border-black scale-105">
+              <h3 className="font-semibold">Pro</h3>
+              <p className="text-3xl my-4 font-bold">₹499 / month</p>
+              <p className="muted">Tax engine + reports + AI advisor</p>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ================= FINAL CTA ================= */}
+      <section className="section text-center">
+        <div className="container-app">
+          <h2 className="heading-lg mb-6">
+            Stop wasting time on spreadsheets
+          </h2>
+
+          <Link href="/login" className="btn text-lg px-8">
+            Create Free Account →
+          </Link>
+        </div>
+      </section>
+
+
+      {/* ================= FOOTER ================= */}
       <footer className="border-t text-center py-6 text-sm text-gray-500">
         © {new Date().getFullYear()} HisabDesk • Made for Indian taxpayers
       </footer>
@@ -172,7 +175,7 @@ export default function Page() {
 }
 
 
-/* ---------- Feature Card ---------- */
+/* ================= COMPONENTS ================= */
 
 function Feature({
   icon,
@@ -184,12 +187,20 @@ function Feature({
   children: React.ReactNode
 }) {
   return (
-    <div className="p-6 border rounded-2xl hover:shadow-lg transition text-left">
-      <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-xl mb-4">
+    <div className="card text-left">
+      <div className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-xl mb-4">
         {icon}
       </div>
       <h4 className="font-semibold mb-2">{title}</h4>
       <p className="text-sm text-gray-600">{children}</p>
+    </div>
+  )
+}
+
+function Problem({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="card text-sm text-gray-700">
+      ❌ {children}
     </div>
   )
 }

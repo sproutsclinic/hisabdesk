@@ -1,35 +1,184 @@
-@import "tailwindcss";
+/* =========================================
+   TAILWIND
+========================================= */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* =========================================
+   ROOT TOKENS (Fintech theme)
+========================================= */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #111111;
+
+  --card: #ffffff;
+  --border: #e5e5e5;
+
+  --primary: #000000;
+  --success: #16a34a;
+  --danger: #dc2626;
+
+  --radius: 14px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
+/* Dark mode ready */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #f4f4f5;
+    --card: #18181b;
+    --border: #27272a;
   }
+}
+
+
+/* =========================================
+   BASE RESET
+========================================= */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family: var(--font-geist-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  overflow-x: hidden;
 }
-button {
-  cursor: pointer;
+
+
+/* Better mobile scroll */
+html {
+  scroll-behavior: smooth;
 }
+
+
+/* Pointer consistency */
+button,
 a {
   cursor: pointer;
 }
-button, a {
-  cursor: pointer;
+
+
+/* =========================================
+   APP CONTAINER (main layout helper)
+========================================= */
+
+.container-app {
+  @apply max-w-7xl mx-auto px-4 md:px-8;
+}
+
+
+/* =========================================
+   CARDS (Stripe style)
+========================================= */
+
+.card {
+  @apply bg-white dark:bg-zinc-900
+         border border-zinc-200 dark:border-zinc-800
+         rounded-2xl shadow-sm p-5 transition;
+}
+
+.card:hover {
+  @apply shadow-md;
+}
+
+
+/* =========================================
+   BUTTON SYSTEM
+========================================= */
+
+.btn {
+  @apply bg-black text-white
+         px-5 py-3 rounded-xl text-sm font-medium
+         hover:opacity-90 active:scale-[0.98]
+         transition;
+}
+
+.btn-outline {
+  @apply border border-zinc-300 dark:border-zinc-700
+         rounded-xl px-5 py-3 text-sm
+         hover:bg-zinc-100 dark:hover:bg-zinc-800
+         transition;
+}
+
+.btn-success {
+  @apply bg-green-600 text-white rounded-xl px-5 py-3
+         hover:bg-green-700 transition;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white rounded-xl px-5 py-3
+         hover:bg-red-700 transition;
+}
+
+
+/* =========================================
+   INPUTS (mobile-first)
+========================================= */
+
+.input {
+  @apply border border-zinc-300 dark:border-zinc-700
+         rounded-xl px-4 py-3 w-full text-sm
+         bg-white dark:bg-zinc-900
+         focus:outline-none focus:ring-2 focus:ring-black;
+}
+
+
+/* =========================================
+   TYPOGRAPHY
+========================================= */
+
+.heading-xl {
+  @apply text-3xl md:text-4xl font-semibold tracking-tight;
+}
+
+.heading-lg {
+  @apply text-2xl font-semibold;
+}
+
+.muted {
+  @apply text-zinc-500;
+}
+
+
+/* =========================================
+   SECTIONS
+========================================= */
+
+.section {
+  @apply py-14 md:py-20;
+}
+
+
+/* =========================================
+   SKELETON LOADER
+========================================= */
+
+.skeleton {
+  @apply animate-pulse bg-zinc-200 dark:bg-zinc-800 rounded-xl;
+}
+
+
+/* =========================================
+   SAFE AREA (mobile bottom nav support)
+========================================= */
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
