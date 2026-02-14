@@ -1,7 +1,6 @@
 // ==========================================================
 // Bills Service (CLEAN + SIMPLE)
-// Only CRUD
-// No reminder engine (your project doesn't export it)
+// CRUD + Cron Hook Placeholder
 // ==========================================================
 
 import { createClient } from "@/lib/supabase/server"
@@ -24,7 +23,7 @@ export type UpdateBillRequest = Partial<CreateBillRequest> & {
 }
 
 /* =========================================================
-CRUD — REQUIRED BY /api/bills/route.ts
+CRUD — USED BY APP
 ========================================================= */
 
 export async function getBillsOverview(userId: string) {
@@ -95,4 +94,19 @@ export async function deleteBill(userId: string, id: string) {
   if (error) throw new Error(error.message)
 
   return true
+}
+
+/* =========================================================
+CRON HOOK (Required by automation runner)
+Currently acts as SAFE NO-OP until reminder engine is built.
+========================================================= */
+
+export async function runBillsReminders(): Promise<number> {
+  // Intentionally empty.
+  // Future version will:
+  // - find upcoming bills
+  // - generate reminders
+  // - push notifications
+
+  return 0
 }

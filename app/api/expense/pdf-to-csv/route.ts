@@ -6,6 +6,8 @@
 
 import { NextResponse } from "next/server"
 
+export const runtime = "nodejs"   // ✅ REQUIRED for pdf-parse
+
 // ----------------------------------------------------------
 // pdf-parse MUST be dynamically imported in Next 16
 // (because it is CommonJS, not ESM)

@@ -1,36 +1,12 @@
 // ==========================================================
 // HisabDesk — AI Insights Summary Route (Intelligence Hub)
-// ----------------------------------------------------------
-// PURPOSE
-//   Master AI insights endpoint for Insights page
-//
-//   This combines:
-//     • cashflow
-//     • savings
-//     • net worth
-//     • goals
-//     • alerts
-//
-//   and produces ONE smart financial summary.
-//
-//   This is slightly smarter than dashboard-summary
-//   but still cheap (GPT-3.5).
-//
-// FLOW
-//   DB → advisors → healthEngine → prompt → AI
-//
-// RULES
-//   ✓ server-side only
-//   ✓ cheap model (module)
-//   ✓ short bullets only
-//   ✓ token efficient
-//   ✓ logs usage
+// Next.js 16 + New Service Architecture Compatible
 // ==========================================================
 
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase"
 
-import { getTransactionsByRange } from "@/lib/api/transactions"
+import { listTransactions } from "@/lib/api/transactions"
 import { listAssets } from "@/lib/api/assets"
 import { listLiabilities } from "@/lib/api/liabilities"
 import { listGoals } from "@/lib/api/goals"
@@ -79,47 +55,42 @@ export async function POST() {
       today.getMonth(),
       1
     )
-      .toISOString()
-      .split("T")[0]
-
-    const end = today.toISOString().split("T")[0]
 
     // ------------------------------------------------------
-    // Fetch all data parallel
+    // Fetch data using NEW transaction API
     // ------------------------------------------------------
 
-    const [incomeTx, expenseTx, assets, liabilities, goals] =
+    const [transactions, assets, liabilities, goals] =
       await Promise.all([
-        getTransactionsByRange(user.id, start, end, "income"),
-        getTransactionsByRange(user.id, start, end, "expense"),
+        listTransactions(user.id, {
+          startDate: start.toISOString(),
+          endDate: today.toISOString(),
+        }),
         listAssets(user.id),
         listLiabilities(user.id),
         listGoals(user.id),
       ])
 
+    // Split income vs expense (new system stores unified tx)
+    const incomeTx = transactions.filter(t => t.type === "income")
+    const expenseTx = transactions.filter(t => t.type === "expense")
+
     // ------------------------------------------------------
     // Cashflow
     // ------------------------------------------------------
 
-    const income = incomeTx.reduce(
-      (s: number, t: any) => s + t.amount,
-      0
-    )
-
-    const expense = expenseTx.reduce(
-      (s: number, t: any) => s + t.amount,
-      0
-    )
+    const income = incomeTx.reduce((s, t) => s + t.amount, 0)
+    const expense = expenseTx.reduce((s, t) => s + t.amount, 0)
 
     const liquid = assets.reduce(
-      (s: number, a: any) => s + a.current_value,
+      (s, a: any) => s + (a.current_value ?? 0),
       0
     )
 
     const cashflow = analyzeCashflow(
       [
         {
-          month: start.slice(0, 7),
+          month: start.toISOString().slice(0, 7),
           income,
           expense,
         },
@@ -128,14 +99,14 @@ export async function POST() {
     )
 
     // ------------------------------------------------------
-    // Net worth
+    // Net Worth
     // ------------------------------------------------------
 
     const networth = analyzeNetworth({
       accounts: 0,
       assets: liquid,
       liabilities: liabilities.reduce(
-        (s: number, l: any) => s + l.principal_amount,
+        (s: number, l: any) => s + (l.principal_amount ?? 0),
         0
       ),
       monthlyExpense: expense || 1,
@@ -148,7 +119,7 @@ export async function POST() {
     const goalSummary = analyzeGoals(goals)
 
     // ------------------------------------------------------
-    // Aggregate metrics
+    // Aggregate Metrics
     // ------------------------------------------------------
 
     const metrics = aggregateMetrics({
@@ -158,7 +129,7 @@ export async function POST() {
     })
 
     // ------------------------------------------------------
-    // Health snapshot (score + alerts)
+    // Health Snapshot
     // ------------------------------------------------------
 
     const health = buildFinancialHealthSnapshot({
@@ -166,7 +137,7 @@ export async function POST() {
     })
 
     // ------------------------------------------------------
-    // Build AI context (token efficient)
+    // Build AI Context
     // ------------------------------------------------------
 
     const ctx = buildAIContext({
@@ -181,10 +152,6 @@ export async function POST() {
       alertCount: health.alerts.length,
     })
 
-    // ------------------------------------------------------
-    // Prompt
-    // ------------------------------------------------------
-
     const prompt = `
 Financial Snapshot:
 ${ctx.summary}
@@ -194,7 +161,7 @@ Give 5 short actionable insights only.
 `
 
     // ------------------------------------------------------
-    // AI call (cheap)
+    // AI Call
     // ------------------------------------------------------
 
     const result = await runAI({
@@ -203,7 +170,7 @@ Give 5 short actionable insights only.
     })
 
     // ------------------------------------------------------
-    // Log usage
+    // Log Usage
     // ------------------------------------------------------
 
     await supabase.from("ai_logs").insert({

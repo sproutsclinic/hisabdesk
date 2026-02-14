@@ -61,3 +61,15 @@ export * from "./financialHealthEngine"
 // ----------------------------------------------------------
 
 export * from "./dashboardContextBuilder"
+
+// ==========================================================
+// ==========================================================
+// BACKWARD COMPATIBILITY EXPORTS (Named — NOT default)
+// ==========================================================
+
+export { analyzeCashflow } from "./cashflowAdvisor"
+export { analyzeGoals } from "./goalAdvisor"
+export { buildFinancialHealthSnapshot as analyzeProfile } from "./financialHealthEngine"
+export { analyzeNetworth } from "./networthAdvisor"
+export { analyzePortfolio } from "./portfolioAdvisor"
+export { aggregateMetrics } from "./metricsAggregator"

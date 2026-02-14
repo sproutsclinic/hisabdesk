@@ -23,3 +23,4 @@ export function analyzeProfile(): ProfileAdvice {
     notes: [],
   }
 }
+export { buildPortfolioAdvice as analyzePortfolio }

@@ -100,3 +100,25 @@ export async function runAI(params: {
     usage: response.usage,
   }
 }
+// ==========================================================
+// BACKWARD COMPATIBILITY LAYER
+// ----------------------------------------------------------
+// Many routes still import legacy helpers.
+// We map them safely to runAI so build does not break.
+// This allows gradual migration instead of mass refactor.
+// ==========================================================
+
+export async function runChat(prompt: string) {
+  const res = await runAI({ prompt, type: "chat" })
+  return res.text
+}
+
+export async function runCheapChat(prompt: string) {
+  const res = await runAI({ prompt, type: "module" })
+  return res.text
+}
+
+export async function runChatModel(params: { prompt: string }) {
+  const res = await runAI({ prompt: params.prompt, type: "chat" })
+  return res.text
+}

@@ -19,51 +19,37 @@
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireUser } from "@/lib/security/guards"
-import { saveOnboardingProfile } from "@/lib/api/profile/profile.service"
-
-/* =========================================================
-POST /api/profile/onboarding
-========================================================= */
+import { saveOnboardingProfile } from "@/lib/api/profiles/profile.service"
 
 export async function POST(req: NextRequest) {
-  try {
-    // ------------------------------------------------------
-    // Auth
-    // ------------------------------------------------------
+try {
+const user = await requireUser()
 
-    const user = await requireUser()
+```
+const body = await req.json()
 
-    // ------------------------------------------------------
-    // Body
-    // ------------------------------------------------------
+const payload = {
+  risk: body.risk,
+  dependents: body.dependents,
+  monthlyIncome: body.monthlyIncome,
+  monthlyExpense: body.monthlyExpense,
+  primaryGoal: body.primaryGoal,
+}
 
-    const body = await req.json()
+await saveOnboardingProfile(user.id, payload)
 
-    const payload = {
-      risk: body.risk,
-      dependents: body.dependents,
-      monthlyIncome: body.monthlyIncome,
-      monthlyExpense: body.monthlyExpense,
-      primaryGoal: body.primaryGoal,
-    }
+return NextResponse.json({ ok: true })
+```
 
-    // ------------------------------------------------------
-    // Service
-    // ------------------------------------------------------
+} catch (err) {
+console.error("[ONBOARDING_POST_ERROR]", err)
 
-    await saveOnboardingProfile(user.id, payload)
+```
+return NextResponse.json(
+  { error: "Failed to save onboarding" },
+  { status: 400 }
+)
+```
 
-    // ------------------------------------------------------
-    // Response
-    // ------------------------------------------------------
-
-    return NextResponse.json({ ok: true })
-  } catch (err) {
-    console.error("[ONBOARDING_POST_ERROR]", err)
-
-    return NextResponse.json(
-      { error: "Failed to save onboarding" },
-      { status: 400 }
-    )
-  }
+}
 }

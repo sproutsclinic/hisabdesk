@@ -21,7 +21,7 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase"
 
-import { getTransactionsByRange } from "@/lib/api/transactions"
+import { listTransactions } from "@/lib/api/transactions"
 import { listAssets } from "@/lib/api/assets"
 import { listLiabilities } from "@/lib/api/liabilities"
 import { listGoals } from "@/lib/api/goals"
@@ -80,8 +80,16 @@ export async function POST() {
 
     const [incomeTx, expenseTx, assets, liabilities, goals] =
       await Promise.all([
-        getTransactionsByRange(user.id, start, end, "income"),
-        getTransactionsByRange(user.id, start, end, "expense"),
+        listTransactions(user.id, {
+          startDate: start,
+          endDate: end,
+          type: "income",
+        }),
+        listTransactions(user.id, {
+          startDate: start,
+          endDate: end,
+          type: "expense",
+        }),
         listAssets(user.id),
         listLiabilities(user.id),
         listGoals(user.id),
@@ -101,6 +109,11 @@ export async function POST() {
       0
     )
 
+    const liquidAssets = assets.reduce(
+      (s: number, a: any) => s + a.current_value,
+      0
+    )
+
     const cashflow = analyzeCashflow(
       [
         {
@@ -109,10 +122,7 @@ export async function POST() {
           expense: expenseTotal,
         },
       ],
-      assets.reduce(
-        (s: number, a: any) => s + a.current_value,
-        0
-      )
+      liquidAssets
     )
 
     // ------------------------------------------------------
@@ -121,10 +131,7 @@ export async function POST() {
 
     const networth = analyzeNetworth({
       accounts: 0,
-      assets: assets.reduce(
-        (s: number, a: any) => s + a.current_value,
-        0
-      ),
+      assets: liquidAssets,
       liabilities: liabilities.reduce(
         (s: number, l: any) => s + l.principal_amount,
         0
@@ -165,7 +172,7 @@ export async function POST() {
     })
 
     // ------------------------------------------------------
-    // AI call (cheap)
+    // AI call
     // ------------------------------------------------------
 
     const result = await runAI({
