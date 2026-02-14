@@ -1,114 +1,74 @@
 /* =========================================================
-   HisabDesk — Portfolio Report Builder
+   HisabDesk — Portfolio Export API
    ---------------------------------------------------------
-   SERVER ONLY
-
-   PURPOSE
-   - Build exportable portfolio reports
-   - CSV generation
-   - future: PDF
-   - ZERO business logic
-   - ZERO calculations
-   - formatting only
-
-   ARCHITECTURE
-     route → service → engine (computed values)
-                         ↓
-                     report.ts (THIS FILE)
-
-   RULES
-   ✅ formatting only
-   ❌ no DB
-   ❌ no AI
-   ❌ no math logic
-
+   SERVER ROUTE ONLY
    ========================================================= */
 
-import type {
-  PortfolioOverview,
-  PortfolioAssetComputed,
-} from "./types"
+import { NextRequest, NextResponse } from "next/server"
+import { createClient } from "@supabase/supabase-js"
+
+import { getPortfolioOverview } from "@/lib/api/portfolio/service"
+import { buildPortfolioCSV } from "@/lib/api/portfolio/reports" // ✅ FIXED (reports.ts)
 
 /* =========================================================
-   HELPERS
+   AUTH CLIENT (session based)
    ========================================================= */
 
-function currency(n: number) {
-  return Math.round(n ?? 0)
-}
-
-function percent(n: number) {
-  return Number((n ?? 0).toFixed(2))
-}
-
-/* =========================================================
-   CSV — HOLDINGS
-   ========================================================= */
-
-export function buildPortfolioCSV(
-  overview: PortfolioOverview,
-): string {
-  const rows: PortfolioAssetComputed[] =
-    overview.assets || []
-
-  const lines: string[] = []
-
-  /* -------------------------------------------------------
-     HEADER
-     ------------------------------------------------------- */
-
-  lines.push(
-    [
-      "Name",
-      "Type",
-      "Quantity",
-      "Buy Price",
-      "Current Price",
-      "Invested Value",
-      "Current Value",
-      "Profit/Loss",
-      "Return %",
-      "Allocation %",
-    ].join(","),
+function getServerClient(req: NextRequest) {
+  return createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    {
+      global: {
+        headers: {
+          Authorization: req.headers.get("Authorization") || "",
+        },
+      },
+    },
   )
+}
 
-  /* -------------------------------------------------------
-     ROWS
-     ------------------------------------------------------- */
+function bad(message: string, status = 400) {
+  return NextResponse.json({ error: message }, { status })
+}
 
-  for (const a of rows) {
-    lines.push(
-      [
-        a.name,
-        a.type,
-        a.quantity,
-        currency(a.buyPrice),
-        currency(a.currentPrice),
-        currency(a.investedValue),
-        currency(a.currentValue),
-        currency(a.profitLoss),
-        percent(a.returnPercent),
-        percent(a.allocationPercent),
-      ].join(","),
-    )
+/* =========================================================
+   GET /api/portfolio/export
+   ========================================================= */
+
+export async function GET(req: NextRequest) {
+  try {
+    const supabase = getServerClient(req)
+
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser()
+
+    if (error || !user) return bad("Unauthorized", 401)
+
+    const { searchParams } = new URL(req.url)
+    const type = searchParams.get("type") || "csv"
+
+    const overview = await getPortfolioOverview(user.id)
+
+    if (!overview) return bad("No portfolio found", 404)
+
+    if (type === "csv") {
+      const csv = buildPortfolioCSV(overview)
+
+      return new NextResponse(csv, {
+        headers: {
+          "Content-Type": "text/csv",
+          "Content-Disposition":
+            'attachment; filename="portfolio.csv"',
+        },
+      })
+    }
+
+    return bad("Unsupported export type")
+  } catch (err) {
+    console.error("Portfolio export error:", err)
+    return bad("Export failed", 500)
   }
-
-  /* -------------------------------------------------------
-     SUMMARY
-     ------------------------------------------------------- */
-
-  const s = overview.summary
-
-  lines.push("") // spacer
-  lines.push("SUMMARY")
-  lines.push(`Total Invested,${currency(s.totalInvested)}`)
-  lines.push(`Current Value,${currency(s.totalCurrent)}`)
-  lines.push(`Profit/Loss,${currency(s.totalPnL)}`)
-  lines.push(`Return %,${percent(s.totalReturnPercent)}`)
-
-  /* -------------------------------------------------------
-     FINAL
-     ------------------------------------------------------- */
-
-  return lines.join("\n")
 }
