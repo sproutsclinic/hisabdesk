@@ -25,7 +25,7 @@ import { createClient } from "@/lib/supabase"
 
 import { getTransactionsByRange } from "@/lib/api/transactions"
 import { detectAutomationSuggestions } from "@/lib/modules/personal"
-import { runAI } from "@/lib/ai/openai"
+import { safeRunAI } from "@/lib/ai/safeRun"
 
 export const dynamic = "force-dynamic"
 
@@ -36,13 +36,13 @@ const supabase = createClient()
 // ==========================================================
 
 async function getUser() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+const {
+data: { user },
+} = await supabase.auth.getUser()
 
-  if (!user) throw new Error("Unauthorized")
+if (!user) throw new Error("Unauthorized")
 
-  return user
+return user
 }
 
 // ==========================================================
@@ -50,69 +50,71 @@ async function getUser() {
 // ==========================================================
 
 export async function POST() {
-  try {
-    const user = await getUser()
+try {
+const user = await getUser()
 
-    const today = new Date()
+```
+const today = new Date()
 
-    // last 3 months for pattern detection
-    const start = new Date(
-      today.getFullYear(),
-      today.getMonth() - 3,
-      1
-    )
-      .toISOString()
-      .split("T")[0]
+// last 3 months for pattern detection
+const start = new Date(
+  today.getFullYear(),
+  today.getMonth() - 3,
+  1
+)
+  .toISOString()
+  .split("T")[0]
 
-    const end = today.toISOString().split("T")[0]
+const end = today.toISOString().split("T")[0]
 
-    // ------------------------------------------------------
-    // Fetch transactions
-    // ------------------------------------------------------
+// ------------------------------------------------------
+// Fetch transactions
+// ------------------------------------------------------
 
-    const tx = await getTransactionsByRange(
-      user.id,
-      start,
-      end
-    )
+const tx = await getTransactionsByRange(
+  user.id,
+  start,
+  end
+)
 
-    const mapped = tx.map((t: any) => ({
-      description: t.description,
-      amount: t.amount,
-      category_id: t.category_id,
-      date: t.date,
-      type: t.type,
-    }))
+const mapped = tx.map((t: any) => ({
+  description: t.description,
+  amount: t.amount,
+  category_id: t.category_id,
+  date: t.date,
+  type: t.type,
+}))
 
-    // ------------------------------------------------------
-    // Detect recurring patterns
-    // ------------------------------------------------------
+// ------------------------------------------------------
+// Detect recurring patterns
+// ------------------------------------------------------
 
-    const suggestions =
-      detectAutomationSuggestions(mapped)
+const suggestions = detectAutomationSuggestions(mapped)
 
-    const monthlyCount = suggestions.filter(
-      (s) => s.frequency === "monthly"
-    ).length
+const monthlyCount = suggestions.filter(
+  (s) => s.frequency === "monthly"
+).length
 
-    const weeklyCount = suggestions.filter(
-      (s) => s.frequency === "weekly"
-    ).length
+const weeklyCount = suggestions.filter(
+  (s) => s.frequency === "weekly"
+).length
 
-    const possibleAutoTotal = suggestions.reduce(
-      (sum, s) =>
-        sum +
-        (s.frequency === "monthly"
-          ? s.amount
-          : s.amount * 4),
-      0
-    )
+const possibleAutoTotal = suggestions.reduce(
+  (sum, s) =>
+    sum +
+    (s.frequency === "monthly"
+      ? s.amount
+      : s.amount * 4),
+  0
+)
 
-    // ------------------------------------------------------
-    // Prompt (compact)
-    // ------------------------------------------------------
+// ------------------------------------------------------
+// Prompt (compact)
+// ------------------------------------------------------
 
-    const prompt = `
+const prompt = `
+```
+
 Automation Metrics:
 monthlyRecurring=${monthlyCount}
 weeklyRecurring=${weeklyCount}
@@ -121,32 +123,27 @@ possibleAutoAmount=${Math.round(possibleAutoTotal)}
 Give 4 short bullet tips to automate finances and reduce manual work.
 `
 
-    // ------------------------------------------------------
-    // AI call (cheap)
-    // ------------------------------------------------------
+```
+// ------------------------------------------------------
+// SAFE AI CALL (centralized + guarded + logged)
+// ------------------------------------------------------
 
-    const result = await runAI({
-      prompt,
-      type: "module",
-    })
+const result = await safeRunAI({
+  userId: user.id,
+  prompt,
+  type: "module",
+  module: "automation-advice",
+})
 
-    // ------------------------------------------------------
-    // Log usage
-    // ------------------------------------------------------
+return NextResponse.json({
+  insights: result.text,
+})
+```
 
-    await supabase.from("ai_logs").insert({
-      user_id: user.id,
-      module: "automation-advice",
-      tokens: result.usage?.total_tokens ?? 0,
-    })
-
-    return NextResponse.json({
-      insights: result.text,
-    })
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message },
-      { status: 401 }
-    )
-  }
+} catch (e: any) {
+return NextResponse.json(
+{ error: e.message },
+{ status: 401 }
+)
+}
 }
