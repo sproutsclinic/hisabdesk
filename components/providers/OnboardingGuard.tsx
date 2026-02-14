@@ -2,24 +2,19 @@
 
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
+import { getSupabaseClient } from "@/lib/supabase"
 import { SkeletonList } from "@/components/ui/skeleton"
 
 /* ========================================
-   ONBOARDING GUARD
+   PRODUCTION SAFE ONBOARDING GUARD
 
-   Purpose:
-   ✅ lock dashboard until onboarding done
-   ✅ prevents empty dashboard confusion
-   ✅ instant redirect
-   ✅ mobile safe
-
-   Logic:
-   if onboarding_profile answers < required
-      → redirect /onboarding
+   ✔ non-blocking render
+   ✔ no blank screen
+   ✔ stable auth
+   ✔ deterministic redirect
 ======================================== */
 
-const TOTAL_REQUIRED = 6 // questions count
+const TOTAL_REQUIRED = 6
 
 export default function OnboardingGuard({
   children,
@@ -29,20 +24,21 @@ export default function OnboardingGuard({
   const router = useRouter()
   const pathname = usePathname()
 
-  const [checking, setChecking] = useState(true)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const check = async () => {
+    const supabase = getSupabaseClient()
+
+    const run = async () => {
       const { data } = await supabase.auth.getUser()
 
       if (!data.user) {
-        router.push("/login")
+        router.replace("/login")
         return
       }
 
-      // allow onboarding page itself
       if (pathname.startsWith("/onboarding")) {
-        setChecking(false)
+        setReady(true)
         return
       }
 
@@ -52,7 +48,7 @@ export default function OnboardingGuard({
         .eq("id", data.user.id)
         .single()
 
-      const answers = profile?.onboarding_profile || {}
+      const answers = profile?.onboarding_profile ?? {}
       const count = Object.keys(answers).length
 
       if (count < TOTAL_REQUIRED) {
@@ -60,15 +56,14 @@ export default function OnboardingGuard({
         return
       }
 
-      setChecking(false)
+      setReady(true)
     }
 
-    check()
+    run()
   }, [pathname, router])
 
-  /* ===== loading state ===== */
-
-  if (checking) {
+  /* immediate skeleton (never blank) */
+  if (!ready) {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <SkeletonList count={6} />

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabase"
+import { getSupabaseClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 
 import {
@@ -12,90 +12,85 @@ import {
 } from "lucide-react"
 
 /* =================================================
-   VAULT STATS (Top Summary Bar)
-
-   Purpose:
-   ✅ quick trust indicators
-   ✅ shows protection level
-   ✅ instant emotional clarity
-   ✅ mobile friendly cards
-   ✅ zero heavy queries
-
-   Shows:
-   - documents count
-   - insurance count
-   - upcoming reminders
-   - total assets value
-
-   Usage:
-   <VaultStats />
-
+   VAULT STATS — Fast + Lightweight
+   Top summary bar for Grahalakshmi Vault
+   FIX:
+   ✅ uses getSupabaseClient()
+   ✅ no invalid supabase import
 ================================================= */
 
 export default function VaultStats() {
+  const supabase = getSupabaseClient()
+
   const [docs, setDocs] = useState(0)
   const [insurance, setInsurance] = useState(0)
   const [reminders, setReminders] = useState(0)
   const [assets, setAssets] = useState(0)
 
   useEffect(() => {
+    if (!supabase) return
     load()
   }, [])
 
   const load = async () => {
-    const { data: userRes } = await supabase.auth.getUser()
-    const user = userRes.user
-    if (!user) return
+    try {
+      const { data: userRes } = await supabase.auth.getUser()
+      const user = userRes.user
+      if (!user) return
 
-    /* documents */
-    const { count: docCount } = await supabase
-      .from("vault_items")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
+      const today = new Date()
+      const next7 = new Date()
+      next7.setDate(today.getDate() + 7)
 
-    setDocs(docCount || 0)
+      const [
+        docsRes,
+        insuranceRes,
+        remindersRes,
+        assetsRes,
+      ] = await Promise.all([
+        supabase
+          .from("vault_items")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id),
 
-    /* insurance */
-    const { count: insCount } = await supabase
-      .from("vault_items")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .eq("category", "insurance")
+        supabase
+          .from("vault_items")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("category", "insurance"),
 
-    setInsurance(insCount || 0)
+        supabase
+          .from("reminders")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .gte("reminder_date", today.toISOString())
+          .lte("reminder_date", next7.toISOString())
+          .eq("status", "pending"),
 
-    /* reminders next 7 days */
-    const today = new Date()
-    const next7 = new Date()
-    next7.setDate(today.getDate() + 7)
+        supabase
+          .from("vault_items")
+          .select("category, metadata")
+          .eq("user_id", user.id),
+      ])
 
-    const { count: reminderCount } = await supabase
-      .from("reminders")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .gte("reminder_date", today.toISOString())
-      .lte("reminder_date", next7.toISOString())
-      .eq("status", "pending")
+      setDocs(docsRes.count || 0)
+      setInsurance(insuranceRes.count || 0)
+      setReminders(remindersRes.count || 0)
 
-    setReminders(reminderCount || 0)
+      let totalAssets = 0
 
-    /* assets value */
-    const { data: items } = await supabase
-      .from("vault_items")
-      .select("category, metadata")
-      .eq("user_id", user.id)
+      ;(assetsRes.data || []).forEach((i: any) => {
+        const m = i.metadata || {}
 
-    let totalAssets = 0
+        if (["property", "tax", "insurance"].includes(i.category)) {
+          totalAssets += Number(m.current_value || m.amount || 0)
+        }
+      })
 
-    ;(items || []).forEach((i: any) => {
-      const m = i.metadata || {}
-
-      if (["property", "tax", "insurance"].includes(i.category)) {
-        totalAssets += Number(m.current_value || m.amount || 0)
-      }
-    })
-
-    setAssets(totalAssets)
+      setAssets(totalAssets)
+    } catch (err) {
+      console.error("VaultStats error:", err)
+    }
   }
 
   return (

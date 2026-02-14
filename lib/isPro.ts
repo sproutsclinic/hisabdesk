@@ -1,21 +1,23 @@
-import { createClient } from "@supabase/supabase-js"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { getSupabaseServer } from "@/lib/supabase"
 
 /* ========================================
-   CHECK PRO STATUS
-   Reads profiles.is_pro (set by webhook)
+   CHECK PRO STATUS (SERVER SAFE)
+
+   - request scoped client
+   - no global singleton
+   - no SSR crash
 ======================================== */
 
-export async function isProUser(userId: string) {
-  const { data } = await supabase
+export async function isProUser(userId: string): Promise<boolean> {
+  const supabase = getSupabaseServer()
+
+  const { data, error } = await supabase
     .from("profiles")
     .select("is_pro")
     .eq("id", userId)
     .single()
 
-  return data?.is_pro === true
+  if (error || !data) return false
+
+  return data.is_pro === true
 }

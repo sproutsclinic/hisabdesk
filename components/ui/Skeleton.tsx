@@ -2,27 +2,19 @@
 
 import { cn } from "@/lib/utils"
 
-/* ========================================
-   SKELETON SYSTEM — Fintech Grade
+/* ==========================================================
+   HisabDesk — Skeleton System
+   ----------------------------------------------------------
+   Enterprise safe
+   No DOM injection
+   SSR safe
+   Pure Tailwind
+========================================================== */
 
-   Purpose:
-   ✅ smooth loading states
-   ✅ avoids layout shift
-   ✅ mobile friendly
-   ✅ instant perceived speed
 
-   Usage:
-
-   <Skeleton className="h-6 w-32" />
-
-   <Card>
-     <SkeletonText lines={3} />
-   </Card>
-
-   <SkeletonList count={5} />
-======================================== */
-
-/* ================= BASE ================= */
+/* ==========================================================
+   BASE
+========================================================== */
 
 export function Skeleton({
   className,
@@ -33,17 +25,21 @@ export function Skeleton({
     <div
       className={cn(
         `
-        animate-pulse
+        relative overflow-hidden
         rounded-xl
-        bg-zinc-200 dark:bg-zinc-800
+        bg-zinc-200
+        animate-pulse
         `,
-        className
+        className,
       )}
     />
   )
 }
 
-/* ================= TEXT BLOCK ================= */
+
+/* ==========================================================
+   TEXT BLOCK
+========================================================== */
 
 export function SkeletonText({
   lines = 3,
@@ -57,7 +53,7 @@ export function SkeletonText({
           key={i}
           className={cn(
             "h-4",
-            i === lines - 1 ? "w-3/4" : "w-full"
+            i === lines - 1 ? "w-3/4" : "w-full",
           )}
         />
       ))}
@@ -65,18 +61,24 @@ export function SkeletonText({
   )
 }
 
-/* ================= CARD PLACEHOLDER ================= */
+
+/* ==========================================================
+   CARD PLACEHOLDER
+========================================================== */
 
 export function SkeletonCard() {
   return (
-    <div className="space-y-4">
+    <div className="rounded-2xl border border-zinc-200 bg-white p-5 space-y-4">
       <Skeleton className="h-5 w-32" />
       <SkeletonText lines={3} />
     </div>
   )
 }
 
-/* ================= LIST PLACEHOLDER ================= */
+
+/* ==========================================================
+   LIST PLACEHOLDER
+========================================================== */
 
 export function SkeletonList({
   count = 5,
@@ -92,7 +94,10 @@ export function SkeletonList({
   )
 }
 
-/* ================= TABLE ROW ================= */
+
+/* ==========================================================
+   TABLE ROW
+========================================================== */
 
 export function SkeletonRow() {
   return (

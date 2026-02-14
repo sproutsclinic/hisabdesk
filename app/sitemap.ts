@@ -1,28 +1,63 @@
-export default function sitemap() {
+import { MetadataRoute } from "next"
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const base = "https://hisabdesk.com"
+
+  const now = new Date()
+
   return [
     {
-      url: "https://hisabdesk.com",
-      lastModified: new Date()
+      url: base,
+      lastModified: now,
+      priority: 1,
     },
+
     {
-      url: "https://hisabdesk.com/dashboard",
-      lastModified: new Date()
+      url: `${base}/login`,
+      lastModified: now,
+      priority: 0.9,
     },
+
     {
-      url: "https://hisabdesk.com/billing",
-      lastModified: new Date()
+      url: `${base}/billing`,
+      lastModified: now,
+      priority: 0.9,
     },
+
     {
-      url: "https://hisabdesk.com/tax",
-      lastModified: new Date()
-    }
+      url: `${base}/dashboard`,
+      lastModified: now,
+      priority: 0.8,
+    },
+
+    {
+      url: `${base}/vault`,
+      lastModified: now,
+      priority: 0.8,
+    },
+
+    {
+      url: `${base}/referral`,
+      lastModified: now,
+      priority: 0.7,
+    },
+
+    {
+      url: `${base}/tax`,
+      lastModified: now,
+      priority: 0.7,
+    },
+
+    {
+      url: `${base}/blog`,
+      lastModified: now,
+      priority: 0.6,
+    },
+
+    {
+      url: `${base}/blog/44ada`,
+      lastModified: now,
+      priority: 0.6,
+    },
   ]
 }
-{
-  url: "https://hisabdesk.com/blog",
-  lastModified: new Date()
-},
-{
-  url: "https://hisabdesk.com/blog/44ada",
-  lastModified: new Date()
-},

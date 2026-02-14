@@ -1,24 +1,16 @@
-"use client"
-
+import * as React from "react"
 import { cn } from "@/lib/utils"
-import React from "react"
 
 /* ========================================
-   CARD SYSTEM — Fintech Grade
+   CARD SYSTEM — Fintech Grade (Hardened)
 
-   Variants:
-   • default
-   • soft
-   • bordered
-   • interactive
-
-   Usage:
-   <Card>
-     <CardHeader />
-     <CardContent />
-   </Card>
-
-   <Card variant="interactive" />
+   ✔ server safe
+   ✔ consistent spacing + radius
+   ✔ clean shadow hierarchy
+   ✔ NO dark mode (design system rule)
+   ✔ stable interactive behavior
+   ✔ accessible focus ring
+   ✔ zero breaking API
 ======================================== */
 
 type Variant = "default" | "soft" | "bordered" | "interactive"
@@ -27,119 +19,127 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: Variant
 }
 
+/* ========================================================
+   BASE TOKENS (global consistency)
+======================================================== */
+
+const base = `
+  rounded-2xl
+  bg-white
+  border border-gray-200
+  p-5
+  transition-all duration-150
+`
+
+/* ========================================================
+   VARIANTS
+======================================================== */
+
 const variants: Record<Variant, string> = {
   default: `
-    bg-white dark:bg-zinc-900
-    border border-zinc-200 dark:border-zinc-800
     shadow-sm
   `,
+
   soft: `
-    bg-zinc-50 dark:bg-zinc-900/60
-    border border-zinc-200/60 dark:border-zinc-800
+    bg-gray-50
+    border-gray-200
   `,
+
   bordered: `
     bg-transparent
-    border border-zinc-300 dark:border-zinc-700
+    border-gray-300
   `,
+
   interactive: `
-    bg-white dark:bg-zinc-900
-    border border-zinc-200 dark:border-zinc-800
     shadow-sm
     hover:shadow-md
-    transition
+    hover:-translate-y-[1px]
     cursor-pointer
+    focus-visible:outline-none
+    focus-visible:ring-2 focus-visible:ring-black/20
   `,
 }
 
 /* ================= MAIN ================= */
 
-export function Card({
-  className,
-  variant = "default",
-  ...props
-}: CardProps) {
-  return (
-    <div
-      className={cn(
-        "rounded-2xl p-4 sm:p-5",
-        variants[variant],
-        className
-      )}
-      {...props}
-    />
-  )
-}
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant = "default", ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(base, variants[variant], className)}
+        {...props}
+      />
+    )
+  }
+)
+
+Card.displayName = "Card"
 
 /* ================= SUB COMPONENTS ================= */
 
-export function CardHeader({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn(
-        "mb-3 flex items-center justify-between",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+export const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("mb-4 flex items-center justify-between", className)}
+    {...props}
+  />
+))
+CardHeader.displayName = "CardHeader"
 
-export function CardTitle({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
-  return (
-    <h3
-      className={cn(
-        "text-sm font-semibold tracking-tight",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+export const CardTitle = React.forwardRef<
+  HTMLHeadingElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={cn(
+      "text-sm font-semibold tracking-tight text-gray-900",
+      className
+    )}
+    {...props}
+  />
+))
+CardTitle.displayName = "CardTitle"
 
-export function CardDescription({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
-  return (
-    <p
-      className={cn(
-        "text-xs text-zinc-500",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+export const CardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-xs text-gray-500", className)}
+    {...props}
+  />
+))
+CardDescription.displayName = "CardDescription"
 
-export function CardContent({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("text-sm", className)}
-      {...props}
-    />
-  )
-}
+export const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("text-sm space-y-3", className)}
+    {...props}
+  />
+))
+CardContent.displayName = "CardContent"
 
-export function CardFooter({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn(
-        "mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+export const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "mt-4 pt-3 border-t border-gray-200 flex items-center justify-between",
+      className
+    )}
+    {...props}
+  />
+))
+CardFooter.displayName = "CardFooter"

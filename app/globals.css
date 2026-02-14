@@ -1,229 +1,243 @@
-/* ========================================
-   HISABDESK GLOBAL STYLES
-   Fintech-grade polish layer
+/* ==========================================================
+   HisabDesk — Enterprise Fintech Design System (v2 Hardened)
+   CLEAN • TRUST • STRIPE-LIKE • CONSISTENT
 
-   Adds:
-   ✅ smoother scroll
-   ✅ better typography
-   ✅ safe-area padding (mobile)
-   ✅ skeleton shimmer
-   ✅ page transitions
-   ✅ premium shadows
-   ✅ touch improvements
-   ✅ dark mode support
-======================================== */
+   Goals
+   ✓ neutral fintech palette
+   ✓ consistent spacing scale
+   ✓ shared tokens
+   ✓ professional forms
+   ✓ better accessibility
+   ✓ zero visual noise
+   ========================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 
-/* ================= ROOT ================= */
+/* ==========================================================
+   DESIGN TOKENS
+   ========================================================== */
 
 :root {
-  --background: #fafafa;
-  --foreground: #111111;
-  --card: #ffffff;
-  --border: #e5e5e5;
-  --radius: 14px;
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.25rem;   /* 20px */
+  --radius-2xl: 1.5rem;   /* 24px */
 
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 10px rgba(0,0,0,0.06);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #f4f4f5;
-    --card: #18181b;
-    --border: #27272a;
-  }
+  --border: #e5e7eb;
+  --muted: #6b7280;
+  --bg-soft: #f9fafb;
 }
 
 
-/* ================= BASE RESET ================= */
+/* ==========================================================
+   BASE RESET
+   ========================================================== */
+
+html,
+body {
+  height: 100%;
+  background: #ffffff;
+}
+
+body {
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  color: #111827;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 
 * {
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
 
-body {
-  margin: 0;
-  background: var(--background);
-  color: var(--foreground);
-
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-
-  min-height: 100vh;
-
-  /* smoother transitions */
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-
-/* ================= LAYOUT ================= */
+/* ==========================================================
+   LAYOUT SYSTEM
+   ========================================================== */
 
 .container-app {
-  max-width: 1280px;
-  margin: 0 auto;
+  @apply max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8;
+}
 
-  padding: 16px;
-  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+.section {
+  @apply space-y-6;
 }
 
 
-/* ================= CARD ================= */
+/* ==========================================================
+   TYPOGRAPHY SCALE (fintech minimal)
+   ========================================================== */
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-
-  box-shadow: var(--shadow-sm);
-
-  transition: box-shadow 0.15s ease, transform 0.05s ease;
+.heading-xl {
+  @apply text-3xl md:text-4xl font-semibold tracking-tight text-gray-900;
 }
-
-.card:hover {
-  box-shadow: var(--shadow-md);
-}
-
-
-/* ================= BUTTON ================= */
-
-.btn {
-  background: black;
-  color: white;
-
-  padding: 10px 16px;
-  border-radius: 12px;
-
-  border: none;
-  cursor: pointer;
-
-  font-size: 14px;
-  font-weight: 500;
-
-  transition: opacity 0.15s ease, transform 0.05s ease;
-}
-
-.btn:hover {
-  opacity: 0.92;
-}
-
-.btn:active {
-  transform: scale(0.97);
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-
-/* ================= INPUT ================= */
-
-.input {
-  width: 100%;
-  padding: 10px 12px;
-
-  border-radius: 12px;
-  border: 1px solid var(--border);
-
-  background: var(--card);
-  color: var(--foreground);
-
-  transition: border 0.15s ease, box-shadow 0.15s ease;
-}
-
-.input:focus {
-  outline: none;
-  border-color: #111;
-  box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
-}
-
-
-/* ================= TYPOGRAPHY ================= */
 
 .heading-lg {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  @apply text-2xl font-semibold tracking-tight text-gray-900;
+}
+
+.heading-md {
+  @apply text-lg font-semibold text-gray-900;
 }
 
 .muted {
-  color: #6b7280;
+  @apply text-sm text-gray-500;
+}
+
+.label {
+  @apply text-xs text-gray-500 font-medium;
 }
 
 
-/* ================= SKELETON (SHIMMER) ================= */
+/* ==========================================================
+   CARDS (unified with dashboard)
+   ========================================================== */
 
-.skeleton {
-  height: 20px;
-  border-radius: 8px;
-
-  background: linear-gradient(
-    90deg,
-    #e5e5e5 25%,
-    #f2f2f2 37%,
-    #e5e5e5 63%
-  );
-
-  background-size: 400% 100%;
-  animation: shimmer 1.3s infinite;
+.card {
+  @apply rounded-2xl
+  border border-gray-200
+  bg-white
+  p-5
+  shadow-sm;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: 100% 0;
-  }
-  100% {
-    background-position: -100% 0;
-  }
+.card-soft {
+  @apply rounded-2xl
+  border border-gray-200
+  bg-gray-50
+  p-5;
 }
 
 
-/* ================= TOUCH IMPROVEMENTS ================= */
+/* ==========================================================
+   FORM CONTROLS
+   ========================================================== */
+
+.input,
+.select,
+.textarea {
+  @apply w-full
+  rounded-xl
+  border border-gray-300
+  bg-white
+  px-4 py-3
+  text-sm
+  transition
+  focus:outline-none
+  focus:ring-2
+  focus:ring-black/20
+  focus:border-gray-400;
+}
+
+.textarea {
+  @apply resize-none;
+}
+
+::placeholder {
+  @apply text-gray-400;
+}
+
+
+/* ==========================================================
+   BUTTON SYSTEM (legacy helpers)
+   NOTE: primary buttons should use <Button /> component
+   ========================================================== */
+
+.btn {
+  @apply inline-flex items-center justify-center
+  rounded-xl
+  bg-black
+  text-white
+  px-4 py-2
+  text-sm font-medium
+  transition
+  hover:opacity-90
+  disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center
+  rounded-xl
+  border border-gray-300
+  bg-white
+  px-4 py-2
+  text-sm
+  transition
+  hover:bg-gray-100;
+}
+
+.btn-danger {
+  @apply inline-flex items-center justify-center
+  rounded-xl
+  border border-red-300
+  text-red-600
+  px-4 py-2
+  text-sm
+  transition
+  hover:bg-red-50;
+}
+
+
+/* ==========================================================
+   TABLES (enterprise clean)
+   ========================================================== */
+
+.table {
+  @apply w-full text-sm border-collapse;
+}
+
+.table th {
+  @apply text-left text-gray-500 font-medium pb-3;
+}
+
+.table td {
+  @apply border-t border-gray-200 py-3;
+}
+
+
+/* ==========================================================
+   LIST + EMPTY STATES
+   ========================================================== */
+
+.empty {
+  @apply rounded-2xl border border-gray-200 bg-gray-50 p-10 text-center text-gray-500;
+}
+
+
+/* ==========================================================
+   INTERACTION HARDENING
+   ========================================================== */
 
 button,
-a {
+input,
+select,
+textarea {
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 
-/* ================= PAGE TRANSITION ================= */
-
-.fade-in {
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
-/* ================= SAFE AREAS ================= */
-
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-
-/* ================= SCROLLBAR (desktop polish) ================= */
+/* ==========================================================
+   SCROLLBAR (subtle fintech)
+   ========================================================== */
 
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d4;
-  border-radius: 8px;
+  background: #e5e7eb;
+  border-radius: 6px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #c4c4c4;
+
+/* ==========================================================
+   SELECTION
+   ========================================================== */
+
+::selection {
+  background: #111827;
+  color: white;
 }

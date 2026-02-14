@@ -1,57 +1,169 @@
-// =============================
-// HISABDESK TAX ENGINE (INDIA)
-// =============================
+// ==========================================================
+// HisabDesk — Tax Engine (India • Enterprise Grade)
+// Deterministic • Auditable • Slab-driven • Cess aware
+// Production safe for fintech use
+// ==========================================================
 
-export function calculateOldRegimeTax(income: number) {
-  let tax = 0
+/* ==========================================================
+   CONSTANTS
+========================================================== */
 
-  if (income <= 250000) return 0
+const CESS_RATE = 0.04 // 4% health & education cess
 
-  if (income > 250000)
-    tax += Math.min(income - 250000, 250000) * 0.05
 
-  if (income > 500000)
-    tax += Math.min(income - 500000, 500000) * 0.2
+/* ==========================================================
+   UTILS
+========================================================== */
 
-  if (income > 1000000)
-    tax += (income - 1000000) * 0.3
-
-  return tax
+function normalize(value: number): number {
+  if (!value || value < 0) return 0
+  return Math.round(value)
 }
 
-export function calculateNewRegimeTax(income: number) {
+function roundTax(value: number): number {
+  return Math.round(value)
+}
+
+function addCess(tax: number): number {
+  return roundTax(tax + tax * CESS_RATE)
+}
+
+
+/* ==========================================================
+   TYPES
+========================================================== */
+
+type Slab = {
+  limit: number | null // null = infinity
+  rate: number
+}
+
+export type TaxResult = {
+  label: string
+  taxable: number
+  tax: number
+}
+
+
+/* ==========================================================
+   GENERIC SLAB ENGINE
+========================================================== */
+
+function calculateFromSlabs(income: number, slabs: Slab[]): number {
+  let remaining = normalize(income)
   let tax = 0
 
-  const slabs = [
-    [300000, 0],
-    [300000, 0.05],
-    [300000, 0.1],
-    [300000, 0.15],
-    [300000, 0.2],
-  ]
-
-  let remaining = income
-
-  for (const [limit, rate] of slabs) {
+  for (const slab of slabs) {
     if (remaining <= 0) break
-    const taxable = Math.min(remaining, limit)
-    tax += taxable * rate
+
+    const taxable =
+      slab.limit === null
+        ? remaining
+        : Math.min(remaining, slab.limit)
+
+    tax += taxable * slab.rate
     remaining -= taxable
   }
 
-  if (remaining > 0) tax += remaining * 0.3
-
-  return tax
+  return roundTax(tax)
 }
 
-// 44ADA for professionals (50% taxable)
-export function calculate44ADA(income: number) {
-  return income * 0.5
-}
-export function getBestTaxOption(oldTax: number, newTax: number, adaTax: number) {
-  const min = Math.min(oldTax, newTax, adaTax)
 
-  if (min === oldTax) return { label: "Old Regime", value: oldTax }
-  if (min === newTax) return { label: "New Regime", value: newTax }
-  return { label: "44ADA", value: adaTax }
+/* ==========================================================
+   OLD REGIME
+========================================================== */
+
+export function calculateOldRegimeTax(income: number): number {
+  const slabs: Slab[] = [
+    { limit: 250000, rate: 0 },
+    { limit: 250000, rate: 0.05 },
+    { limit: 500000, rate: 0.2 },
+    { limit: null, rate: 0.3 },
+  ]
+
+  const baseTax = calculateFromSlabs(income, slabs)
+
+  return addCess(baseTax)
+}
+
+
+/* ==========================================================
+   NEW REGIME (2023+ structure)
+   Includes 87A rebate logic
+========================================================== */
+
+export function calculateNewRegimeTax(income: number): number {
+  const taxable = normalize(income)
+
+  const slabs: Slab[] = [
+    { limit: 300000, rate: 0 },
+    { limit: 300000, rate: 0.05 },
+    { limit: 300000, rate: 0.1 },
+    { limit: 300000, rate: 0.15 },
+    { limit: 300000, rate: 0.2 },
+    { limit: null, rate: 0.3 },
+  ]
+
+  let tax = calculateFromSlabs(taxable, slabs)
+
+  /* ===== 87A rebate (≤ 7L ⇒ zero tax) ===== */
+  if (taxable <= 700000) tax = 0
+
+  return addCess(tax)
+}
+
+
+/* ==========================================================
+   SECTION 44ADA
+   50% deemed profit for professionals
+========================================================== */
+
+export function calculate44ADA(income: number): number {
+  return normalize(income) * 0.5
+}
+
+
+/* ==========================================================
+   BEST OPTION (BACKWARD COMPATIBLE)
+   returns smallest tax number
+========================================================== */
+
+export function getBestTaxOption(
+  oldTax: number,
+  newTax: number,
+  adaTax: number
+) {
+  const values = [
+    { label: "Old Regime", value: oldTax },
+    { label: "New Regime", value: newTax },
+    { label: "44ADA", value: adaTax },
+  ]
+
+  return values.reduce((min, curr) =>
+    curr.value < min.value ? curr : min
+  )
+}
+
+
+/* ==========================================================
+   ENTERPRISE HELPER (NEW)
+   returns structured result for dashboards
+========================================================== */
+
+export function compareTaxOptions(income: number): TaxResult {
+  const taxable = normalize(income)
+
+  const oldTax = calculateOldRegimeTax(taxable)
+  const newTax = calculateNewRegimeTax(taxable)
+  const adaTax = calculateOldRegimeTax(calculate44ADA(taxable))
+
+  const options: TaxResult[] = [
+    { label: "Old Regime", taxable, tax: oldTax },
+    { label: "New Regime", taxable, tax: newTax },
+    { label: "44ADA", taxable: calculate44ADA(taxable), tax: adaTax },
+  ]
+
+  return options.reduce((min, curr) =>
+    curr.tax < min.tax ? curr : min
+  )
 }

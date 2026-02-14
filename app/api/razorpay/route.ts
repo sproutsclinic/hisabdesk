@@ -1,94 +1,54 @@
+// app/api/razorpay/route.ts
+
 import { NextResponse } from "next/server"
-import crypto from "crypto"
-import { createClient } from "@supabase/supabase-js"
+import Razorpay from "razorpay"
 
-/* =================================================
-   RAZORPAY WEBHOOK — AUTO PRO ACTIVATION
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+})
 
-   Route:
-   POST /api/razorpay/webhook
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const plan = searchParams.get("plan")
 
-   Purpose:
-   ✅ verifies Razorpay signature
-   ✅ activates PRO automatically
-   ✅ updates profiles.is_pro = true
-
-   Requires:
-   RAZORPAY_WEBHOOK_SECRET in .env.local
-
-================================================= */
-
-export async function POST(req: Request) {
-  try {
-    /* ================= RAW BODY ================= */
-
-    const rawBody = await req.text()
-
-    const signature =
-      req.headers.get("x-razorpay-signature") || ""
-
-    /* ================= VERIFY ================= */
-
-    const expected = crypto
-      .createHmac(
-        "sha256",
-        process.env.RAZORPAY_WEBHOOK_SECRET!
-      )
-      .update(rawBody)
-      .digest("hex")
-
-    if (signature !== expected) {
-      return NextResponse.json(
-        { error: "Invalid signature" },
-        { status: 401 }
-      )
-    }
-
-    const body = JSON.parse(rawBody)
-    const event = body.event
-
-    /* ================= ONLY SUCCESS EVENTS ================= */
-
-    const allowed = [
-      "subscription.activated",
-      "subscription.charged",
-      "payment.captured",
-    ]
-
-    if (!allowed.includes(event)) {
-      return NextResponse.json({ ok: true })
-    }
-
-    /* ================= GET USER ID ================= */
-
-    const userId =
-      body.payload?.subscription?.entity?.notes?.userId ||
-      body.payload?.payment?.entity?.notes?.userId
-
-    if (!userId) {
-      return NextResponse.json({ ok: true })
-    }
-
-    /* ================= SUPABASE ================= */
-
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { auth: { persistSession: false } }
-    )
-
-    /* ================= ACTIVATE PRO ================= */
-
-    await supabase
-      .from("profiles")
-      .update({ is_pro: true })
-      .eq("id", userId)
-
-    return NextResponse.json({ ok: true })
-  } catch {
-    return NextResponse.json(
-      { error: "Webhook failed" },
-      { status: 500 }
-    )
+  const prices: Record<string, number> = {
+    personal: 19900,
+    business: 49900,
+    ca: 149900,
   }
+
+  const amount = prices[plan || ""]
+
+  if (!amount) {
+    return new NextResponse("Invalid plan", { status: 400 })
+  }
+
+  const order = await razorpay.orders.create({
+    amount,
+    currency: "INR",
+  })
+
+  const html = `
+  <html>
+    <body>
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <script>
+        const options = {
+          key: "${process.env.RAZORPAY_KEY_ID}",
+          order_id: "${order.id}",
+          handler: function () {
+            window.location.href = "/(personal)/onboarding";
+          }
+        };
+
+        new Razorpay(options).open();
+      </script>
+    </body>
+  </html>
+  `
+
+  return new NextResponse(html, {
+    headers: { "Content-Type": "text/html" },
+  })
 }

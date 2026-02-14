@@ -1,39 +1,35 @@
 "use client"
 
 import { Gift, Copy } from "lucide-react"
-import { useToast } from "@/components/ui/toast"
 
 /* =================================================
-   REFERRAL BANNER — Growth Loop
+   REFERRAL BANNER — SSR SAFE VERSION
 
-   Upgrades:
-   ✅ premium look
-   ✅ toast instead of alert
-   ✅ better CTA
-   ✅ mobile friendly
-   ✅ zero breaking
+   ✔ no context hooks
+   ✔ no toast
+   ✔ zero crash risk
 ================================================= */
 
 export default function ReferralBanner() {
-  const toast = useToast()
-
   const copy = async () => {
     await navigator.clipboard.writeText(
       "https://hisabdesk.com?ref=invite"
     )
 
-    toast.success("Referral link copied")
+    // temporary safe feedback
+    alert("Referral link copied")
   }
 
   return (
     <div
       className="
-        card
+        bg-white dark:bg-zinc-900
+        border rounded-2xl
+        px-4 py-4
         flex items-center justify-between
         gap-4
       "
     >
-      {/* LEFT */}
       <div className="flex items-center gap-3">
         <div
           className="
@@ -56,7 +52,6 @@ export default function ReferralBanner() {
         </div>
       </div>
 
-      {/* CTA */}
       <button
         onClick={copy}
         className="

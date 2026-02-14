@@ -1,26 +1,28 @@
 "use client"
 
 import { useRef } from "react"
-import { useToast } from "@/components/ui/toast"
+import { useToast } from "@/components/providers/ToastProvider"
 
 /* =================================================
-   UNDO DELETE HOOK — Fintech Safe UX
+   UNDO DELETE HOOK — Enterprise Safe
 
-   Purpose:
-   ✅ prevents accidental delete loss
-   ✅ shows Undo toast
-   ✅ delays DB delete
-   ✅ works for vault / transactions / docs
+   Fixes:
+   ✅ no NodeJS types (browser safe)
+   ✅ correct ToastProvider import
+   ✅ memory-safe cleanup
+   ✅ prevents double delete
+   ✅ debounced confirmation
 
    Usage:
 
    const undoDelete = useUndoDelete()
 
-   undoDelete({
+   const undo = undoDelete({
      label: "Transaction deleted",
      onConfirm: () => deleteFromDB(id)
    })
 
+   // call undo() if user clicks undo
 ================================================= */
 
 type UndoOptions = {
@@ -31,23 +33,33 @@ type UndoOptions = {
 
 export function useUndoDelete() {
   const toast = useToast()
-  const timer = useRef<NodeJS.Timeout | null>(null)
 
-  const run = ({ label = "Deleted", delay = 3000, onConfirm }: UndoOptions) => {
-    let cancelled = false
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const confirmed = useRef(false)
+
+  const run = ({
+    label = "Deleted",
+    delay = 3000,
+    onConfirm,
+  }: UndoOptions) => {
+    confirmed.current = false
+
+    if (timer.current) clearTimeout(timer.current)
 
     timer.current = setTimeout(async () => {
-      if (!cancelled) await onConfirm()
+      if (confirmed.current) return
+      confirmed.current = true
+      await onConfirm()
     }, delay)
 
-    toast.info(
-      `${label} • Undo?`
-    )
+    toast.info(`${label} • Undo?`)
 
-    /* return undo function */
+    // undo handler
     return () => {
-      cancelled = true
+      confirmed.current = true
+
       if (timer.current) clearTimeout(timer.current)
+
       toast.success("Restored")
     }
   }

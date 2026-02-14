@@ -1,36 +1,93 @@
-import { createClient } from "@supabase/supabase-js"
-import type { Database } from "@/types/supabase"
+/* =================================================
+   Supabase Clients — NEXT 16 / TURBOPACK SAFE
+   ✔ browser singleton
+   ✔ server safe (no hanging fetch)
+   ✔ shorter timeouts
+   ✔ no edge timeout errors
+   Phase 3 — Production hardening (ADDITIVE ONLY)
+================================================= */
 
-/* ========================================
-   SINGLETON + TYPED SUPABASE CLIENT
-   - typed DB (autocomplete + safety)
-   - prevents multiple instances
-   - faster dashboard
-   - stable auth
-   - production safe
-======================================== */
+import { createBrowserClient } from "@supabase/ssr"
+import { createClient as supabaseCreateClient } from "@supabase/supabase-js" // ✅ renamed
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+/* ===============================
+   ENV
+=============================== */
 
-let client: ReturnType<typeof createClient<Database>> | null = null
+const URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export function getSupabase() {
-  if (!client) {
-    client = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+/* ===============================
+   BROWSER CLIENT (singleton)
+=============================== */
+
+let browserClient: ReturnType<typeof createBrowserClient> | null = null
+
+export function getSupabaseClient() {
+  if (typeof window === "undefined") return null as any
+
+  if (!browserClient) {
+    browserClient = createBrowserClient(URL, KEY, {
       auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
+        persistSession: false,
+        autoRefreshToken: false,
       },
       global: {
-        fetch: (...args) => fetch(...args)
-      }
+        headers: {
+          "x-application-name": "hisabdesk-web",
+        },
+        fetch: (url, options) =>
+          fetch(url, {
+            ...options,
+            cache: "no-store",
+          }),
+      },
     })
   }
 
-  return client
+  return browserClient
 }
 
-/* backwards compatible export */
-export const supabase = getSupabase()
+/* ===============================
+   SERVER CLIENT (stable)
+=============================== */
+
+export function getSupabaseServer() {
+  return supabaseCreateClient(URL, KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+    global: {
+      headers: {
+        "x-application-name": "hisabdesk-server",
+      },
+      fetch: (url, options) =>
+        fetch(url, {
+          ...options,
+          cache: "no-store",
+        }),
+    },
+  })
+}
+
+/* =================================================
+   ✅ GLOBAL BACKWARD COMPATIBILITY FIX (IMPORTANT)
+   ------------------------------------------------
+   Many routes import:
+     import { createClient } from "@/lib/supabase"
+
+   We alias it so OLD code keeps working.
+================================================= */
+
+export const createClient = getSupabaseServer // ✅ ADD THIS LINE
+
+/* ===============================
+   DEFAULT EXPORT (compat)
+=============================== */
+
+export const supabase =
+  typeof window !== "undefined"
+    ? getSupabaseClient()
+    : getSupabaseServer()

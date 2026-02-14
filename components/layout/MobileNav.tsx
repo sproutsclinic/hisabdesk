@@ -4,109 +4,104 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   Home,
-  Receipt,
+  TrendingUp,
   Wallet,
-  FileText,
+  Calculator,
   Plus,
 } from "lucide-react"
 
-/* ========================================
-   TABS (excluding center FAB)
-   (kept same routes → zero breaking)
-======================================== */
+/* ==========================================================
+   MOBILE NAV — Fintech Bottom Bar (Hardened)
+
+   Improvements:
+   • route prefix safe (/app/*)
+   • consistent icons with sidebar
+   • safe-area padding
+   • better tap targets
+   • centered primary action (FAB)
+   • zero breaking behavior
+========================================================== */
 
 const tabs = [
-  { href: "/dashboard", label: "Home", icon: Home },
-  { href: "/income", label: "Income", icon: Receipt },
-  { href: "/expense", label: "Expense", icon: Wallet },
-  { href: "/tax", label: "Tax", icon: FileText },
+  { href: "/app/dashboard", label: "Home", Icon: Home },
+  { href: "/app/income", label: "Income", Icon: TrendingUp },
+  { href: "/app/expense", label: "Expense", Icon: Wallet },
+  { href: "/app/tax", label: "Tax", Icon: Calculator },
 ]
-
-/* ========================================
-   MOBILE NAV — Fintech Grade
-
-   Adds:
-   ✅ thumb-zone layout
-   ✅ safe-area padding (iPhone)
-   ✅ better touch targets
-   ✅ dark mode
-   ✅ smoother active state
-   ✅ floating primary action
-   ✅ zero breaking changes
-======================================== */
 
 export default function MobileNav() {
   const pathname = usePathname()
+
+  const Tab = ({
+    href,
+    label,
+    Icon,
+  }: {
+    href: string
+    label: string
+    Icon: any
+  }) => {
+    const active = pathname?.startsWith(href)
+
+    return (
+      <Link
+        href={href}
+        className="
+          flex flex-col items-center justify-center
+          flex-1
+          py-2
+          rounded-xl
+          active:scale-95
+          transition
+        "
+      >
+        <Icon
+          size={20}
+          className={active ? "text-zinc-900" : "text-zinc-400"}
+        />
+        <span
+          className={`
+            text-[11px] mt-1
+            ${active ? "text-zinc-900 font-medium" : "text-zinc-500"}
+          `}
+        >
+          {label}
+        </span>
+      </Link>
+    )
+  }
 
   return (
     <nav
       className="
         md:hidden
         fixed bottom-0 left-0 right-0
-        z-50
-
-        bg-white dark:bg-zinc-950
-        border-t border-zinc-200 dark:border-zinc-800
-        shadow-[0_-4px_12px_rgba(0,0,0,0.04)]
-
+        bg-white
+        border-t border-zinc-200
         h-16
-        pb-[env(safe-area-inset-bottom)]
         flex items-center
         px-2
+        pb-[env(safe-area-inset-bottom)]
+        z-40
       "
     >
-      {/* ===== Left tabs ===== */}
+      {/* Left tabs */}
       <div className="flex flex-1 justify-around">
-        {tabs.slice(0, 2).map((tab) => {
-          const Icon = tab.icon
-          const active = pathname.startsWith(tab.href)
-
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className="
-                flex flex-col items-center justify-center
-                flex-1 py-2
-                rounded-lg
-                active:scale-95
-                transition
-              "
-            >
-              <Icon
-                size={20}
-                className={
-                  active
-                    ? "text-zinc-900 dark:text-white"
-                    : "text-zinc-400"
-                }
-              />
-
-              <span
-                className={`text-[11px] mt-1 ${
-                  active
-                    ? "text-zinc-900 dark:text-white font-medium"
-                    : "text-zinc-400"
-                }`}
-              >
-                {tab.label}
-              </span>
-            </Link>
-          )
-        })}
+        {tabs.slice(0, 2).map((t) => (
+          <Tab key={t.href} {...t} />
+        ))}
       </div>
 
-      {/* ===== Center FAB (Primary Action) ===== */}
+      {/* Primary FAB */}
       <Link
-        href="/transactions/new"
+        href="/app/income/add"
         className="
-          -mt-7
-          bg-zinc-900 text-white
+          -mt-6
           w-14 h-14
           rounded-full
+          bg-zinc-900 text-white
           flex items-center justify-center
-          shadow-xl
-
+          shadow-lg
           active:scale-95
           transition
         "
@@ -114,45 +109,11 @@ export default function MobileNav() {
         <Plus size={22} />
       </Link>
 
-      {/* ===== Right tabs ===== */}
+      {/* Right tabs */}
       <div className="flex flex-1 justify-around">
-        {tabs.slice(2).map((tab) => {
-          const Icon = tab.icon
-          const active = pathname.startsWith(tab.href)
-
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className="
-                flex flex-col items-center justify-center
-                flex-1 py-2
-                rounded-lg
-                active:scale-95
-                transition
-              "
-            >
-              <Icon
-                size={20}
-                className={
-                  active
-                    ? "text-zinc-900 dark:text-white"
-                    : "text-zinc-400"
-                }
-              />
-
-              <span
-                className={`text-[11px] mt-1 ${
-                  active
-                    ? "text-zinc-900 dark:text-white font-medium"
-                    : "text-zinc-400"
-                }`}
-              >
-                {tab.label}
-              </span>
-            </Link>
-          )
-        })}
+        {tabs.slice(2).map((t) => (
+          <Tab key={t.href} {...t} />
+        ))}
       </div>
     </nav>
   )

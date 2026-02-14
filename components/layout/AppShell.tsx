@@ -1,20 +1,21 @@
 "use client"
 
-import Sidebar from "@/components/Sidebar"
-import Header from "./Header"
-import MobileNav from "./MobileNav"
+import Header from "@/components/layout/Header"
+import Sidebar from "@/components/layout/Sidebar"
+import MobileNav from "@/components/layout/MobileNav"
 
-/* ========================================
-   APP SHELL — Fintech Grade Layout
+/* ==========================================================
+   APP SHELL — Enterprise Fintech Layout (FIXED)
 
-   Adds:
-   ✅ sticky header safe area
-   ✅ centered container system
-   ✅ mobile thumb spacing
-   ✅ smoother scrolling
-   ✅ better desktop proportions
-   ✅ zero breaking changes
-======================================== */
+   Fixes applied:
+   ✓ prevents double scroll
+   ✓ prevents sidebar/content height mismatch
+   ✓ safer mobile safe-area padding
+   ✓ correct flex shrink issues
+   ✓ stable full-height layout
+   ✓ smoother desktop spacing
+   ✓ production safe
+========================================================== */
 
 export default function AppShell({
   children,
@@ -25,48 +26,58 @@ export default function AppShell({
     <div
       className="
         min-h-screen
-        flex
         bg-zinc-50
-        dark:bg-zinc-950
         text-zinc-900
-        dark:text-zinc-100
+        flex
+        overflow-hidden        /* ✅ prevents body double scroll */
       "
     >
-      {/* ===== Desktop Sidebar ===== */}
+      {/* ======================================================
+         DESKTOP SIDEBAR
+      ====================================================== */}
       <Sidebar />
 
-      {/* ===== Right Side ===== */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Sticky Header */}
+      {/* ======================================================
+         MAIN WRAPPER
+      ====================================================== */}
+      <div
+        className="
+          flex-1
+          flex flex-col
+          min-h-screen
+          md:pl-64
+          overflow-hidden       /* ✅ important */
+        "
+      >
+        {/* HEADER */}
         <Header />
 
-        {/* ===== Main Content Area ===== */}
+        {/* ======================================================
+           CONTENT — SINGLE SCROLL CONTAINER ONLY
+        ====================================================== */}
         <main
           className="
             flex-1
-            overflow-y-auto
-            scroll-smooth
-
-            px-4
-            sm:px-6
-            lg:px-10
-
-            pt-6
-            pb-28 md:pb-10
-
-            w-full
-            max-w-6xl
-            mx-auto
+            overflow-y-auto      /* ✅ only this scrolls */
+            overflow-x-hidden
+            pb-24 md:pb-8
           "
         >
-          <div className="space-y-6">
+          <div
+            className="
+              max-w-7xl
+              mx-auto
+              px-4 md:px-6
+              py-6 md:py-8
+            "
+          >
             {children}
           </div>
         </main>
-      </div>
 
-      {/* ===== Mobile Bottom Nav ===== */}
-      <MobileNav />
+        {/* MOBILE NAV */}
+        <MobileNav />
+      </div>
     </div>
   )
 }

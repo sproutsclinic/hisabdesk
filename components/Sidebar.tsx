@@ -15,8 +15,7 @@ import {
 } from "lucide-react"
 
 /* ========================================
-   NAV ITEMS
-   (kept same → zero breaking changes)
+   NAV ITEMS (unchanged routes)
 ======================================== */
 
 const nav = [
@@ -28,15 +27,15 @@ const nav = [
 ]
 
 /* ========================================
-   SIDEBAR — Fintech Grade
+   SIDEBAR — ENTERPRISE POLISH
 
-   Adds:
+   ✅ softer shadows
+   ✅ smoother active state
    ✅ better spacing
-   ✅ softer UI
+   ✅ sticky height stability
    ✅ trust footer
-   ✅ smoother hover
-   ✅ dark mode
-   ✅ mobile safe
+   ✅ dark mode ready
+   ✅ accessibility improvements
    ✅ zero breaking changes
 ======================================== */
 
@@ -57,15 +56,17 @@ export default function Sidebar() {
         h-screen
         sticky top-0
         flex-col
+        shrink-0
 
         bg-white dark:bg-zinc-900
         border-r border-zinc-200 dark:border-zinc-800
+        shadow-sm
 
         px-5 py-6
       "
     >
       {/* ===== Brand ===== */}
-      <div className="mb-10 px-2">
+      <div className="mb-10 px-2 select-none">
         <h1 className="text-xl font-semibold tracking-tight">
           HisabDesk
         </h1>
@@ -84,6 +85,7 @@ export default function Sidebar() {
             <Link
               key={href}
               href={href}
+              aria-current={active ? "page" : undefined}
               className={`
                 group
                 flex items-center gap-3
@@ -101,7 +103,11 @@ export default function Sidebar() {
             >
               <Icon
                 size={18}
-                className="opacity-80 group-hover:opacity-100"
+                className="
+                  opacity-80
+                  group-hover:opacity-100
+                  transition
+                "
               />
               {label}
             </Link>
@@ -117,6 +123,7 @@ export default function Sidebar() {
           Bank-grade security
         </div>
 
+        {/* Logout */}
         <button
           onClick={logout}
           className="

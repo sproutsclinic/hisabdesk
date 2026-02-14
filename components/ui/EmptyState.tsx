@@ -2,91 +2,102 @@
 
 import Link from "next/link"
 import { PlusCircle } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 /* =================================================
-   EMPTY STATE — Fintech Grade
+   EMPTY STATE — Enterprise Fintech Grade (Hardened)
 
-   Purpose:
-   ✅ avoids blank screens
-   ✅ guides first action
-   ✅ improves activation rate
-   ✅ clean card UI
-   ✅ mobile friendly
-
-   Usage:
-
-   <EmptyState
-     title="No transactions yet"
-     description="Add income or expense to start tracking tax savings"
-     actionHref="/income/add"
-     actionLabel="Add Income"
-   />
+   Improvements:
+   • consistent with Card + Button system
+   • no dark mode (design system aligned)
+   • optional secondary action
+   • supports custom icon
+   • tighter spacing
+   • reusable everywhere (lists, vault, docs, etc.)
 ================================================= */
+
+interface Props {
+  title?: string
+  description?: string
+
+  actionHref?: string
+  actionLabel?: string
+
+  secondaryHref?: string
+  secondaryLabel?: string
+
+  icon?: React.ReactNode
+  className?: string
+}
 
 export default function EmptyState({
   title = "No data yet",
-  description = "Start by adding your first transaction",
+  description = "Start by adding your first record",
+
   actionHref,
   actionLabel = "Get Started",
-}: {
-  title?: string
-  description?: string
-  actionHref?: string
-  actionLabel?: string
-}) {
+
+  secondaryHref,
+  secondaryLabel,
+
+  icon,
+  className,
+}: Props) {
   return (
     <div
-      className="
-        w-full max-w-md mx-auto
+      className={cn(
+        `
+        mx-auto
+        max-w-md
         text-center
-        py-16 px-6
-        space-y-5
+        px-6 py-14
+        space-y-6
 
-        bg-white dark:bg-zinc-900
-        border border-zinc-200 dark:border-zinc-800
         rounded-2xl
+        border border-gray-200
+        bg-white
         shadow-sm
-      "
+        `,
+        className
+      )}
     >
-      {/* ===== Icon ===== */}
-      <div
-        className="
-          mx-auto
-          w-12 h-12
-          rounded-full
-          bg-zinc-100 dark:bg-zinc-800
-          flex items-center justify-center
-        "
-      >
-        <PlusCircle size={20} className="text-zinc-600" />
+      {/* ================= ICON ================= */}
+      <div className="mx-auto w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+        {icon ?? <PlusCircle size={20} className="text-gray-600" />}
       </div>
 
-      {/* ===== Text ===== */}
+      {/* ================= TEXT ================= */}
       <div className="space-y-1">
-        <h3 className="text-base font-semibold">
+        <h3 className="text-base font-semibold text-gray-900">
           {title}
         </h3>
 
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-gray-500 leading-relaxed">
           {description}
         </p>
       </div>
 
-      {/* ===== CTA ===== */}
-      {actionHref && (
-        <Link
-          href={actionHref}
-          className="
-            inline-flex items-center justify-center
-            bg-zinc-900 text-white
-            px-4 py-2
-            rounded-xl text-sm font-medium
-            hover:opacity-90
-            transition
-          "
-        >
-          {actionLabel}
-        </Link>
+      {/* ================= ACTIONS ================= */}
+      {(actionHref || secondaryHref) && (
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          {actionHref && (
+            <Link
+              href={actionHref}
+              className="btn"
+            >
+              {actionLabel}
+            </Link>
+          )}
+
+          {secondaryHref && secondaryLabel && (
+            <Link
+              href={secondaryHref}
+              className="btn-outline"
+            >
+              {secondaryLabel}
+            </Link>
+          )}
+        </div>
       )}
     </div>
   )

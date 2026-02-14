@@ -1,30 +1,17 @@
-"use client"
-
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-/* ========================================
-   BUTTON SYSTEM — Fintech Grade
+/* =====================================================
+   HisabDesk — Button System (ENTERPRISE FINAL)
 
-   Variants:
-   • primary  (main CTA)
-   • secondary
-   • outline
-   • ghost
-   • danger
-   • success
-
-   Sizes:
-   • sm
-   • md
-   • lg
-   • icon
-
-   Usage:
-   <Button>Save</Button>
-   <Button variant="outline" />
-   <Button size="icon" />
-======================================== */
+   ✔ forwardRef
+   ✔ server-safe
+   ✔ loading spinner (stable layout)
+   ✔ keyboard accessible
+   ✔ strict disabled handling
+   ✔ consistent fintech sizing
+   ✔ no layout shift while loading
+===================================================== */
 
 type Variant =
   | "primary"
@@ -78,49 +65,73 @@ const sizes: Record<Size, string> = {
   sm: "h-8 px-3 text-xs rounded-lg",
   md: "h-10 px-4 text-sm rounded-xl",
   lg: "h-12 px-5 text-base rounded-xl",
-  icon: "h-10 w-10 rounded-xl",
+  icon: "h-10 w-10 rounded-xl p-0",
 }
 
 /* ================= COMPONENT ================= */
 
-export function Button({
-  className,
-  variant = "primary",
-  size = "md",
-  loading,
-  disabled,
-  children,
-  ...props
-}: ButtonProps) {
-  return (
-    <button
-      disabled={disabled || loading}
-      className={cn(
-        `
-        inline-flex items-center justify-center gap-2
-        font-medium
-        transition
-        active:scale-[0.98]
-        disabled:opacity-50 disabled:pointer-events-none
-        focus:outline-none focus:ring-2 focus:ring-zinc-400/40
-        `,
-        variants[variant],
-        sizes[size],
-        className
-      )}
-      {...props}
-    >
-      {loading && (
-        <span
-          className="
-            w-4 h-4
-            border-2 border-white/40 border-t-white
-            rounded-full animate-spin
-          "
-        />
-      )}
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant = "primary",
+      size = "md",
+      loading = false,
+      disabled,
+      children,
+      type = "button",
+      ...props
+    },
+    ref
+  ) => {
+    const isDisabled = disabled || loading
 
-      {children}
-    </button>
-  )
-}
+    return (
+      <button
+        ref={ref}
+        type={type}
+        disabled={isDisabled}
+        aria-disabled={isDisabled}
+        className={cn(
+          `
+          relative
+          inline-flex items-center justify-center gap-2
+          font-medium whitespace-nowrap select-none
+          transition-all duration-150
+          active:scale-[0.98]
+
+          disabled:opacity-50
+          disabled:pointer-events-none
+
+          focus-visible:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-zinc-400/40
+          `,
+          variants[variant],
+          sizes[size],
+          className
+        )}
+        {...props}
+      >
+        {/* spinner keeps width stable */}
+        {loading && (
+          <span
+            className="
+              absolute
+              w-4 h-4
+              border-2 border-current/30 border-t-current
+              rounded-full animate-spin
+            "
+          />
+        )}
+
+        {/* hide text while loading to avoid shift */}
+        <span className={loading ? "opacity-0" : "opacity-100"}>
+          {children}
+        </span>
+      </button>
+    )
+  }
+)
+
+Button.displayName = "Button"

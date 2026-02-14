@@ -3,20 +3,18 @@
 import { useEffect, useRef } from "react"
 
 /* =================================================
-   AUTO SAVE HOOK — Silent persistence
+   AUTO SAVE HOOK — Enterprise Safe
 
-   Purpose:
-   ✅ autosave forms
+   Fixes:
+   ✅ no NodeJS types (browser safe)
+   ✅ SSR safe
    ✅ debounced
-   ✅ mobile friendly
-   ✅ reduces fear of data loss
+   ✅ no memory leaks
+   ✅ stable deps
+   ✅ prevents parallel saves
 
    Usage:
-
-   useAutoSave(data, async (v) => {
-     await saveToDB(v)
-   })
-
+   useAutoSave(data, async (v) => await save(v))
 ================================================= */
 
 export function useAutoSave<T>(
@@ -24,17 +22,25 @@ export function useAutoSave<T>(
   saveFn: (v: T) => Promise<void>,
   delay = 800
 ) {
-  const timer = useRef<NodeJS.Timeout | null>(null)
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const saving = useRef(false)
 
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current)
 
-    timer.current = setTimeout(() => {
-      saveFn(value)
+    timer.current = setTimeout(async () => {
+      if (saving.current) return
+
+      try {
+        saving.current = true
+        await saveFn(value)
+      } finally {
+        saving.current = false
+      }
     }, delay)
 
     return () => {
       if (timer.current) clearTimeout(timer.current)
     }
-  }, [value])
+  }, [value, delay, saveFn])
 }

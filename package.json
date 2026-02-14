@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.3",
     "jspdf": "^4.1.0",
     "jszip": "^3.10.1",
@@ -16,13 +18,16 @@
     "next": "16.1.6",
     "openai": "^6.17.0",
     "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.17.2",
     "razorpay": "^2.9.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "recharts": "^3.7.0",
-    "twilio": "^5.12.0"
+    "twilio": "^5.12.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
