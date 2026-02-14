@@ -25,7 +25,7 @@ import { createClient } from "@/lib/supabase"
 
 import { getTransactionsByRange } from "@/lib/api/transactions"
 import { detectAutomationSuggestions } from "@/lib/modules/personal"
-import { safeRunAI } from "@/lib/ai/safeRun"
+import { safeRunAI } from "@/lib/ai/safeRunAI"
 
 export const dynamic = "force-dynamic"
 

@@ -16,7 +16,7 @@ import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase"
 
 import { buildAIContext } from "@/lib/modules/personal"
-import { safeRunAI } from "@/lib/ai/safeRun"
+import { safeRunAI } from "@/lib/ai/safeRunAI"
 import { FINANCE_SYSTEM_PROMPT } from "@/lib/ai/prompts"
 
 export const dynamic = "force-dynamic"

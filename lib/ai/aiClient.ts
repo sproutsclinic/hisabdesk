@@ -25,7 +25,7 @@
 //
 // ==========================================================
 
-import { safeRunAI } from "./safeRun"
+import { safeRunAI } from "./safeRunAI"
 import { injectContext } from "./contextInjector"
 import {
   FINANCE_SYSTEM_PROMPT,

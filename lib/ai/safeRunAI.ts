@@ -25,9 +25,8 @@
 //     ✓ zero duplication across routes
 //
 // ==========================================================
-
-import { runAI } from "./openai"
-import { guardAI } from "./guard"
+import { runAI } from "@/lib/ai/openai"
+import { guardAI } from "@/lib/ai/guard"
 import { createClient } from "@/lib/supabase"
 
 // ==========================================================

@@ -28,7 +28,7 @@
 // Core runner (ONLY one routes should use)
 // ----------------------------------------------------------
 
-export * from "./safeRun"
+export * from "./safeRunAI"
 
 // ----------------------------------------------------------
 // Lower level utilities (rarely needed directly)

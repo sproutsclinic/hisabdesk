@@ -7,7 +7,7 @@ import { NextResponse } from "next/server"
 /* ✅ MUST use server client — NOT browser client */
 import { createClient } from "@/lib/supabase/server"
 
-import { safeRunAI } from "@/lib/ai/safeRun"
+import { safeRunAI } from "@/lib/ai/safeRunAI"
 import {
   FINANCE_SYSTEM_PROMPT,
   MODULE_INSIGHT_PROMPT,
