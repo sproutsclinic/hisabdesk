@@ -2,10 +2,7 @@
   "crons": [
     {
       "path": "/api/pro/notify",
-      "schedule": "0 9 * * *",
-      "headers": {
-        "Authorization": "Bearer hisabdesk_cron_9x82hsk29"
-      }
+      "schedule": "0 9 * * *"
     },
     {
       "path": "/api/cron/gst-sync",
@@ -13,10 +10,7 @@
     },
     {
       "path": "/api/internal/run-automation",
-      "schedule": "0 2 * * *",
-      "headers": {
-        "Authorization": "Bearer ${CRON_SECRET}"
-      }
+      "schedule": "0 2 * * *"
     }
   ]
 }
