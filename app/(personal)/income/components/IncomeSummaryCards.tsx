@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 
@@ -12,7 +12,7 @@ export default function IncomeSummaryCards({
       <Card className="p-4">
         <p className="text-xs text-muted-foreground">Total Income</p>
         <p className="text-lg font-semibold text-green-600">
-          ₹ {total.toLocaleString("en-IN")}
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {total.toLocaleString("en-IN")}
         </p>
       </Card>
     </div>

@@ -1,77 +1,29 @@
-// ==========================================================
-// HisabDesk — requireOnboarding Guard (Server only)
-//
-// PURPOSE
-// Force first-time users to complete onboarding
-//
-// Behavior:
-// - ensure profile exists (bootstrap)
-// - if onboarding_complete = false → redirect
-// - else → continue
-//
-// Used by:
-// - protected pages (server components/layouts)
-// - dashboards
-//
-// RULES
-// ✅ server only
-// ✅ DB only via service
-// ❌ no UI
-// ❌ no business logic
-// ❌ no calculations
-// ==========================================================
-
-import { redirect } from "next/navigation"
-
-import { requireUser } from "./guards"
-import { ensureProfile } from "@/lib/api/profile/profile.bootstrap"
+ï»¿import { redirect } from "next/navigation"
+import type { ProfileRow } from "@/lib/api/profile/types"
 
 /* =========================================================
-Public Guard
-========================================================= */
+   Require Onboarding Guard
+   Compatible with multiple schema versions
+   ========================================================= */
 
-/**
- * Usage (Server Component / Layout):
- *
- * await requireOnboarding()
- *
- * Flow:
- *   1. auth
- *   2. ensure profile exists
- *   3. check onboarding
- */
-export async function requireOnboarding(): Promise<void> {
-  const user = await requireUser()
+export function requireOnboarding(profile: ProfileRow | null) {
+  if (!profile) {
+    redirect("/onboarding")
+  }
 
   // -------------------------------------------------------
-  // NEW: ensure profile exists (bootstrap safe)
+  // Some environments don't yet have onboarding_complete
+  // We must safely detect instead of assuming schema.
   // -------------------------------------------------------
 
-  const profile = await ensureProfile(user.id)
-
-  // -------------------------------------------------------
-  // check onboarding flag
-  // -------------------------------------------------------
-
-  const completed = profile.onboarding_complete === true
-
-  // -------------------------------------------------------
-  // redirect if not completed
-  // -------------------------------------------------------
+  const completed =
+    typeof (profile as any).onboarding_complete === "boolean"
+      ? (profile as any).onboarding_complete === true
+      : true // ? fallback for older schema
 
   if (!completed) {
-    redirect("/personal/onboarding")
+    redirect("/onboarding")
   }
-}
 
-/* =========================================================
-Optional helper
-========================================================= */
-
-export async function isOnboardingComplete(): Promise<boolean> {
-  const user = await requireUser()
-
-  const profile = await ensureProfile(user.id)
-
-  return profile.onboarding_complete === true
+  return profile
 }

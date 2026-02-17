@@ -1,7 +1,7 @@
-"use client"
+ï»¿"use client"
 
 // ==========================================================
-// HisabDesk — Net Worth Card
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Net Worth Card
 // ----------------------------------------------------------
 // PURPOSE
 //   Shows real-time net worth snapshot
@@ -9,10 +9,10 @@
 //   Net Worth = Assets - Liabilities
 //
 //   Why:
-//     ✓ core wealth metric
-//     ✓ fast API (no AI)
-//     ✓ lightweight
-//     ✓ dashboard essential
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ core wealth metric
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ fast API (no AI)
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ lightweight
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ dashboard essential
 //
 //   Uses:
 //     GET /api/dashboard/networth
@@ -89,7 +89,7 @@ export default function NetWorthCard() {
 
       {loading ? (
         <p className="text-xs text-muted-foreground">
-          Calculating…
+          CalculatingÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦
         </p>
       ) : (
         <div className="space-y-2 text-sm">
@@ -98,7 +98,7 @@ export default function NetWorthCard() {
               Assets
             </span>
             <span className="text-green-600 font-medium">
-              ₹ {data.assets.toLocaleString("en-IN")}
+              ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {data.assets.toLocaleString("en-IN")}
             </span>
           </div>
 
@@ -107,14 +107,14 @@ export default function NetWorthCard() {
               Liabilities
             </span>
             <span className="text-red-600 font-medium">
-              ₹ {data.liabilities.toLocaleString("en-IN")}
+              ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {data.liabilities.toLocaleString("en-IN")}
             </span>
           </div>
 
           <div className="border-t pt-2 flex justify-between font-semibold">
             <span>Net Worth</span>
             <span className={color(data.networth)}>
-              ₹ {data.networth.toLocaleString("en-IN")}
+              ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {data.networth.toLocaleString("en-IN")}
             </span>
           </div>
         </div>

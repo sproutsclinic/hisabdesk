@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — useProfile Hook
+ï»¿/* =========================================================
+   HisabDesk ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â useProfile Hook
    ---------------------------------------------------------
    CLIENT SIDE ONLY
 
@@ -12,14 +12,14 @@
    - ZERO Supabase direct access
 
    ARCHITECTURE
-     Component → hook → /api/profile → service → DB
+     Component ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ hook ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ /api/profile ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ service ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ DB
 
    RULES
-   ✅ thin client
-   ✅ fetch only
-   ❌ no DB
-   ❌ no math
-   ❌ no AI
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ thin client
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ fetch only
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no DB
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no math
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no AI
 
    ========================================================= */
 

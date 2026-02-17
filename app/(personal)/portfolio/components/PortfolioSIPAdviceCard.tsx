@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
@@ -18,7 +18,7 @@ export default function PortfolioSIPAdviceCard() {
 
   return (
     <Card className="p-4 bg-emerald-50 border-emerald-200 text-sm whitespace-pre-wrap">
-      💰 SIP Suggestions
+      ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â° SIP Suggestions
       <div className="mt-2">{text}</div>
     </Card>
   )

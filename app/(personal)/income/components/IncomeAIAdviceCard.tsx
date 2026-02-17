@@ -1,9 +1,9 @@
-"use client"
+ï»¿"use client"
 
 /* =========================================================
    Income AI Advice Card
    UI only
-   Fetches → /api/ai/income-summary
+   Fetches ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ /api/ai/income-summary
    No business logic
 ========================================================= */
 
@@ -39,7 +39,7 @@ export default function IncomeAIAdviceCard({ totalIncome }: Props) {
   return (
     <Card className="p-4 bg-purple-50 border-purple-200 space-y-2">
       <h3 className="text-sm font-medium text-purple-900">
-        🤖 AI Income Insights
+        ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ AI Income Insights
       </h3>
 
       <p className="text-sm text-purple-800">{advice}</p>

@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { LifeBuoy } from "lucide-react"
 

@@ -1,20 +1,20 @@
-"use client"
+ï»¿"use client"
 
 // ==========================================================
-// HisabDesk — Add Income Form (PRO VERSION)
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Add Income Form (PRO VERSION)
 // SAME STRUCTURE
-// ✅ Notes
-// ✅ File upload (now uploads to Supabase Storage)
-// ✅ Category + Subcategory
-// ✅ Date added
-// ✅ Amount LAST
-// Phase 4 — Receipt automation integrated
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Notes
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ File upload (now uploads to Supabase Storage)
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Category + Subcategory
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Date added
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Amount LAST
+// Phase 4 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Receipt automation integrated
 // ==========================================================
 
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { createIncome } from "@/lib/api/income"
-import { uploadReceipt } from "@/lib/storage/upload" // ✅ NEW
+import { uploadReceipt } from "@/lib/storage/upload" // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ NEW
 
 /* ========================================================== */
 
@@ -94,7 +94,7 @@ export default function AddIncomeForm() {
       let attachmentUrl = ""
 
       // ======================================================
-      // ✅ NEW — Upload receipt to storage
+      // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ NEW ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Upload receipt to storage
       // ======================================================
       if (file) {
         const { url } = await uploadReceipt(
@@ -102,22 +102,30 @@ export default function AddIncomeForm() {
           file,
           file.name
         )
-        attachmentUrl = `📎 ${url}`
+        attachmentUrl = `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â½ ${url}`
       }
 
       const finalNotes =
         [notes.trim(), attachmentUrl]
           .filter(Boolean)
-          .join(" • ") || null
+          .join(" ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ ") || null
 
-      await createIncome({
-        user_id: DEMO_USER,
-        amount: amt,
-        category: category || "Other",
-        subcategory: subcategory || "Misc",
-        notes: finalNotes,
-        date: new Date(date).toISOString(),
-      })
+      // merge subcategory into notes instead of sending to DB
+const combinedNotes =
+  [
+    subcategory ? `Source: ${subcategory}` : null,
+    finalNotes,
+  ]
+    .filter(Boolean)
+    .join(" ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ ") || null
+
+await createIncome({
+  user_id: DEMO_USER,
+  amount: amt,
+  category: category || "Other",
+  notes: combinedNotes,
+  date: new Date(date).toISOString(),
+})
 
       router.push("/income/list")
     } catch (err: any) {
@@ -224,7 +232,7 @@ export default function AddIncomeForm() {
           type="number"
           inputMode="decimal"
           required
-          placeholder="₹ 0"
+          placeholder="ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ 0"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           className="w-full rounded-xl border px-4 py-3 text-sm font-semibold"

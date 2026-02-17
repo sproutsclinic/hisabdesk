@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 import type { ProfileRow, UpdateProfileRequest } from "@/lib/api/profile/types"
@@ -25,8 +25,8 @@ export default function ProfilePreferencesCard({ profile, onSave }: Props) {
       </div>
 
       <input
-        placeholder="Currency (₹, $, €)"
-        value={profile.currency || "₹"}
+        placeholder="Currency (ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹, $, ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬)"
+        value={profile.currency || "ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹"}
         onChange={(e) =>
           onSave({ currency: e.target.value })
         }

@@ -1,9 +1,12 @@
-// ==========================================================
-// HisabDesk — Personal Dashboard (FINAL • Server Safe)
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Personal Dashboard (FINAL ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Server Safe)
 // ==========================================================
 
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { Card } from "@/components/ui/card"
+
+import { getSupabaseAdmin } from "@/lib/supabase/server"
 
 import { getIncomeSummary } from "@/lib/api/income"
 import { getExpenseSummary } from "@/lib/api/expenses"
@@ -24,6 +27,23 @@ export const dynamic = "force-dynamic"
 // ==========================================================
 
 export default async function DashboardPage() {
+  // --------------------------------------------------------
+  // AUTH (Server-Side)
+  // --------------------------------------------------------
+
+  const supabase = getSupabaseAdmin()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) redirect("/")
+
+  const userId = user.id
+
+  // --------------------------------------------------------
+  // Safe wrapper (prevents dashboard crash)
+  // --------------------------------------------------------
 
   async function safe(promise: Promise<any>, fallback: any) {
     try {
@@ -33,15 +53,23 @@ export default async function DashboardPage() {
     }
   }
 
-  const incomeSummary = await safe(getIncomeSummary(undefined), {
+  // --------------------------------------------------------
+  // Load Data WITH USER ID (FIX)
+  // --------------------------------------------------------
+
+  const incomeSummary = await safe(getIncomeSummary(userId), {
     totalIncome: 0,
   })
 
-  const expenseSummary = await safe(getExpenseSummary(undefined), {
+  const expenseSummary = await safe(getExpenseSummary(userId), {
     totalExpense: 0,
   })
 
-  const data = await safe(loadDashboardData(undefined), {})
+  const data = await safe(loadDashboardData(userId), {})
+
+  // --------------------------------------------------------
+  // Compute
+  // --------------------------------------------------------
 
   const income = Number(incomeSummary?.totalIncome || 0)
   const expense = Number(expenseSummary?.totalExpense || 0)
@@ -69,7 +97,7 @@ export default async function DashboardPage() {
     insights.push("You have surplus money. Consider investing")
 
   if (insights.length === 0)
-    insights.push("Your finances look stable 👍")
+    insights.push("Your finances look stable ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â")
 
   // ======================================================
   // UI
@@ -77,10 +105,9 @@ export default async function DashboardPage() {
 
   return (
     <main className="space-y-8">
-
       <div>
         <h1 className="text-2xl font-semibold">
-          Hello {name} 👋
+          Hello {name} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¹
         </h1>
         <p className="text-sm text-gray-500">
           Your financial command center
@@ -89,11 +116,11 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-2 gap-3">
         <Link href="/expense/add">
-          <Card className="p-4 text-center font-medium">➕ Add Expense</Card>
+          <Card className="p-4 text-center font-medium">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Add Expense</Card>
         </Link>
 
         <Link href="/income/add">
-          <Card className="p-4 text-center font-medium">➕ Add Income</Card>
+          <Card className="p-4 text-center font-medium">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Add Income</Card>
         </Link>
       </div>
 
@@ -110,7 +137,7 @@ export default async function DashboardPage() {
 
       <Card className="p-4 bg-blue-50 border-blue-200 text-sm space-y-1">
         {insights.map((i, idx) => (
-          <p key={idx}>💡 {i}</p>
+          <p key={idx}>ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ {i}</p>
         ))}
       </Card>
 
@@ -156,3 +183,5 @@ function Stat({ title, value, color = "" }: StatProps) {
     </Card>
   )
 }
+
+

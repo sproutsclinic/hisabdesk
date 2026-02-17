@@ -1,0 +1,67 @@
+/* =========================================================
+   HisabDesk — Tax Module Public API (STABLE EXPORT SURFACE)
+   ---------------------------------------------------------
+   This file EXPLICITLY defines what the outside world can use.
+
+   ❌ DO NOT use `export *`
+   ❌ DO NOT leak internal helpers
+   ❌ DO NOT re-export duplicate types
+
+   This prevents:
+     - Type collisions
+     - Hidden circular dependencies
+     - Breaking changes during Phase-2 (CA App)
+
+   Think of this as your module's "API Gateway".
+   ========================================================= */
+
+/* =========================================================
+   TYPES (single source of truth)
+   ========================================================= */
+
+export type {
+  DeductionInput,
+  TaxComputationInput,
+  TaxComputationResult,
+  TaxProfile,
+} from "./types"
+
+/* =========================================================
+   CALCULATION ENGINE (pure domain logic)
+   ========================================================= */
+
+export {
+  calculateTax,
+  computeDeductions,
+} from "./calcEngine"
+
+/* =========================================================
+   DATABASE SERVICE (server-only layer)
+   ========================================================= */
+
+export {
+  getTaxProfile,
+  saveTaxProfile,
+  updateTaxProfile,
+} from "./service"
+
+/* =========================================================
+   REPORT BUILDERS (formatting only)
+   ========================================================= */
+
+export {
+  buildTaxCSV,
+} from "./report"
+
+export {
+  buildTaxPDF,
+} from "./pdf"
+
+/* =========================================================
+   VALIDATION (input boundary)
+   ========================================================= */
+
+export {
+  sanitizeTaxProfileInput,
+  validateTaxProfile,
+} from "./validators"

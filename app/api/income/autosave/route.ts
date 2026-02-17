@@ -1,18 +1,18 @@
-/* =========================================================
+ï»¿/* =========================================================
    Income AutoSave Suggestion API
    ---------------------------------------------------------
-   ✓ calculates suggested saving amount
-   ✓ server only
-   ✓ no AI
+   âœ“ calculates suggested saving amount
+   âœ“ server only
+   âœ“ no AI
 ========================================================= */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
@@ -34,7 +34,6 @@ export async function GET() {
   /* ---------------- rule (default 20%) ---------------- */
 
   const rate = 0.2
-
   const suggested = Math.round(total * rate)
 
   return NextResponse.json({

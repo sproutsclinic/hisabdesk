@@ -29,8 +29,19 @@ function rateLimit(ip: string) {
   return true
 }
 
-function getIP(req: NextRequest) {
-  return req.headers.get("x-forwarded-for") || req.ip || "unknown"
+function getIP(req: NextRequest): string {
+  // Next.js 16 Edge-compatible IP detection
+  const forwarded = req.headers.get("x-forwarded-for")
+  if (forwarded && forwarded.length > 0) {
+    return forwarded.split(",")[0].trim()
+  }
+
+  const real = req.headers.get("x-real-ip")
+  if (real && real.length > 0) {
+    return real
+  }
+
+  return "unknown"
 }
 
 /* =========================================================
@@ -76,3 +87,4 @@ export function proxy(req: NextRequest) {
 export const config = {
   matcher: ["/api/:path*", "/admin/:path*", "/ca/:path*"],
 }
+

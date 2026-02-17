@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import type { ProfileRow, UpdateProfileRequest } from "@/lib/api/profile/types"
 
@@ -24,7 +24,7 @@ export default function ProfileForm({ profile, loading, onSave }: Props) {
       <ProfileSecurityCard />
 
       {loading && (
-        <div className="text-sm text-muted-foreground">Saving…</div>
+        <div className="text-sm text-muted-foreground">SavingÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦</div>
       )}
     </div>
   )

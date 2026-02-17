@@ -1,36 +1,10 @@
-// ==========================================================
-// HisabDesk — AI Health Check Route
-// ----------------------------------------------------------
-// PURPOSE
-//   Internal diagnostics for AI subsystem
-//
-//   Shows:
-//     ✓ monthly usage
-//     ✓ estimated cost
-//     ✓ remaining budget
-//     ✓ system status
-//
-//   Used by:
-//     - Profile → AI Usage card
-//     - Admin monitoring
-//
-// RULES
-//   ✓ server-side only
-//   ✓ NO OpenAI calls
-//   ✓ cheap DB aggregation only
-// ==========================================================
-
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { AI_COST } from "@/lib/ai/constants"
 
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
-
-// ==========================================================
-// AUTH
-// ==========================================================
+const supabase = getSupabaseAdmin()
 
 async function getUser() {
   const {
@@ -38,13 +12,8 @@ async function getUser() {
   } = await supabase.auth.getUser()
 
   if (!user) throw new Error("Unauthorized")
-
   return user
 }
-
-// ==========================================================
-// GET
-// ==========================================================
 
 export async function GET() {
   try {
@@ -55,10 +24,6 @@ export async function GET() {
       new Date().getMonth(),
       1
     ).toISOString()
-
-    // ------------------------------------------------------
-    // Fetch usage logs
-    // ------------------------------------------------------
 
     const { data } = await supabase
       .from("ai_logs")
@@ -79,23 +44,14 @@ export async function GET() {
     const remaining =
       AI_COST.MONTHLY_LIMIT_DOLLARS - cost
 
-    // ------------------------------------------------------
-    // Response
-    // ------------------------------------------------------
-
     return NextResponse.json({
       status: "ok",
       monthTokens: totalTokens,
       estimatedCost: Number(cost.toFixed(2)),
-      remainingBudget: Number(
-        Math.max(0, remaining).toFixed(2)
-      ),
+      remainingBudget: Number(Math.max(0, remaining).toFixed(2)),
       limit: AI_COST.MONTHLY_LIMIT_DOLLARS,
     })
   } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: e.message }, { status: 401 })
   }
 }

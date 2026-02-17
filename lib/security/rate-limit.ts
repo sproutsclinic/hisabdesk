@@ -1,11 +1,11 @@
-/**
+ï»¿/**
  * =========================================================
  * Enterprise Rate Limiter (API / Webhook Protection)
- * HisabDesk – Security Layer
+ * HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Security Layer
  * =========================================================
  *
  * PURE UTILITY MODULE
- * ⚠ DO NOT add "use server" or "use client"
+ * ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â  DO NOT add "use server" or "use client"
  * Must stay directive-free for Next 16 compatibility
  * =========================================================
  */

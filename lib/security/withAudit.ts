@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
+ï»¿import { NextRequest, NextResponse } from "next/server"
 import { logAudit } from "./auditLog"
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /*
   Wrapper for API routes to automatically log actions

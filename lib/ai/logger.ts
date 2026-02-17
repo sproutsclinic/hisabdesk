@@ -1,23 +1,23 @@
-// ==========================================================
-// HisabDesk — AI Logger (Centralized Usage Logging)
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Logger (Centralized Usage Logging)
 // ----------------------------------------------------------
 // PURPOSE
 //   Single place to log ALL AI usage
 //
 //   Prevents:
-//     ❌ duplicate logging logic
-//     ❌ inconsistent inserts
-//     ❌ routes manually writing ai_logs
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ duplicate logging logic
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ inconsistent inserts
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ routes manually writing ai_logs
 //
 //   Used by:
-//     ✓ safeRunAI()
-//     ✓ future analytics
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ safeRunAI()
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ future analytics
 //
 //   RULE:
 //     Only THIS file writes to ai_logs table
 // ==========================================================
 
-import { createClient } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 // ==========================================================
 // TYPES
@@ -35,7 +35,7 @@ interface LogParams {
 // CLIENT
 // ==========================================================
 
-const supabase = createClient()
+const supabase = getSupabaseAdmin()
 
 // ==========================================================
 // LOGGER

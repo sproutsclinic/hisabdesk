@@ -1,14 +1,14 @@
-// ==========================================================
-// HisabDesk — AI Middleware Utilities
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Middleware Utilities
 // ----------------------------------------------------------
 // PURPOSE
 //   Shared helpers for ALL AI routes
 //
 //   Handles:
-//     ✓ auth
-//     ✓ JSON body parsing
-//     ✓ small prompt enforcement
-//     ✓ standard responses
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ auth
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ JSON body parsing
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ small prompt enforcement
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ standard responses
 //
 //   Keeps route files extremely small + clean
 //
@@ -17,13 +17,13 @@
 //
 // ==========================================================
 
-import { createClient } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 // ==========================================================
 // CLIENT
 // ==========================================================
 
-const supabase = createClient()
+const supabase = getSupabaseAdmin()
 
 // ==========================================================
 // AUTH HELPER
@@ -60,8 +60,8 @@ export async function readJson<T = any>(
 // PROMPT SANITIZER
 // ----------------------------------------------------------
 // Prevents:
-//   ❌ extremely large prompts
-//   ❌ token abuse
+//   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ extremely large prompts
+//   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ token abuse
 //
 // Keeps prompts short & safe
 // ==========================================================

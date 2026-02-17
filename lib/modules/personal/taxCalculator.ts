@@ -1,5 +1,5 @@
-// ==========================================================
-// HisabDesk — Personal Tax Calculator (Business Logic ONLY)
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Personal Tax Calculator (Business Logic ONLY)
 // ----------------------------------------------------------
 // PURPOSE
 //   Pure Indian income-tax calculations
@@ -40,7 +40,7 @@ export interface TaxResult {
 }
 
 // ==========================================================
-// CONSTANTS (India FY slabs — can update yearly)
+// CONSTANTS (India FY slabs ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â can update yearly)
 // ==========================================================
 
 // ---------- OLD REGIME ----------

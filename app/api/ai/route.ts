@@ -1,85 +1,24 @@
-import { createClient } from "@supabase/supabase-js"
-import OpenAI from "openai"
-import { NextResponse } from "next/server"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+export const dynamic = "force-dynamic"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
-
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    // ======================
-    // Check logged in user
-    // ======================
-    const { data: userData } = await supabase.auth.getUser()
+    const supabase = getSupabaseAdmin()
 
-    if (!userData.user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
-    }
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    // ======================
-    // Check subscription
-    // ======================
-    const { data: sub } = await supabase
-      .from("subscriptions")
-      .select("id")
-      .eq("user_id", userData.user.id)
-      .single()
+    if (!user)
+      return NextResponse.json({ status: "unauthorized" }, { status: 401 })
 
-    if (!sub) {
-      return NextResponse.json(
-        { error: "Pro only feature" },
-        { status: 403 }
-      )
-    }
-
-    // ======================
-    // Get request data
-    // ======================
-    const body = await req.json()
-
-    const { income, expense, profit, oldTax, newTax, adaTax } = body
-
-    const prompt = `
-You are an Indian tax advisor.
-
-User data:
-Income: ₹${income}
-Expense: ₹${expense}
-Profit: ₹${profit}
-Old tax: ₹${oldTax}
-New tax: ₹${newTax}
-44ADA tax: ₹${adaTax}
-
-Give 5 short actionable tax saving tips.
-Be simple. Bullet points only.
-`
-
-    // ======================
-    // OpenAI call
-    // ======================
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
+    return NextResponse.json({
+      status: "ok",
+      message: "AI gateway active",
     })
-
-    const advice = response.choices[0].message.content
-
-    return NextResponse.json({ advice })
-  } catch (error) {
-    console.error(error)
-
-    return NextResponse.json(
-      { error: "AI processing failed" },
-      { status: 500 }
-    )
+  } catch {
+    return NextResponse.json({ status: "error" }, { status: 500 })
   }
 }

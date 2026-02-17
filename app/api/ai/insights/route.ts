@@ -1,122 +1,49 @@
-// ==========================================================
-// HisabDesk — AI Insights API (SERVER SAFE • FINAL)
-// ==========================================================
-
-import { NextResponse } from "next/server"
-
-/* ✅ MUST use server client — NOT browser client */
-import { createClient } from "@/lib/supabase/server"
-
-import { safeRunAI } from "@/lib/ai/safeRunAI"
-import {
-  FINANCE_SYSTEM_PROMPT,
-  MODULE_INSIGHT_PROMPT,
-} from "@/lib/ai/prompts"
-
-import { buildAIContext } from "@/lib/modules/personal"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
+import { runAI } from "@/lib/ai/openai"
 
 export const dynamic = "force-dynamic"
 
-/* =========================================================
-   AUTH (SERVER SESSION)
-========================================================= */
-
-async function getUser() {
-  const supabase = createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) throw new Error("Unauthorized")
-
-  return { user, supabase }
-}
-
-/* =========================================================
-   POST
-========================================================= */
-
 export async function POST() {
   try {
-    const { user, supabase } = await getUser()
+    const supabase = getSupabaseAdmin()
 
-    /* ------------------------------------------------------
-       SINGLE SOURCE → transactions table
-    ------------------------------------------------------ */
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    const { data: tx } = await supabase
+    if (!user)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const { data: transactions } = await supabase
       .from("transactions")
-      .select("amount,type,category")
+      .select("amount,type")
       .eq("user_id", user.id)
-
-    const transactions = tx || []
 
     let income = 0
     let expense = 0
 
-    const categoryMap: Record<string, number> = {}
-
-    for (const t of transactions) {
+    for (const t of transactions || []) {
       const amt = Number(t.amount)
-
       if (t.type === "income") income += amt
       else expense += amt
-
-      if (t.type === "expense") {
-        const cat = t.category || "Misc"
-        categoryMap[cat] = (categoryMap[cat] || 0) + amt
-      }
     }
 
-    const savingsRate =
-      income > 0 ? Math.round(((income - expense) / income) * 100) : 0
-
-    /* ------------------------------------------------------
-       Build Context
-    ------------------------------------------------------ */
-
-    const ctx = buildAIContext({
-      income,
-      expense,
-      savingsRate,
-    })
-
     const prompt = `
-User Financial Snapshot:
-${ctx}
+Financial Snapshot:
+income=${Math.round(income)}
+expense=${Math.round(expense)}
 
-Expense Categories:
-${JSON.stringify(categoryMap)}
-
-Give:
-- overspending alerts
-- savings improvements
-- 3–5 short bullets only
-
-${MODULE_INSIGHT_PROMPT}
+Give 3 short financial improvement tips.
 `
 
-    /* ------------------------------------------------------
-       SAFE AI CALL
-    ------------------------------------------------------ */
-
-    const result = await safeRunAI({
-      userId: user.id,
+    const result = await runAI({
       prompt,
       type: "module",
-      system: FINANCE_SYSTEM_PROMPT,
-      module: "dashboard-insights",
     })
 
-    return NextResponse.json({
-      text: result.text,   // ← matches Insights page expectation
-    })
-  } catch (e) {
-    console.error("AI insights error:", e)
-
-    return NextResponse.json({
-      text: "Unable to generate insights right now.",
-    })
+    return NextResponse.json({ text: result.text })
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }

@@ -1,9 +1,9 @@
-"use client"
+ï»¿"use client"
 
 /**
  * =========================================================
  * Global Route Loading (Production Hardened)
- * HisabDesk – Stability Phase
+ * HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Stability Phase
  * =========================================================
  *
  * PURPOSE
@@ -51,3 +51,4 @@ export default function Loading() {
     </div>
   )
 }
+

@@ -1,149 +1,90 @@
-// ==========================================================
-// HisabDesk — AI Automation Advice Route
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Automation Advice Route (PFOS-Compliant)
 // ----------------------------------------------------------
 // PURPOSE
-//   AI insights for Automation page
+//   Generate automation suggestions using behavioural signals
+//   derived from Reports domain (NOT raw transactions).
 //
-//   Helps user:
-//     • detect recurring expenses
-//     • suggest auto rules
-//     • reduce manual tracking
+// FLOW (Correct Architecture)
+//   Route ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Reports Service ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Engine Output ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ withAI ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Response
 //
-// FLOW
-//   DB → transactions → automationAdvisor → compact prompt → AI
-//
-// RULES
-//   ✓ server-side only
-//   ✓ cheap model (module → GPT-3.5)
-//   ✓ short bullets only
-//   ✓ token efficient
-//   ✓ logs usage
+// RULES ENFORCED
+//   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ No DB access here
+//   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ No direct Supabase usage
+//   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ No raw transactions to AI
+//   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ AI only via withAI()
+//   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Domain layer remains source of truth
 // ==========================================================
 
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
-
-import { getTransactionsByRange } from "@/lib/api/transactions"
-import { detectAutomationSuggestions } from "@/lib/modules/personal"
-import { safeRunAI } from "@/lib/ai/safeRunAI"
-
+import { withAI } from "@/lib/ai/withAI"
+import { getReportsService } from "@/lib/api/reports/reports.service"
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
+/* =========================================================
+POST /api/ai/automation-advice
+========================================================= */
 
-// ==========================================================
-// AUTH
-// ==========================================================
+export const POST = withAI(async ({ user, safeRun }) => {
+  const reportsService = getReportsService()
 
-async function getUser() {
-const {
-data: { user },
-} = await supabase.auth.getUser()
+  // -------------------------------------------------------
+  // Use last 90 days (pattern detection window)
+  // -------------------------------------------------------
 
-if (!user) throw new Error("Unauthorized")
+  const reports = await reportsService.getReports({
+    userId: user.id,
+    range: "90d",
+  })
 
-return user
-}
+  // -------------------------------------------------------
+  // Derive automation signals from domain output
+  // (NO financial math ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â interpretation only)
+  // -------------------------------------------------------
 
-// ==========================================================
-// POST
-// ==========================================================
+  const recurringCategories = reports.expenseByCategory
+    .filter((c) => c.percent >= 10) // behaviour signal threshold
+    .slice(0, 5)
 
-export async function POST() {
-try {
-const user = await getUser()
+  const expenseLoad = reports.kpis.expense
+  const savingsRate = reports.kpis.savingsRate
 
-```
-const today = new Date()
+  // -------------------------------------------------------
+  // AI Prompt (domain-informed, not row-based)
+  // -------------------------------------------------------
 
-// last 3 months for pattern detection
-const start = new Date(
-  today.getFullYear(),
-  today.getMonth() - 3,
-  1
-)
-  .toISOString()
-  .split("T")[0]
+  const prompt = `
+User Financial Behaviour Snapshot:
 
-const end = today.toISOString().split("T")[0]
+Top Expense Categories:
+${recurringCategories
+  .map((c) => `- ${c.category}: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${c.amount}`)
+  .join("\n")}
 
-// ------------------------------------------------------
-// Fetch transactions
-// ------------------------------------------------------
+Monthly Expense Load: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${expenseLoad}
+Savings Rate: ${savingsRate}%
 
-const tx = await getTransactionsByRange(
-  user.id,
-  start,
-  end
-)
+Task:
+Give 4 short actionable suggestions to automate finances,
+reduce manual tracking, and stabilise savings behaviour.
 
-const mapped = tx.map((t: any) => ({
-  description: t.description,
-  amount: t.amount,
-  category_id: t.category_id,
-  date: t.date,
-  type: t.type,
-}))
-
-// ------------------------------------------------------
-// Detect recurring patterns
-// ------------------------------------------------------
-
-const suggestions = detectAutomationSuggestions(mapped)
-
-const monthlyCount = suggestions.filter(
-  (s) => s.frequency === "monthly"
-).length
-
-const weeklyCount = suggestions.filter(
-  (s) => s.frequency === "weekly"
-).length
-
-const possibleAutoTotal = suggestions.reduce(
-  (sum, s) =>
-    sum +
-    (s.frequency === "monthly"
-      ? s.amount
-      : s.amount * 4),
-  0
-)
-
-// ------------------------------------------------------
-// Prompt (compact)
-// ------------------------------------------------------
-
-const prompt = `
-```
-
-Automation Metrics:
-monthlyRecurring=${monthlyCount}
-weeklyRecurring=${weeklyCount}
-possibleAutoAmount=${Math.round(possibleAutoTotal)}
-
-Give 4 short bullet tips to automate finances and reduce manual work.
+Rules:
+- No assumptions
+- No new numbers
+- Use only given data
+- Keep concise (bullet points)
 `
 
-```
-// ------------------------------------------------------
-// SAFE AI CALL (centralized + guarded + logged)
-// ------------------------------------------------------
+  // -------------------------------------------------------
+  // AI Execution (centralised guardrail)
+  // -------------------------------------------------------
 
-const result = await safeRunAI({
-  userId: user.id,
-  prompt,
-  type: "module",
-  module: "automation-advice",
+  const result = await safeRun({
+    prompt,
+    type: "module",
+    module: "automation-advice",
+  })
+
+  return {
+    insights: result.text,
+  }
 })
-
-return NextResponse.json({
-  insights: result.text,
-})
-```
-
-} catch (e: any) {
-return NextResponse.json(
-{ error: e.message },
-{ status: 401 }
-)
-}
-}

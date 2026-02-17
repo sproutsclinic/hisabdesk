@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+ï»¿import { getSupabaseAdmin } from "@/lib/supabase/gateway";
 
 export const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

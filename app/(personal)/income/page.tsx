@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
@@ -94,7 +94,7 @@ export default function IncomePage() {
       <div className="p-4 bg-green-50 border rounded-xl">
         <p className="text-sm text-muted-foreground">Filtered Total</p>
         <p className="text-xl font-semibold text-green-700">
-          ₹ {total.toLocaleString("en-IN")}
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {total.toLocaleString("en-IN")}
         </p>
       </div>
 
@@ -149,7 +149,7 @@ export default function IncomePage() {
                 </div>
 
                 <p className="text-green-600 font-semibold">
-                  ₹ {r.amount.toLocaleString("en-IN")}
+                  ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {r.amount.toLocaleString("en-IN")}
                 </p>
               </div>
             </Link>

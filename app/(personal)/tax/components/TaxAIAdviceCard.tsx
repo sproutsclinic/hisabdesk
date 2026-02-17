@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — TaxAIAdviceCard
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â TaxAIAdviceCard
    UI ONLY COMPONENT
    ========================================================= */
 
@@ -7,7 +7,7 @@
 
 import { Card } from "@/components/ui/card"
 
-/* ✅ FIXED PATH (file is useTax.ts) */
+/* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ FIXED PATH (file is useTax.ts) */
 import { useTaxAI } from "@/hooks/useTax"
 
 interface Props {

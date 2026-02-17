@@ -1,33 +1,12 @@
-// ==========================================================
-// HisabDesk — AI Bill Optimizer Route
-// ----------------------------------------------------------
-// PURPOSE
-//   AI insights for Bills / Subscriptions page
-//
-// FLOW
-//   DB → bills → subscriptionAdvisor → compact prompt → AI
-//
-// RULES
-//   ✓ server-side only
-//   ✓ GPT-3.5 (module type)
-//   ✓ short bullets only
-//   ✓ token efficient
-//   ✓ logs usage
-// ==========================================================
-
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { listBills } from "@/lib/api/bills"
 import { analyzeSubscriptions } from "@/lib/modules/personal"
 import { runAI } from "@/lib/ai/openai"
 
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
-
-// ==========================================================
-// AUTH
-// ==========================================================
+const supabase = getSupabaseAdmin()
 
 async function getUser() {
   const {
@@ -35,21 +14,12 @@ async function getUser() {
   } = await supabase.auth.getUser()
 
   if (!user) throw new Error("Unauthorized")
-
   return user
 }
-
-// ==========================================================
-// POST
-// ==========================================================
 
 export async function POST() {
   try {
     const user = await getUser()
-
-    // ------------------------------------------------------
-    // Fetch bills
-    // ------------------------------------------------------
 
     const bills = await listBills(user.id)
 
@@ -61,27 +31,18 @@ export async function POST() {
       isActive: true,
     }))
 
-    // ------------------------------------------------------
-    // Analyze
-    // ------------------------------------------------------
-
-    // NOTE:
-    // We don't know exact income here → pass 1 to avoid divide by zero
     const summary = analyzeSubscriptions(subscriptions, 1)
 
     const expensiveCount = summary.advices.filter(
-      (a) => a.status !== "normal"
+      (a: any) => a.status !== "normal"
     ).length
 
     const totalMonthly = summary.totalMonthlyCost
+
     const potentialSave = summary.advices.reduce(
-      (s, a) => s + a.suggestedSaving,
+      (s: number, a: any) => s + a.suggestedSaving,
       0
     )
-
-    // ------------------------------------------------------
-    // Prompt (compact)
-    // ------------------------------------------------------
 
     const prompt = `
 Bills Metrics:
@@ -93,32 +54,21 @@ possibleSave=${Math.round(potentialSave)}
 Give 4 short bullet tips to reduce subscription waste.
 `
 
-    // ------------------------------------------------------
-    // AI call
-    // ------------------------------------------------------
-
     const result = await runAI({
       prompt,
       type: "module",
     })
 
-    // ------------------------------------------------------
-    // Log usage
-    // ------------------------------------------------------
-
     await supabase.from("ai_logs").insert({
       user_id: user.id,
       module: "bill-optimizer",
-      tokens: result.usage?.total_tokens ?? 0,
+      tokens: result.tokens,
     })
 
     return NextResponse.json({
       insights: result.text,
     })
   } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: e.message }, { status: 401 })
   }
 }

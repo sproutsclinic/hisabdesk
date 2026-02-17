@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — Portfolio Service (DB LAYER)
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Portfolio Service (DB LAYER)
    ---------------------------------------------------------
    SERVER SIDE ONLY
 
@@ -11,21 +11,20 @@
 
    ARCHITECTURE
      route
-       ↓
+       ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“
      service (THIS FILE)
-       ↓
+       ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“
      engine (pure math)
 
    RULES
-   ✅ DB calls allowed
-   ✅ calls engine
-   ❌ no business math
-   ❌ no OpenAI
-   ❌ no client usage
-
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ DB calls allowed
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ calls engine
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ no business math
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ no OpenAI
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ no client usage
    ========================================================= */
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 import type {
   AssetRow,
@@ -53,8 +52,6 @@ function getServiceClient() {
 
 const TABLE = "assets"
 
-
-
 /* =========================================================
    CRUD
    ========================================================= */
@@ -73,6 +70,17 @@ export async function listAssets(
   if (error) throw error
 
   return (data || []) as AssetRow[]
+}
+
+/* ---------------------------------------------------------
+   COMPATIBILITY EXPORT
+   Routes still call "listInvestments"
+   --------------------------------------------------------- */
+
+export async function listInvestments(
+  userId: string,
+): Promise<AssetRow[]> {
+  return listAssets(userId)
 }
 
 export async function createAsset(
@@ -130,8 +138,6 @@ export async function deleteAsset(
 
   if (error) throw error
 }
-
-
 
 /* =========================================================
    OVERVIEW (dashboard use)

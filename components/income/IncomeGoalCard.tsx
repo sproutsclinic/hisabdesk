@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 
@@ -45,7 +45,7 @@ export default function IncomeGoalCard() {
       {/* Progress */}
       <div>
         <p className="text-xs text-muted-foreground mb-1">
-          Target ₹ {data.target || 0}
+          Target ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {data.target || 0}
         </p>
 
         <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
@@ -83,7 +83,7 @@ function Kpi({ label, value }: any) {
     <div>
       <p className="text-muted-foreground text-xs">{label}</p>
       <p className="font-semibold">
-        ₹ {Number(value).toLocaleString("en-IN")}
+        ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {Number(value).toLocaleString("en-IN")}
       </p>
     </div>
   )

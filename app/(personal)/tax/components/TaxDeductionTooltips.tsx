@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — TaxDeductionTooltips
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â TaxDeductionTooltips
    ---------------------------------------------------------
    UI ONLY HELPER COMPONENT
 
@@ -16,10 +16,10 @@
      <TaxDeductionTooltip code="80C" />
 
    RULES
-   ✅ Presentational only
-   ✅ Static content only
-   ✅ No hooks
-   ✅ No side effects
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Presentational only
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Static content only
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ No hooks
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ No side effects
 
    ========================================================= */
 
@@ -41,17 +41,17 @@ const MAP: Record<
   "80C": {
     title: "Section 80C",
     description:
-      "PF, PPF, ELSS, LIC, tuition fees. Maximum deduction ₹ 1,50,000.",
+      "PF, PPF, ELSS, LIC, tuition fees. Maximum deduction ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ 1,50,000.",
   },
   "80D": {
     title: "Section 80D",
     description:
-      "Health insurance premium. Standard limit ₹ 25,000 (higher for senior citizens).",
+      "Health insurance premium. Standard limit ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ 25,000 (higher for senior citizens).",
   },
   "80CCD": {
     title: "Section 80CCD(1B)",
     description:
-      "NPS additional contribution. Extra deduction up to ₹ 50,000.",
+      "NPS additional contribution. Extra deduction up to ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ 50,000.",
   },
   HRA: {
     title: "HRA",
@@ -61,7 +61,7 @@ const MAP: Record<
   HOME_LOAN: {
     title: "Home Loan Interest",
     description:
-      "Interest paid on housing loan. Commonly deductible up to ₹ 2,00,000.",
+      "Interest paid on housing loan. Commonly deductible up to ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ 2,00,000.",
   },
   OTHER: {
     title: "Other",

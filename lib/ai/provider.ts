@@ -1,58 +1,54 @@
-// ==========================================================
-// HisabDesk — AI Provider Abstraction
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Provider Abstraction (FINAL)
 // ----------------------------------------------------------
-// PURPOSE
-//   Provider abstraction layer for AI engines
-//
-//   Today:
-//     OpenAI
-//
-//   Tomorrow:
-//     Anthropic / Groq / Local / Azure / etc.
-//
-//   By routing ALL calls through this interface,
-//   you can switch providers without touching:
-//
-//     ✓ routes
-//     ✓ services
-//     ✓ business logic
-//
-//   Only this file + openai.ts change.
-//
+// Single contract aligned with openai.ts
 // ==========================================================
 
-import type { AIRunType, AIResult } from "./types"
-import { runAI as openaiRun } from "./openai"
+import { runAI, type AIRunType } from "./openai"
 
-// ==========================================================
-// TYPES
-// ==========================================================
+/* =========================================================
+   STANDARD RESULT (single shape across app)
+========================================================= */
+
+export type AIResult = {
+  text: string
+  tokens: number
+}
+
+/* =========================================================
+   PROVIDER INTERFACE
+========================================================= */
 
 export interface AIProvider {
   run(params: {
     prompt: string
-    type: AIRunType
+    type?: AIRunType
     system?: string
   }): Promise<AIResult>
 }
 
-// ==========================================================
-// OPENAI PROVIDER (current)
-// ==========================================================
+/* =========================================================
+   OPENAI PROVIDER (current engine)
+========================================================= */
 
 class OpenAIProvider implements AIProvider {
   async run(params: {
     prompt: string
-    type: AIRunType
+    type?: AIRunType
     system?: string
-  }) {
-    return openaiRun(params)
+  }): Promise<AIResult> {
+    // system is ignored for now (kept for future extensibility)
+
+    return runAI({
+      prompt: params.prompt,
+      type: params.type ?? "cheap",
+    })
   }
 }
 
-// ==========================================================
-// FACTORY
-// ==========================================================
+/* =========================================================
+   FACTORY (swappable later)
+========================================================= */
 
 let provider: AIProvider = new OpenAIProvider()
 
@@ -60,16 +56,9 @@ export function getProvider(): AIProvider {
   return provider
 }
 
-// ==========================================================
-// FUTURE EXTENSIBILITY
-// ==========================================================
-//
-// Example:
-//
+/* =========================================================
+   FUTURE (multi-provider ready)
+========================================================= */
 // export function setProvider(p: AIProvider) {
 //   provider = p
 // }
-//
-// Then you could swap engines at runtime.
-//
-// ==========================================================

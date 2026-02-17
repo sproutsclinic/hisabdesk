@@ -1,26 +1,23 @@
-import { NextResponse } from "next/server"
+ï»¿import { NextResponse } from "next/server"
 import crypto from "crypto"
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /* =================================================
-   RAZORPAY WEBHOOK — FINAL PRODUCTION (HisabDesk)
+   RAZORPAY WEBHOOK â€” FINAL (HisabDesk Hardened)
 
    Handles:
-   ✅ subscription.activated
-   ✅ subscription.charged
-   ✅ payment.captured
-   ✅ subscription.cancelled
+   - subscription.activated
+   - subscription.charged
+   - payment.captured
+   - subscription.cancelled
 
    Features:
-   ✅ signature verified
-   ✅ auto Pro activation
-   ✅ extends expiry (monthly)
-   ✅ auto referral reward (both users)
-   ✅ idempotent safe
-   ✅ server trusted only
-
-   ENV:
-   RAZORPAY_WEBHOOK_SECRET
+   - Signature verified
+   - Auto Pro activation
+   - Extends expiry safely
+   - Referral reward (first payment only)
+   - Idempotent
+   - Uses CENTRAL Supabase Gateway (NO direct client)
 ================================================= */
 
 export async function POST(req: Request) {
@@ -45,13 +42,8 @@ export async function POST(req: Request) {
 
     const event = JSON.parse(rawBody)
 
-    /* ================= SUPABASE ================= */
-
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { auth: { persistSession: false } }
-    )
+    /* ================= CENTRAL DB CLIENT ================= */
+    const supabase = getSupabaseAdmin()
 
     /* ================= EXTRACT USER ================= */
 
@@ -60,7 +52,7 @@ export async function POST(req: Request) {
       event?.payload?.payment?.entity?.notes?.userId
 
     if (!userId) {
-      return NextResponse.json({ ok: true }) // ignore safely
+      return NextResponse.json({ ok: true }) // safely ignore unknown events
     }
 
     /* ================= HELPERS ================= */
@@ -78,7 +70,7 @@ export async function POST(req: Request) {
     ]
 
     /* =================================================
-       🔒 PRO ACTIVATION + EXTEND EXPIRY
+       PRO ACTIVATION / EXTENSION
     ================================================= */
 
     if (upgradeEvents.includes(event.event)) {
@@ -99,9 +91,7 @@ export async function POST(req: Request) {
         })
         .eq("id", userId)
 
-      /* =================================================
-         🎁 AUTO REFERRAL REWARD (FIRST PAYMENT ONLY)
-      ================================================= */
+      /* ================= REFERRAL REWARD (FIRST PAYMENT) ================= */
 
       if (!profile?.referral_used && profile?.referred_by) {
         const code = profile.referred_by
@@ -118,9 +108,7 @@ export async function POST(req: Request) {
           await Promise.all([
             supabase
               .from("profiles")
-              .update({
-                referral_used: true,
-              })
+              .update({ referral_used: true })
               .eq("id", userId),
 
             supabase
@@ -136,7 +124,7 @@ export async function POST(req: Request) {
     }
 
     /* =================================================
-       CANCEL / EXPIRE
+       CANCEL EVENT
     ================================================= */
 
     if (event.event === "subscription.cancelled") {
@@ -148,7 +136,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error(err)
+    console.error("Webhook error:", err)
     return NextResponse.json({ error: "Webhook failed" }, { status: 500 })
   }
 }

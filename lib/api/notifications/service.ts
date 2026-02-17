@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import type { NotificationRow } from "./types"
 
 const supabase = createClient(

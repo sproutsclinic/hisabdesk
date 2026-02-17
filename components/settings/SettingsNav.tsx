@@ -1,9 +1,9 @@
-"use client"
+ï»¿"use client"
 
 import { useState } from "react"
 
 /*
-  PHASE 18 — Settings Navigation Tabs
+  PHASE 18 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Settings Navigation Tabs
 
   Reusable section switcher for enterprise settings
 */

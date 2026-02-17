@@ -1,5 +1,5 @@
-/*
-  PHASE 18 — System Health Checker
+ï»¿/*
+  PHASE 18 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â System Health Checker
 
   Central place to report enterprise features enabled.
   Used by admin dashboard/status cards.

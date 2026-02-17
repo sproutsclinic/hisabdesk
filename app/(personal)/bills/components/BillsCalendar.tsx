@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 import type { BillComputed } from "@/lib/api/bills/types"
@@ -38,7 +38,7 @@ export default function BillsCalendar({ rows }: Props) {
 
               {bills.map((b) => (
                 <div key={b.id} className="text-[10px]">
-                  ₹{Math.round(b.amount)} {b.name}
+                  ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹{Math.round(b.amount)} {b.name}
                 </div>
               ))}
             </div>

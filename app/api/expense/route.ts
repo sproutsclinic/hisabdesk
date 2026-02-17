@@ -1,20 +1,20 @@
-/* =========================================================
-   HisabDesk — Expense List API
+ï»¿/* =========================================================
+   HisabDesk â€” Expense List API
    ---------------------------------------------------------
-   ✓ server only
-   ✓ auth based
-   ✓ returns rows for expense page
-   ✓ NO AI
+   âœ“ server only
+   âœ“ auth based
+   âœ“ returns rows for expense page
+   âœ“ NO AI
 ========================================================= */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
 export async function GET() {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },

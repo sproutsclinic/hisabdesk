@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
@@ -13,7 +13,7 @@ import {
 } from "lucide-react"
 
 /* ========================================
-   ADMIN — METRICS DASHBOARD
+   ADMIN ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â METRICS DASHBOARD
 ======================================== */
 
 export default function AdminMetricsPage() {
@@ -55,7 +55,7 @@ export default function AdminMetricsPage() {
   const conversion =
     users > 0 ? ((proUsers / users) * 100).toFixed(1) : "0"
 
-  /* ✅ FIXED price */
+  /* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ FIXED price */
   const revenue = proUsers * 499
 
   /* ================= UI ================= */
@@ -90,7 +90,7 @@ export default function AdminMetricsPage() {
         <MetricCard
           icon={<IndianRupee size={18} />}
           label="Monthly Revenue"
-          value={`₹ ${revenue.toLocaleString("en-IN")}`}
+          value={`ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ ${revenue.toLocaleString("en-IN")}`}
         />
 
       </div>

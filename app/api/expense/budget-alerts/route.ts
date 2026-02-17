@@ -1,20 +1,20 @@
-/* =========================================================
+ï»¿/* =========================================================
    Expense Budget Alerts API
    ---------------------------------------------------------
    Detects:
-   ✓ near limit (>80%)
-   ✓ over budget (>100%)
+   âœ“ near limit (>80%)
+   âœ“ over budget (>100%)
    Pure server analytics (no AI cost)
 ========================================================= */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
 export async function GET() {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },

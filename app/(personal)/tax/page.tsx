@@ -1,9 +1,9 @@
-"use client"
+ï»¿"use client"
 
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 
-/* ✅ YOUR PROJECT ONLY HAS THIS */
+/* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ AI Hook (ONLY for advice now) */
 import { useTaxAI } from "@/hooks/useTax"
 
 import TaxAIAdviceCard from "./components/TaxAIAdviceCard"
@@ -14,6 +14,8 @@ import TaxSummaryCard from "./components/TaxSummaryCard"
 import TaxHistoryTable from "./components/TaxHistoryTable"
 import TaxComparisonChart from "./components/TaxComparisonChart"
 import TaxDeductionTooltip from "./components/TaxDeductionTooltips"
+
+import type { TaxComputationResult } from "@/lib/api/tax/types"
 
 /* ========================================================= */
 
@@ -38,14 +40,13 @@ const emptyDeduction: NumMap = {
 /* ========================================================= */
 
 export default function TaxPage() {
-  /* ✅ useTaxAI directly */
-  const {
-    calculate,
-    result,
-    loading,
-    history,
-    fetchLatest,
-  } = useTaxAI("2024-25")
+  /* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ AI ONLY */
+  const { getAdvice, message, loading: aiLoading, reset } = useTaxAI("2024-25")
+
+  /* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Deterministic computation state */
+  const [result, setResult] = useState<TaxComputationResult | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [age, setAge] = useState(30)
   const [filingStatus, setFilingStatus] = useState("individual")
@@ -59,18 +60,45 @@ export default function TaxPage() {
   const handleDeduction = (key: string, value: number) =>
     setDeductions((s) => ({ ...s, [key]: value }))
 
+  /* =========================================================
+     TAX CALCULATION (API ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â NOT AI)
+  ========================================================= */
+
   const runCalculation = async () => {
-    await calculate({
-      age,
-      filingStatus: filingStatus as any,
-      income: income as any,
-      deductions: deductions as any,
-    })
+    try {
+      setLoading(true)
+      setError(null)
+      reset()
+
+      const res = await fetch("/api/tax/compute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          age,
+          filingStatus,
+          income,
+          deductions,
+        }),
+      })
+
+      if (!res.ok) throw new Error("Failed to compute tax")
+
+      const json: TaxComputationResult = await res.json()
+      setResult(json)
+
+      /* Ask AI AFTER calculation */
+      await getAdvice()
+    } catch (e: any) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
+
+  /* ========================================================= */
 
   return (
     <div className="space-y-6 p-6">
-
       <div>
         <h1 className="text-2xl font-semibold">Tax Planner</h1>
         <p className="text-sm text-muted-foreground">
@@ -130,18 +158,11 @@ export default function TaxPage() {
               <input
                 type="number"
                 value={deductions[k]}
-                onChange={(e) =>
-                  handleDeduction(k, Number(e.target.value))
-                }
+                onChange={(e) => handleDeduction(k, Number(e.target.value))}
                 className="border rounded p-2 w-full"
               />
 
-              {k === "section80C" && <TaxDeductionTooltip code="80C" />}
-              {k === "section80D" && <TaxDeductionTooltip code="80D" />}
-              {k === "section80CCD" && <TaxDeductionTooltip code="80CCD" />}
-              {k === "hra" && <TaxDeductionTooltip code="HRA" />}
-              {k === "homeLoanInterest" && <TaxDeductionTooltip code="HOME_LOAN" />}
-              {k === "other" && <TaxDeductionTooltip code="OTHER" />}
+              <TaxDeductionTooltip code={k.toUpperCase()} />
             </div>
           ))}
         </div>
@@ -155,6 +176,8 @@ export default function TaxPage() {
         {loading ? "Calculating..." : "Calculate Tax"}
       </button>
 
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+
       {result && (
         <>
           <TaxSummaryCard result={result} />
@@ -166,11 +189,9 @@ export default function TaxPage() {
             <TaxShareEmailButton result={result} financialYear="2024-25" />
           </div>
 
-          <TaxAIAdviceCard financialYear="2024-25" />
+         <TaxAIAdviceCard financialYear="2024-25" />
         </>
       )}
-
-      <TaxHistoryTable rows={history} />
     </div>
   )
 }

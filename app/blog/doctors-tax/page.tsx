@@ -1,4 +1,4 @@
-import Link from "next/link"
+ï»¿import Link from "next/link"
 import EmailCapture from "@/components/EmailCapture"
 
 export const metadata = {
@@ -25,7 +25,7 @@ export default function Page() {
 
       <p className="text-gray-600">
         Many doctors unknowingly overpay taxes every year.
-        With the right strategy and proper tracking, you can legally reduce your tax by 30–50%.
+        With the right strategy and proper tracking, you can legally reduce your tax by 30ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“50%.
       </p>
 
 
@@ -34,7 +34,7 @@ export default function Page() {
         <p>
           Whether you run a clinic, work as a consultant or practice privately,
           managing taxes can feel complicated. Most doctors depend fully on CAs
-          and only calculate tax at year-end — which leads to mistakes and missed savings.
+          and only calculate tax at year-end ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â which leads to mistakes and missed savings.
         </p>
 
         <p>
@@ -56,8 +56,8 @@ export default function Page() {
         <div className="bg-gray-50 p-4 rounded-xl">
           <p className="font-medium">Example:</p>
           <ul className="list-disc pl-6 text-sm mt-2">
-            <li>Total income = ₹30,00,000</li>
-            <li>Taxable income = ₹15,00,000 only</li>
+            <li>Total income = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹30,00,000</li>
+            <li>Taxable income = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹15,00,000 only</li>
             <li>You save thousands in tax</li>
           </ul>
         </div>
@@ -122,7 +122,7 @@ export default function Page() {
           href="/dashboard"
           className="inline-block bg-black text-white px-6 py-3 rounded-xl font-medium hover:opacity-90"
         >
-          Start Free →
+          Start Free ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢
         </Link>
       </section>
 

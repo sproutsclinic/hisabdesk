@@ -1,9 +1,5 @@
-// ==========================================================
-// HisabDesk — Dashboard Snapshot API
-// ==========================================================
-
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase" // ✅ FIX: server client
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
@@ -13,14 +9,13 @@ export const dynamic = "force-dynamic"
 
 export async function GET() {
   try {
-    const supabase = createClient() // ✅ create per request (server safe)
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-      // ✅ never break dashboard
       return NextResponse.json({
         income: 0,
         expense: 0,

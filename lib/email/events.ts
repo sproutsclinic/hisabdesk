@@ -1,4 +1,4 @@
-import { triggerEmail } from "./client"
+ï»¿import { triggerEmail } from "./client"
 
 /*
   Central reusable helpers

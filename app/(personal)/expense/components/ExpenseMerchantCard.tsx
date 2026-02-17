@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 
@@ -18,7 +18,7 @@ export default function ExpenseMerchantCard({
           <div key={m.name} className="bg-red-50 rounded-lg p-2 text-center">
             <p className="text-xs text-gray-500">{m.name}</p>
             <p className="font-semibold text-red-600">
-              ₹ {m.value.toLocaleString("en-IN")}
+              ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {m.value.toLocaleString("en-IN")}
             </p>
           </div>
         ))}

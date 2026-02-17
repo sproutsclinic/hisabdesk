@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { cn } from "@/lib/utils"
 import { CheckCircle2, AlertCircle, Info, X } from "lucide-react"
@@ -22,6 +22,7 @@ export { useToast } from "@/components/providers/ToastProvider"
 export type ToastVariant = "success" | "error" | "info"
 
 interface Props {
+  type?: 'success' | 'error' | 'info'
   message: string
   variant?: ToastVariant
 
@@ -44,12 +45,12 @@ const styles: Record<ToastVariant, string> = {
    COMPONENT (visual only)
    Enterprise Hardened
 
-   ✅ smooth animation
-   ✅ dismiss button
-   ✅ mobile safe
-   ✅ accessibility compliant
-   ✅ long text safe
-   ✅ pointer safe
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ smooth animation
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ dismiss button
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ mobile safe
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ accessibility compliant
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ long text safe
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ pointer safe
 ========================================================== */
 
 export default function Toast({
@@ -120,3 +121,4 @@ export default function Toast({
     </div>
   )
 }
+

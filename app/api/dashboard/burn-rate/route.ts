@@ -1,35 +1,13 @@
-// ==========================================================
-// HisabDesk — Dashboard Burn Rate API
-// ----------------------------------------------------------
-// PURPOSE
-//   Calculates spending burn metrics
-//
-//   Returns:
-//     ✓ burnRate (%)      → expense / income
-//     ✓ monthlyExpense
-//     ✓ monthlyIncome
-//     ✓ runwayMonths      → how long savings last
-//
-//   Used by:
-//     ✓ Dashboard alerts
-//     ✓ Wealth planner
-//     ✓ AI context injection
-//
-//   RULES
-//     ✓ server-side only
-//     ✓ transactions = single source of truth
-//     ✓ NO AI calls
-//     ✓ fast math only
-//     ✓ auth based
-//
+ï»¿// ==========================================================
+// HisabDesk â€” Dashboard Burn Rate API
 // ==========================================================
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
+const supabase = getSupabaseAdmin()
 
 // ==========================================================
 // AUTH
@@ -63,20 +41,12 @@ export async function GET() {
   try {
     const user = await getUser()
 
-    // ------------------------------------------------------
-    // Load transactions
-    // ------------------------------------------------------
-
     const { data } = await supabase
       .from("transactions")
       .select("amount,type,date")
       .eq("user_id", user.id)
 
     const tx = data || []
-
-    // ------------------------------------------------------
-    // Current month only
-    // ------------------------------------------------------
 
     const nowKey = monthKey(new Date())
 
@@ -92,10 +62,6 @@ export async function GET() {
       else expense += amt
     }
 
-    // ------------------------------------------------------
-    // Burn calculations
-    // ------------------------------------------------------
-
     const burnRate =
       income > 0
         ? Math.round((expense / income) * 100)
@@ -105,10 +71,6 @@ export async function GET() {
       expense > 0
         ? Math.round((income - expense) / expense)
         : 0
-
-    // ------------------------------------------------------
-    // Response
-    // ------------------------------------------------------
 
     return NextResponse.json({
       monthlyIncome: income,

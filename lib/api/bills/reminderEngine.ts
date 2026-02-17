@@ -1,4 +1,4 @@
-import type { BillComputed } from "./types"
+ï»¿import type { BillComputed } from "./types"
 
 export function getUpcomingReminders(rows: BillComputed[]) {
   const today = new Date()

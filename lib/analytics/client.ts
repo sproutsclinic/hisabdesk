@@ -1,9 +1,9 @@
-/*
+ï»¿/*
   Client helper that automatically attaches Supabase auth token
   so events are linked to user_id
 */
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 
@@ -37,7 +37,7 @@ export default function UserActivityDrawer({
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm font-semibold">User Activity</h2>
           <button onClick={onClose} className="text-xs">
-            ✕
+            ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢
           </button>
         </div>
 

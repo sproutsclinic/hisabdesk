@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },

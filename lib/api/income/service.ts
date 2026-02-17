@@ -1,24 +1,24 @@
-/* =========================================================
-   HisabDesk — Income Service (DB layer ONLY)
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Income Service (DB layer ONLY)
    ---------------------------------------------------------
    RESPONSIBILITY
    - All DB access
    - Aggregations
    - NO business rules outside this file
 
-   ROUTE → service → DB
+   ROUTE ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ service ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ DB
 
    RULES
-   ✓ server only
-   ✓ supabase only here
-   ✓ aggregation allowed
-   ✗ no UI
-   ✗ no AI
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ server only
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ supabase only here
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ aggregation allowed
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â no UI
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â no AI
 ========================================================= */
 
 "use server"
 
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 import type {
   CreateIncomeRequest,
@@ -33,7 +33,7 @@ import type {
 export async function listIncome(
   userId: string,
 ): Promise<IncomeRow[]> {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const { data, error } = await supabase
     .from("incomes")
@@ -53,7 +53,7 @@ export async function listIncome(
 export async function getIncomeTotal(
   userId: string,
 ): Promise<number> {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const { data, error } = await supabase
     .from("incomes")
@@ -78,7 +78,7 @@ export async function createIncome(
   userId: string,
   payload: CreateIncomeRequest,
 ): Promise<IncomeRow> {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const { data, error } = await supabase
     .from("incomes")
@@ -105,7 +105,7 @@ export async function updateIncome(
   userId: string,
   payload: UpdateIncomeRequest,
 ): Promise<IncomeRow> {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const { data, error } = await supabase
     .from("incomes")
@@ -133,7 +133,7 @@ export async function deleteIncome(
   userId: string,
   id: string,
 ): Promise<void> {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const { error } = await supabase
     .from("incomes")

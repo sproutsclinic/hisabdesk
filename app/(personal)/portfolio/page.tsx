@@ -1,9 +1,12 @@
-"use client"
+ï»¿"use client"
 
 import { useMemo } from "react"
 
-/* ✅ ONLY REAL HOOKS */
-import { usePortfolioAI } from "@/hooks/usePortfolio"
+import type {
+  PortfolioAssetComputed,
+  PortfolioOverview,
+} from "@/lib/api/portfolio/types"
+
 import { usePortfolioFilters } from "@/hooks/usePortfolioFilters"
 
 import PortfolioSummaryCards from "./components/PortfolioSummaryCards"
@@ -16,44 +19,57 @@ import PortfolioEmptyState from "./components/PortfolioEmptyState"
 import PortfolioSIPAdviceCard from "./components/PortfolioSIPAdviceCard"
 import PortfolioXIRRCard from "./components/PortfolioXIRRCard"
 
-/* ========================================================= */
+/* =========================================================
+   TEMP PLACEHOLDER DATA (until backend hook is wired)
+   Must MATCH PortfolioOverview exactly
+   ========================================================= */
+
+const EMPTY_OVERVIEW: PortfolioOverview = {
+  assets: [],
+  summary: {
+    totalInvested: 0,
+    totalCurrent: 0,
+    totalPnL: 0,
+    totalReturnPercent: 0,
+  },
+}
 
 export default function PortfolioPage() {
+  /* -------------------------------------------------------
+     Using placeholder domain object (strict-mode safe)
+     ------------------------------------------------------- */
 
-  /* =======================================================
-     TEMP STATIC STATE (until real usePortfolio hook added)
-  ======================================================= */
+  const overview: PortfolioOverview = EMPTY_OVERVIEW
 
-  const assets: any[] = []
-  const overview = null
+  const assets: PortfolioAssetComputed[] = overview.assets
+
   const loading = false
-  const error = null
+  const error: string | null = null
 
-  const create = async () => {}
-  const remove = async () => {}
+  const create = async (_data: unknown) => {}
+  const remove = async (_id: string) => {}
 
-  /* =======================================================
-     FILTERING
-  ======================================================= */
+  /* -------------------------------------------------------
+     FILTERING (UI only)
+     ------------------------------------------------------- */
 
-  const {
-    rows: filteredRows,
-    setFilters,
-  } = usePortfolioFilters(assets as any)
+  const { rows: filteredRows, setFilters } =
+    usePortfolioFilters(assets)
 
   const types = useMemo(() => {
-    const set = new Set<string>()
-    assets?.forEach((a: any) => set.add(a.type))
-    return Array.from(set)
-  }, [assets])
+  const set = new Set<PortfolioAssetComputed["type"]>()
+
+  assets.forEach((a) => set.add(a.type))
+
+  return Array.from(set)
+}, [assets])
 
   /* =======================================================
      UI
-  ======================================================= */
+     ======================================================= */
 
   return (
     <div className="space-y-6 p-6">
-
       <div>
         <h1 className="text-2xl font-semibold">Portfolio</h1>
         <p className="text-sm text-muted-foreground">
@@ -61,10 +77,10 @@ export default function PortfolioPage() {
         </p>
       </div>
 
-      {overview && (
-        <PortfolioSummaryCards summary={overview.summary} />
-      )}
+      {/* Summary */}
+      <PortfolioSummaryCards summary={overview.summary} />
 
+      {/* Allocation Chart */}
       {assets.length > 0 && (
         <PortfolioAllocationChart rows={assets} />
       )}
@@ -87,15 +103,11 @@ export default function PortfolioPage() {
 
       {assets.length === 0 && <PortfolioEmptyState />}
 
-      {filteredRows?.length > 0 && (
-        <PortfolioTable
-          rows={filteredRows}
-          onDelete={remove}
-        />
+      {filteredRows.length > 0 && (
+        <PortfolioTable rows={filteredRows} onDelete={remove} />
       )}
 
       {assets.length > 0 && <PortfolioAIAdviceCard />}
-
     </div>
   )
 }

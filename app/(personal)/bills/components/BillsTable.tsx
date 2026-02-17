@@ -1,9 +1,9 @@
-/* =========================================================
-   HisabDesk — BillsTable
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â BillsTable
    ---------------------------------------------------------
    UI ONLY
    List all bills
-   ❌ no logic
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ no logic
    ========================================================= */
 
 "use client"
@@ -38,12 +38,12 @@ export default function BillsTable({
           <div className="flex flex-col">
             <span className="font-medium">{b.name}</span>
             <span className="text-muted-foreground">
-              {b.category} • due {b.due_day}
+              {b.category} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ due {b.due_day}
             </span>
           </div>
 
           <div className="flex gap-6">
-            <span>₹ {Math.round(b.amount)}</span>
+            <span>ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {Math.round(b.amount)}</span>
             <span>{b.daysLeft} days</span>
           </div>
 

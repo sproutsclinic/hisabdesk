@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

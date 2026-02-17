@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — useAutomationAI Hook
+ï»¿/* =========================================================
+   HisabDesk ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â useAutomationAI Hook
    ---------------------------------------------------------
    CLIENT SIDE ONLY
 
@@ -11,14 +11,14 @@
    - ZERO OpenAI calls here
 
    ARCHITECTURE
-     Component → hook → /api/ai/automation/advice → server → OpenAI
+     Component ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ hook ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ /api/ai/automation/advice ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ server ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ OpenAI
 
    RULES
-   ✅ thin client
-   ✅ fetch only
-   ❌ no AI SDK here
-   ❌ no math
-   ❌ no DB
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ thin client
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ fetch only
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no AI SDK here
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no math
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no DB
 
    MODEL
    - GPT-3.5 (server side only)

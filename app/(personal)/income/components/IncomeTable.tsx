@@ -1,7 +1,7 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
-import type { IncomeRow } from "@/hooks/useIncome"
+import type { IncomeRow } from "@/lib/api/income/types"
 
 export default function IncomeTable({
   rows,
@@ -32,10 +32,15 @@ export default function IncomeTable({
           {rows.map((r) => (
             <tr key={r.id} className="border-t">
               <td className="py-2">{r.date}</td>
-              <td>{r.category}</td>
-              <td>{r.notes}</td>
+
+              {/* category can be null per your domain model */}
+              <td>{r.category ?? "-"}</td>
+
+              {/* notes nullable */}
+              <td>{r.notes ?? "-"}</td>
+
               <td className="text-right font-medium">
-                ₹ {r.amount.toLocaleString("en-IN")}
+                ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {Number(r.amount).toLocaleString("en-IN")}
               </td>
             </tr>
           ))}

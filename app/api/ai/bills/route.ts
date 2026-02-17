@@ -1,137 +1,67 @@
-/* =========================================================
-   HisabDesk — AI Bills Optimizer API
-   ---------------------------------------------------------
-   SERVER ROUTE ONLY
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Bills Intelligence Route (PFOS-Compliant)
+// ----------------------------------------------------------
+// Route = Adapter only.
+// Domain owns data.
+// AI layer owns model execution.
+// ==========================================================
 
-   PURPOSE
-   - Generate AI suggestions to reduce recurring bills
-   - Reads real DB data (server authority)
-   - Builds compact context
-   - Calls OpenAI safely
+import { withAI } from "@/lib/ai/withAI"
+import { getAutomationOverview } from "@/lib/api/automation/service"
 
-   ARCHITECTURE
-     client
-        ↓
-     /api/ai/bills
-        ↓
-     DB fetch (bills + totals)
-        ↓
-     prompt builder
-        ↓
-     safeRunAI()
-
-   RULES
-   ✅ server only
-   ✅ uses real DB data
-   ✅ no client trust
-   ❌ no business logic
-   ❌ no math here
-   ❌ no direct OpenAI call (must use safe wrapper)
-
-   ========================================================= */
-
-import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
-
-import { safeRunAI } from "@/lib/ai/safeRunAI"
-import { BILLS_OPTIMIZER_PROMPT } from "@/lib/ai/billsOptimizerPrompt"
+export const dynamic = "force-dynamic"
 
 /* =========================================================
-   SERVER CLIENT (session based)
-   ========================================================= */
+POST /api/ai/bills
+========================================================= */
 
-function getServerClient(req: NextRequest) {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
-    {
-      global: {
-        headers: {
-          Authorization: req.headers.get("Authorization") || "",
-        },
-      },
-    },
-  )
-}
+export const POST = withAI(async ({ user, safeRun }) => {
+  // -------------------------------------------------------
+  // Domain fetch (DB handled inside service layer)
+  // -------------------------------------------------------
 
-/* =========================================================
-   POST /api/ai/bills
-   ========================================================= */
+  const overview = await getAutomationOverview(user.id)
 
-export async function POST(req: NextRequest) {
-  try {
-    const supabase = getServerClient(req)
+  const rules = overview.rules
+  const monthlyExpense = overview.summary.monthlyExpense
+  const netImpact = overview.summary.netMonthlyImpact
 
-    /* -----------------------------------------------------
-       AUTH
-       ----------------------------------------------------- */
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser()
+  // -------------------------------------------------------
+  // Lightweight formatting (NOT business logic)
+  // -------------------------------------------------------
 
-    if (error || !user) {
-      return NextResponse.json(
-        { text: "Unauthorized" },
-        { status: 401 },
-      )
-    }
+  const compact = rules
+    .map(r => `${r.name}:${r.amount}:${r.frequency}`)
+    .join("|")
 
-    /* -----------------------------------------------------
-       LOAD REAL BILLS (server truth)
-       ----------------------------------------------------- */
-    const { data: bills } = await supabase
-      .from("bills")
-      .select("name, amount, category, frequency, auto_pay")
-      .eq("user_id", user.id)
-      .eq("active", true)
+  const prompt = `
+Bills Snapshot:
 
-    if (!bills || bills.length === 0) {
-      return NextResponse.json({
-        text: "No active bills found.",
-      })
-    }
+monthlyExpense=${monthlyExpense}
+netImpact=${netImpact}
+rules=${compact}
 
-    /* -----------------------------------------------------
-       BUILD ULTRA COMPACT CONTEXT (cheap tokens)
-       ----------------------------------------------------- */
+Task:
+Suggest ways to optimize recurring bills,
+reduce waste, and improve predictability.
 
-    const total = bills.reduce(
-      (a, b) => a + Number(b.amount || 0),
-      0,
-    )
-
-    const compact = bills
-      .map(
-        (b) =>
-          `${b.name}:${b.amount}:${b.category}:${b.frequency}:${b.auto_pay ? 1 : 0}`,
-      )
-      .join("|")
-
-    const userText = `
-total=${total}
-bills=${compact}
+Rules:
+Use only provided data.
+Do not assume anything.
+Keep concise.
 `
 
-    /* -----------------------------------------------------
-       AI CALL (safe wrapper only)
-       ----------------------------------------------------- */
+  // -------------------------------------------------------
+  // Centralized AI Execution
+  // -------------------------------------------------------
 
-    const text = await safeRunAI({
-      model: "gpt-3.5-turbo", // cheap + fast
-      messages: [
-        { role: "system", content: BILLS_OPTIMIZER_PROMPT },
-        { role: "user", content: userText },
-      ],
-      maxTokens: 300,
-    })
+  const result = await safeRun({
+    prompt,
+    type: "module",
+    module: "bills-intelligence",
+  })
 
-    return NextResponse.json({ text })
-  } catch (err) {
-    console.error("Bills AI error:", err)
-
-    return NextResponse.json({
-      text: "Unable to generate optimization advice right now.",
-    })
+  return {
+    text: result.text,
   }
-}
+})

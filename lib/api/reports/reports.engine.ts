@@ -1,25 +1,6 @@
+ï»¿// ==========================================================
+// Reports Engine (PURE LOGIC ONLY ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â DETERMINISTIC)
 // ==========================================================
-// Reports Engine (PURE LOGIC ONLY)
-// Layer: Engine (NO DB / NO HTTP / NO Supabase)
-//
-// Responsibilities:
-// - calculations
-// - aggregations
-// - grouping
-// - formatting output DTO
-//
-// This is the ONLY place where math exists.
-//
-// Safe:
-// ✅ pure functions
-// ❌ side effects
-// ❌ network
-// ❌ database
-// ==========================================================
-
-/* =========================================================
-Types (shared with hook/service)
-========================================================= */
 
 export type TransactionType = "income" | "expense"
 
@@ -68,6 +49,21 @@ export interface ReportsResult {
 }
 
 /* =========================================================
+Precision Utilities (match portfolio engine)
+========================================================= */
+
+const SCALE = 100
+
+function toPaise(value: unknown): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return 0
+  return Math.round(value * SCALE)
+}
+
+function fromPaise(value: number): number {
+  return Number((value / SCALE).toFixed(2))
+}
+
+/* =========================================================
 Public Entry
 ========================================================= */
 
@@ -79,19 +75,21 @@ export function buildReportsFromTransactions(
   const incomeTx = transactions.filter((t) => t.type === "income")
   const expenseTx = transactions.filter((t) => t.type === "expense")
 
-  const totalIncome = sum(incomeTx)
-  const totalExpense = sum(expenseTx)
+  const totalIncome = sumPaise(incomeTx)
+  const totalExpense = sumPaise(expenseTx)
 
   const savings = totalIncome - totalExpense
-  const savingsRate = totalIncome > 0 ? (savings / totalIncome) * 100 : 0
+
+  const savingsRate =
+    totalIncome > 0 ? (savings / totalIncome) * 100 : 0
 
   return {
     kpis: {
-      income: round(totalIncome),
-      expense: round(totalExpense),
-      savings: round(savings),
+      income: fromPaise(totalIncome),
+      expense: fromPaise(totalExpense),
+      savings: fromPaise(savings),
       savingsRate: round(savingsRate),
-      netCashflow: round(savings),
+      netCashflow: fromPaise(savings),
     },
 
     incomeByCategory: buildCategoryBreakdown(incomeTx),
@@ -102,11 +100,15 @@ export function buildReportsFromTransactions(
 }
 
 /* =========================================================
-Helpers
+Safe Aggregation
 ========================================================= */
 
-function sum(list: EngineTransaction[]) {
-  return list.reduce((acc, t) => acc + Number(t.amount || 0), 0)
+function sumPaise(list: EngineTransaction[]) {
+  let total = 0
+  for (const t of list) {
+    total += toPaise(t.amount)
+  }
+  return total
 }
 
 /* ---------------- Category Aggregation ---------------- */
@@ -114,13 +116,14 @@ function sum(list: EngineTransaction[]) {
 function buildCategoryBreakdown(
   list: EngineTransaction[]
 ): CategoryBreakdown[] {
-  const total = sum(list)
+  const total = sumPaise(list)
 
   const map = new Map<string, number>()
 
   for (const tx of list) {
-    const key = tx.category || "Other"
-    map.set(key, (map.get(key) || 0) + tx.amount)
+    const key = tx.category ?? "Other"
+    const value = toPaise(tx.amount)
+    map.set(key, (map.get(key) ?? 0) + value)
   }
 
   const result: CategoryBreakdown[] = []
@@ -128,7 +131,7 @@ function buildCategoryBreakdown(
   for (const [category, amount] of map.entries()) {
     result.push({
       category,
-      amount: round(amount),
+      amount: fromPaise(amount),
       percent: total > 0 ? round((amount / total) * 100) : 0,
     })
   }
@@ -141,41 +144,38 @@ function buildCategoryBreakdown(
 function buildMonthlySeries(
   transactions: EngineTransaction[]
 ): MonthlySeriesPoint[] {
-  const map = new Map<string, MonthlySeriesPoint>()
+  const map = new Map<string, { income: number; expense: number }>()
 
   for (const tx of transactions) {
     const d = new Date(tx.date)
-
-    const monthKey = `${d.getFullYear()}-${String(
+    const key = `${d.getFullYear()}-${String(
       d.getMonth() + 1
     ).padStart(2, "0")}`
 
-    if (!map.has(monthKey)) {
-      map.set(monthKey, {
-        month: monthKey,
-        income: 0,
-        expense: 0,
-        savings: 0,
-      })
+    if (!map.has(key)) {
+      map.set(key, { income: 0, expense: 0 })
     }
 
-    const bucket = map.get(monthKey)!
+    const bucket = map.get(key)!
 
-    if (tx.type === "income") bucket.income += tx.amount
-    else bucket.expense += tx.amount
+    if (tx.type === "income") bucket.income += toPaise(tx.amount)
+    else bucket.expense += toPaise(tx.amount)
   }
 
-  const series = Array.from(map.values()).sort((a, b) =>
-    a.month.localeCompare(b.month)
-  )
+  const series: MonthlySeriesPoint[] = []
 
-  for (const m of series) {
-    m.savings = round(m.income - m.expense)
-    m.income = round(m.income)
-    m.expense = round(m.expense)
+  for (const [month, v] of map.entries()) {
+    const savings = v.income - v.expense
+
+    series.push({
+      month,
+      income: fromPaise(v.income),
+      expense: fromPaise(v.expense),
+      savings: fromPaise(savings),
+    })
   }
 
-  return series
+  return series.sort((a, b) => a.month.localeCompare(b.month))
 }
 
 /* ---------------- Utils ---------------- */

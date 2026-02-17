@@ -1,14 +1,14 @@
-// ==========================================================
-// HisabDesk — Financial Profile API Layer
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Financial Profile API Layer
 // User financial preferences + personalization
 // Used by: tax engine, AI context, planner, insights
 // Table: financial_profile
 // One row per user
 // ==========================================================
 
-import { createClient } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
-const supabase = createClient()
+const supabase = getSupabaseAdmin()
 
 // ==========================================================
 // TYPES

@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 
@@ -32,7 +32,7 @@ export default function AdminFunnelChart() {
               </span>
 
               <span className="font-semibold">
-                {row.count} • {row.conversion}%
+                {row.count} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ {row.conversion}%
               </span>
             </div>
 

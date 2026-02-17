@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 type Props = {
   income: number
@@ -25,7 +25,7 @@ export default function BurnMeter({ income, expense, tax }: Props) {
       </div>
 
       <div className="text-xs text-zinc-600 flex justify-between">
-        <span>Spent + Tax: ₹ {used.toLocaleString()}</span>
+        <span>Spent + Tax: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {used.toLocaleString()}</span>
         <span>{percent.toFixed(0)}%</span>
       </div>
     </div>

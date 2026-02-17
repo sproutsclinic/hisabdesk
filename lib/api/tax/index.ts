@@ -1,62 +1,53 @@
-/* =========================================================
-   HisabDesk — Tax Module Public Exports (Barrel)
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Tax Module Public Exports (ARCHITECTURE SAFE)
    ---------------------------------------------------------
-   PURPOSE
-   - Single entry point for all Tax server/domain imports
-   - Cleaner imports across project
-   - Prevents deep relative paths
-   - Enterprise modular boundary
+   This file preserves DOMAIN NAMING expected by services
+   while mapping to Supabase-generated DB types.
 
-   WHY
-   Before:
-     import { calculateTax } from "@/lib/api/tax/calcEngine"
-     import { buildTaxCSV } from "@/lib/api/tax/report"
-     import { sanitizeTaxProfileInput } from "@/lib/api/tax/validators"
-
-   After:
-     import { calculateTax, buildTaxCSV, sanitizeTaxProfileInput }
-       from "@/lib/api/tax"
-
-   RULES
-   ✅ exports only
-   ❌ no logic
-   ❌ no side effects
-   ❌ no DB
-
-   ARCHITECTURE LAYER
-     lib/api/tax/*
-       ↑
-     this file (public surface)
-
+   DO NOT remove aliases ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â they are the boundary between:
+     Domain Language  ?  Database Language
    ========================================================= */
 
-/* =========================================================
-   TYPES
-   ========================================================= */
+/* =======================
+   TYPES (DB ? DOMAIN ALIAS)
+   ======================= */
 
-export * from "./types"
+export type {
+  DeductionInput,
+  TaxComputationResult
+} from "./types"
 
-/* =========================================================
+/*
+  Supabase renamed TaxProfile ? TaxProfileRow.
+  We expose the DOMAIN name expected by architecture.
+*/
+export type { TaxProfileRow as TaxProfile } from "./types"
+
+
+/* =======================
    ENGINE (pure computation)
-   ========================================================= */
+   ======================= */
 
 export * from "./calcEngine"
 
-/* =========================================================
+
+/* =======================
    SERVICE (DB layer)
-   ========================================================= */
+   ======================= */
 
 export * from "./service"
 
-/* =========================================================
+
+/* =======================
    REPORT / EXPORT
-   ========================================================= */
+   ======================= */
 
 export * from "./report"
 export * from "./pdf"
 
-/* =========================================================
+
+/* =======================
    VALIDATORS
-   ========================================================= */
+   ======================= */
 
 export * from "./validators"

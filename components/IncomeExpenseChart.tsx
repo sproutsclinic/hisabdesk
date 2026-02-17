@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useMemo } from "react"
 
@@ -34,15 +34,15 @@ const MAX_POINTS = 180 // ~6 months daily data (smooth + fast)
 export default function IncomeExpenseChart({ data }: { data: Row[] }) {
   /* =====================================================
      SSR SAFE + PERFORMANCE HARDENED
-     ✅ memoized transformation
-     ✅ dataset cap
-     ✅ avoids heavy re-renders
+     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ memoized transformation
+     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ dataset cap
+     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ avoids heavy re-renders
   ===================================================== */
 
   const enriched = useMemo(() => {
     const safe = Array.isArray(data) ? data : []
 
-    // ✅ prevent over-rendering thousands of points
+    // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ prevent over-rendering thousands of points
     const trimmed =
       safe.length > MAX_POINTS
         ? safe.slice(safe.length - MAX_POINTS)
@@ -59,12 +59,12 @@ export default function IncomeExpenseChart({ data }: { data: Row[] }) {
   ===================================================== */
 
   const formatCurrency = (value: number) =>
-    `₹ ${Number(value).toLocaleString("en-IN")}`
+    `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ ${Number(value).toLocaleString("en-IN")}`
 
   const formatAxis = (v: number) => {
-    if (v >= 1000000) return `₹${(v / 1000000).toFixed(1)}M`
-    if (v >= 1000) return `₹${(v / 1000).toFixed(0)}k`
-    return `₹${v}`
+    if (v >= 1000000) return `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${(v / 1000000).toFixed(1)}M`
+    if (v >= 1000) return `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${(v / 1000).toFixed(0)}k`
+    return `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${v}`
   }
 
   return (
@@ -98,19 +98,20 @@ export default function IncomeExpenseChart({ data }: { data: Row[] }) {
             <XAxis
               dataKey="date"
               tick={{ fontSize: 12 }}
-              minTickGap={24} // ✅ avoids overcrowding
+              minTickGap={24} // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ avoids overcrowding
             />
 
             <YAxis
               tickFormatter={formatAxis}
               tick={{ fontSize: 12 }}
-              width={70} // ✅ stable layout
+              width={70} // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ stable layout
             />
 
             <Tooltip
-              formatter={(value: number) =>
-                formatCurrency(value)
-              }
+              formatter={(value) => {
+  const num = typeof value === "number" ? value : Number(value ?? 0)
+  return formatCurrency(num)
+}}
               contentStyle={{
                 borderRadius: 12,
                 fontSize: 12,
@@ -154,3 +155,4 @@ export default function IncomeExpenseChart({ data }: { data: Row[] }) {
     </div>
   )
 }
+

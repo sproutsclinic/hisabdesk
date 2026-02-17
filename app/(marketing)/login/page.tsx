@@ -36,7 +36,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-sm text-center text-slate-600 mt-6">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link href="/signup" className="underline">
             Sign up
           </Link>
@@ -46,3 +46,4 @@ export default function LoginPage() {
     </div>
   )
 }
+

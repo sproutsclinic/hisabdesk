@@ -1,25 +1,24 @@
-/* =========================================================
-   HisabDesk — Supabase Server Client (ROUTE SAFE)
-========================================================= */
+ï»¿import { createClient } from '@supabase/supabase-js'
 
-import { createClient as supabaseCreateClient } from "@supabase/supabase-js"
+/**
+ * =========================================================
+ * HisabDesk â€” Supabase Server Client (SERVICE ROLE)
+ * Used ONLY inside:
+ * - API routes
+ * - Server Components
+ * - Jobs / Automation
+ * NEVER expose to browser.
+ * =========================================================
+ */
 
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+export function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-export function createClient() {
-  return supabaseCreateClient(URL, KEY, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false,
-    },
-    global: {
-      fetch: (url, options) =>
-        fetch(url, {
-          ...options,
-          cache: "no-store",
-        }),
-    },
+  if (!url) throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL')
+  if (!key) throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY')
+
+  return createClient(url, key, {
+    auth: { persistSession: false }
   })
 }

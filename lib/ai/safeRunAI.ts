@@ -1,45 +1,31 @@
-// ==========================================================
-// HisabDesk — Safe AI Runner (MANDATORY WRAPPER)
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Safe AI Runner (FINAL WRAPPER)
 // ----------------------------------------------------------
 // PURPOSE
-//   Single safe entrypoint to call OpenAI
+//   Single safe entrypoint to call AI engine
 //
 //   Combines:
-//     ✓ guardAI()  → rate limit protection
-//     ✓ runAI()    → actual OpenAI call
-//     ✓ auto logging
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ guardAI()  ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ rate limit protection
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ runAI()    ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ actual AI call
+//     ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ auto logging
 //
-//   So routes NEVER directly call runAI()
-//
-//   Instead use:
-//
-//     const result = await safeRunAI({
-//       userId,
-//       prompt,
-//       type: "module"
-//     })
-//
-//   This guarantees:
-//     ✓ cost protection
-//     ✓ consistent logging
-//     ✓ zero duplication across routes
-//
+//   Routes SHOULD call this instead of runAI() directly.
 // ==========================================================
+
 import { runAI } from "@/lib/ai/openai"
 import { guardAI } from "@/lib/ai/guard"
-import { createClient } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 // ==========================================================
-// TYPES
+// TYPES (aligned with new engine)
 // ==========================================================
 
-export type AIRunType = "module" | "chat" | "heavy"
+export type AIRunType = "cheap" | "module" | "heavy"
 
 interface SafeRunParams {
   userId: string
   prompt: string
-  type: AIRunType
-  system?: string
+  type?: AIRunType
   module: string // for logging
 }
 
@@ -47,7 +33,7 @@ interface SafeRunParams {
 // CLIENT
 // ==========================================================
 
-const supabase = createClient()
+const supabase = getSupabaseAdmin()
 
 // ==========================================================
 // SAFE RUNNER
@@ -61,23 +47,22 @@ export async function safeRunAI(params: SafeRunParams) {
   await guardAI(params.userId)
 
   // --------------------------------------------------------
-  // 2. Run AI
+  // 2. Run AI (NEW CONTRACT)
   // --------------------------------------------------------
 
   const result = await runAI({
     prompt: params.prompt,
-    type: params.type,
-    system: params.system,
+    type: params.type ?? "cheap",
   })
 
   // --------------------------------------------------------
-  // 3. Log usage automatically
+  // 3. Log usage (NEW TOKEN FORMAT)
   // --------------------------------------------------------
 
   await supabase.from("ai_logs").insert({
     user_id: params.userId,
     module: params.module,
-    tokens: result.usage?.total_tokens ?? 0,
+    tokens: result.tokens, // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ no more usage.total_tokens
   })
 
   return result

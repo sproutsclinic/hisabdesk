@@ -1,13 +1,13 @@
-/* =========================================================
+ï»¿/* =========================================================
    Income Forecast API
    ---------------------------------------------------------
-   ✓ predicts next 3 months
-   ✓ simple trend line
-   ✓ server only
+   âœ“ predicts next 3 months
+   âœ“ simple trend line
+   âœ“ server only
 ========================================================= */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
@@ -20,7 +20,7 @@ function monthKey(date: Date) {
 /* ========================================================= */
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },

@@ -1,33 +1,5 @@
-// ==========================================================
-// HisabDesk — AI Service (Top-Level Facade)
-// ----------------------------------------------------------
-// PURPOSE
-//   FINAL public entrypoint for AI across the app
-//
-//   This is what the rest of the app should import.
-//
-//   Instead of:
-//     import { createAI } from "@/lib/ai/aiClient"
-//
-//   Use:
-//     import { getAI } from "@/lib/ai/service"
-//
-//   Why:
-//     ✓ hides internal structure
-//     ✓ future-proof (swap providers easily)
-//     ✓ cleaner architecture boundary
-//     ✓ business layer talks to service, not infra
-//
-//   LAYERING:
-//
-//   Routes / Modules
-//        ↓
-//     AI Service   ← THIS FILE
-//        ↓
-//     AI Client
-//        ↓
-//   safeRun → guard → openai
-//
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Service (Top-Level Facade)
 // ==========================================================
 
 import { createAI } from "./aiClient"
@@ -37,16 +9,6 @@ import { createAI } from "./aiClient"
 // ==========================================================
 
 export function getAI(userId: string) {
-  // future:
-  //   could add:
-  //   - caching
-  //   - tracing
-  //   - analytics
-  //   - provider switching
-  //   - fallbacks
-  //
-  // without touching routes
-
   return createAI(userId)
 }
 
@@ -62,12 +24,16 @@ export async function runModuleAI(
   return getAI(userId).module(prompt, module)
 }
 
+/**
+ * Chat mode was merged into "module" mode
+ * to avoid duplicate pipelines.
+ */
 export async function runChatAI(
   userId: string,
   prompt: string,
   module: string
 ) {
-  return getAI(userId).chat(prompt, module)
+  return getAI(userId).module(prompt, module)
 }
 
 export async function runHeavyAI(
@@ -83,5 +49,6 @@ export async function runTaxAI(
   prompt: string,
   module: string
 ) {
-  return getAI(userId).tax(prompt, module)
+  // tax flows use heavy reasoning model now
+  return getAI(userId).heavy(prompt, module)
 }

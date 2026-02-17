@@ -1,8 +1,8 @@
-import Link from "next/link"
+ï»¿import Link from "next/link"
 import EmailCapture from "@/components/EmailCapture"
 
 export const metadata = {
-  title: "Old vs New Tax Regime – Which is Better in 2026?",
+  title: "Old vs New Tax Regime ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Which is Better in 2026?",
   description:
     "Compare old vs new tax regime in India and find which saves more tax. Use our free calculator to instantly choose the best regime.",
   keywords: [
@@ -20,7 +20,7 @@ export default function Page() {
 
       {/* TITLE */}
       <h1 className="text-3xl font-bold">
-        Old vs New Tax Regime – Which One Should You Choose?
+        Old vs New Tax Regime ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Which One Should You Choose?
       </h1>
 
       <p className="text-gray-600">
@@ -88,8 +88,8 @@ export default function Page() {
 
         <div className="bg-gray-50 p-4 rounded-xl">
           <ul className="list-disc pl-6 text-sm">
-            <li>Income = ₹10,00,000</li>
-            <li>Deductions = ₹2,00,000</li>
+            <li>Income = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹10,00,000</li>
+            <li>Deductions = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹2,00,000</li>
             <li>Old regime may save more tax</li>
           </ul>
         </div>
@@ -123,7 +123,7 @@ export default function Page() {
           href="/dashboard"
           className="inline-block bg-black text-white px-6 py-3 rounded-xl font-medium hover:opacity-90"
         >
-          Compare Now →
+          Compare Now ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢
         </Link>
       </section>
 

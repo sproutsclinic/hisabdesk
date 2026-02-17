@@ -1,30 +1,6 @@
-"use client"
-
-/**
- * =========================================================
- * HisabDesk — Reports & Insights
- * ---------------------------------------------------------
- * UI ONLY PAGE
- *
- * Responsibilities:
- *   ✓ layout
- *   ✓ filters
- *   ✓ call hook
- *   ✓ render components
- *
- * STRICT
- * ❌ no Supabase
- * ❌ no auth
- * ❌ no DB
- * ❌ no business logic
- *
- * ARCH
- *   UI → useReports → /api/reports → service → DB
- * =========================================================
- */
+ï»¿"use client"
 
 import { useState } from "react"
-
 import { useReports } from "@/hooks/useReports"
 
 import KPIDashboard from "@/components/reporting/kpi-dashboard"
@@ -33,53 +9,48 @@ import AdvancedFilters, {
   ReportFilters,
 } from "@/components/reporting/advanced-filters"
 
-/* =========================================================
-   PAGE
-   ========================================================= */
-
 export default function ReportsPage() {
   const { data, loading, error } = useReports()
 
-  const [filters, setFilters] =
-    useState<ReportFilters>({
-      type: "all",
-    })
-
-  /* ======================================================
-     STATES
-  ====================================================== */
+  const [filters, setFilters] = useState<ReportFilters>({
+    type: "all",
+  })
 
   if (loading) {
-    return (
-      <div className="p-10 text-sm text-muted-foreground">
-        Loading reports...
-      </div>
-    )
+    return <div className="p-10 text-sm">Loading reports...</div>
   }
 
   if (error) {
-    return (
-      <div className="p-10 text-sm text-red-500">
-        {error}
-      </div>
-    )
+    return <div className="p-10 text-sm text-red-500">{error}</div>
   }
 
   if (!data) return null
 
   /* ======================================================
-     UI
+     UI ADAPTER (ReportsResponse ? KPIData)
+     Pure mapping ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â NO calculations introduced
   ====================================================== */
+
+  const kpiData = {
+    points: data.monthlySeries.map((m) => ({
+      date: m.month,
+      income: m.income,
+      expense: m.expense,
+      profit: m.savings, // already computed by server
+    })),
+    totals: {
+      income: data.kpis.income,
+      expense: data.kpis.expense,
+      profit: data.kpis.savings,
+      count: data.monthlySeries.length,
+    },
+  }
 
   return (
     <div className="p-6 space-y-8">
-      {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">
-            Reports & Insights
-          </h1>
-
+          <h1 className="text-2xl font-semibold">Reports & Insights</h1>
           <p className="text-sm text-muted-foreground">
             Financial analytics, trends and exports
           </p>
@@ -88,14 +59,9 @@ export default function ReportsPage() {
         <ReportExport />
       </div>
 
-      {/* FILTERS */}
-      <AdvancedFilters
-        value={filters}
-        onChange={setFilters}
-      />
+      <AdvancedFilters value={filters} onChange={setFilters} />
 
-      {/* KPI DASHBOARD */}
-      <KPIDashboard data={data} filters={filters} />
+      <KPIDashboard data={kpiData} />
     </div>
   )
 }

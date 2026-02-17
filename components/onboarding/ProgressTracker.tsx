@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 import { ONBOARDING_STEPS } from "@/lib/onboarding/config"

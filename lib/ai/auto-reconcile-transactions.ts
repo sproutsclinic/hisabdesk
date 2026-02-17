@@ -1,9 +1,9 @@
-"use server"
+ï»¿"use server"
 
 /**
  * =========================================================
  * Auto Reconcile Integration (DB Layer)
- * HisabDesk – Phase B (AI Integration)
+ * HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Phase B (AI Integration)
  * =========================================================
  *
  * PURPOSE
@@ -11,10 +11,10 @@
  *   reconcileTransactions()
  *
  * Adds:
- *   ✓ DB fetch
- *   ✓ DB updates
- *   ✓ mark reconciled
- *   ✓ confidence stored
+ *   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ DB fetch
+ *   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ DB updates
+ *   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ mark reconciled
+ *   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ confidence stored
  *
  * IMPORTANT
  * ---------------------------------------------------------
@@ -23,19 +23,19 @@
  *
  * Architecture:
  *
- *   fetch → reconcile → update
+ *   fetch ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ reconcile ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ update
  *
  * =========================================================
  */
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 import {
   reconcileTransactions,
   reconciliationStats,
   type BankTxn,
   type LedgerEntry,
-} from "@/lib/ai/auto-reconcilation"
+} from "@/lib/ai/auto-reconciliation"
 
 /* =========================================================
    CLIENT
@@ -57,7 +57,7 @@ export async function autoReconcileOrg(orgId: string) {
   const supabase = getClient()
 
   /* ------------------------------------------------------
-     1️⃣ FETCH DATA
+     1ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ FETCH DATA
   ------------------------------------------------------ */
 
   const [bankRes, expenseRes] = await Promise.all([
@@ -74,21 +74,21 @@ export async function autoReconcileOrg(orgId: string) {
       .is("reconciled_with", null),
   ])
 
-  const bankTxns = (bankRes.data || []) as BankTxn[]
-  const ledger = (expenseRes.data || []) as LedgerEntry[]
+  const bankTxns = ((bankRes.data ?? []) as unknown as BankTxn[])
+  const ledger = ((expenseRes.data ?? []) as unknown as LedgerEntry[])
 
   if (!bankTxns.length || !ledger.length) {
     return { matched: 0 }
   }
 
   /* ------------------------------------------------------
-     2️⃣ RUN ENGINE (your existing logic)
+     2ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ RUN ENGINE (your existing logic)
   ------------------------------------------------------ */
 
   const result = reconcileTransactions(bankTxns, ledger)
 
   /* ------------------------------------------------------
-     3️⃣ APPLY MATCHES
+     3ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ APPLY MATCHES
   ------------------------------------------------------ */
 
   for (const m of result.matched) {
@@ -112,8 +112,10 @@ export async function autoReconcileOrg(orgId: string) {
   }
 
   /* ------------------------------------------------------
-     4️⃣ RETURN STATS
+     4ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ RETURN STATS
   ------------------------------------------------------ */
 
   return reconciliationStats(result)
 }
+
+

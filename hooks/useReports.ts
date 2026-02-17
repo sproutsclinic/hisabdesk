@@ -1,10 +1,10 @@
-"use client"
+ï»¿"use client"
 
 import { useCallback, useEffect, useState } from "react"
 
 // ==========================================================
 // useReports Hook
-// Thin client → server authority
+// Thin client ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ server authority
 // ONLY fetches from /api/reports
 // NO business logic
 // NO calculations

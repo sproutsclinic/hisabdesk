@@ -1,121 +1,84 @@
-// ==========================================================
-// HisabDesk — AI Dashboard Insights Route
-// AI-native financial summary for Dashboard
-// Server-side only (NEVER client)
-// Uses cheap model (GPT-3.5 class)
-// Short, bullet insights only
-// Logs usage to ai_logs
-// ==========================================================
+ï»¿/**
 
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
-import { getCashflowSummary, getBurnRate } from "@/lib/api/analytics"
-import { getNetWorthSummary } from "@/lib/api/networth"
-import { getGoalsSummary } from "@/lib/api/goals"
-import { runAI } from "@/lib/ai/openai"
-import { buildDashboardPrompt } from "@/lib/ai/prompts"
+* =========================================================
+* HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Dashboard AI Insights (PFOS-Compliant)
+* ---
+* Thin orchestration layer.
+*
+* RULES ENFORCED:
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ No DB access here
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ No analytics math here
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ No prompt builders
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ No direct OpenAI usage
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Uses Phase-2 domain intelligence only
+*
+* FLOW:
+* Route ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Reports Service ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Portfolio Overview ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ withAI ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ safeRun
+* =========================================================
+  */
+
+import { withAI } from "@/lib/ai/withAI"
+import { getReportsService } from "@/lib/api/reports/reports.service"
+import { getPortfolioOverview } from "@/lib/api/portfolio/service"
 
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
+/* =========================================================
+POST /api/ai/dashboard
+========================================================= */
 
-// ==========================================================
-// AUTH HELPER
-// ==========================================================
+export const POST = withAI(async ({ user, safeRun }) => {
+const reportsService = getReportsService()
 
-async function getUser() {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
+// -------------------------------------------------------
+// Pull validated domain intelligence (Phase-2 engines)
+// -------------------------------------------------------
 
-  if (error || !user) throw new Error("Unauthorized")
+const [reports, portfolio] = await Promise.all([
+reportsService.getReports({ userId: user.id, range: "30d" }),
+getPortfolioOverview(user.id),
+])
 
-  return user
+const income = reports.kpis.income
+const expense = reports.kpis.expense
+const savingsRate = reports.kpis.savingsRate
+
+const portfolioValue = portfolio.summary.totalCurrent
+const portfolioPnL = portfolio.summary.totalPnL
+
+// -------------------------------------------------------
+// AI Interpretation ONLY (no calculations)
+// -------------------------------------------------------
+
+const prompt = `
+Dashboard Financial Snapshot:
+
+Income (30d): ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${income}
+Expense (30d): ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${expense}
+Savings Rate: ${savingsRate}%
+
+Portfolio Value: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${portfolioValue}
+Portfolio P&L: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${portfolioPnL}
+
+Provide 4 concise bullets:
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Overall financial health
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ One key risk
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ One improvement action
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ One forward-looking suggestion
+
+Rules:
+Use only supplied data.
+No assumptions.
+Keep it short and practical.
+`
+
+const result = await safeRun({
+prompt,
+type: "module",
+module: "dashboard-insights",
+})
+
+return {
+insights: result.text,
 }
-
-// ==========================================================
-// POST → Generate dashboard AI insights
-// ==========================================================
-
-export async function POST() {
-  try {
-    const user = await getUser()
-
-    const today = new Date()
-    const startOfMonth = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      1
-    )
-      .toISOString()
-      .split("T")[0]
-
-    const endOfMonth = new Date(
-      today.getFullYear(),
-      today.getMonth() + 1,
-      0
-    )
-      .toISOString()
-      .split("T")[0]
-
-    // ======================================================
-    // Gather metrics (NO AI yet)
-    // ======================================================
-
-    const [cashflow, networth, goals, burnRate] =
-      await Promise.all([
-        getCashflowSummary(user.id, startOfMonth, endOfMonth),
-        getNetWorthSummary(user.id),
-        getGoalsSummary(user.id),
-        getBurnRate(user.id),
-      ])
-
-    // ======================================================
-    // Build prompt (prompts.ts ONLY)
-    // ======================================================
-
-    const prompt = buildDashboardPrompt({
-      income: cashflow.income,
-      expense: cashflow.expense,
-      savingsRate: cashflow.savingsRate,
-      burnRate,
-      netWorth: networth.netWorth,
-      goalProgress: goals.percent,
-    })
-
-    // ======================================================
-    // Run AI (cheap model)
-    // ======================================================
-
-    const result = await runAI({
-      prompt,
-      model: "gpt-3.5-turbo",
-      temperature: 0.3,
-      max_tokens: 400,
-    })
-
-    // ======================================================
-    // Log usage
-    // ======================================================
-
-    await supabase.from("ai_logs").insert({
-      user_id: user.id,
-      module: "dashboard",
-      tokens: result.usage?.total_tokens ?? 0,
-    })
-
-    // ======================================================
-    // Response
-    // ======================================================
-
-    return NextResponse.json({
-      insights: result.text,
-    })
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message },
-      { status: 401 }
-    )
-  }
-}
+})

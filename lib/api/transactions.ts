@@ -1,10 +1,10 @@
-// ==========================================================
-// HisabDesk — Transactions API Layer
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Transactions API Layer
 // Centralized DB access for ALL income/expense operations
 // Single Source of Truth = transactions table
 // ==========================================================
 
-import { createClient } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export type TransactionType = "income" | "expense"
 
@@ -18,7 +18,7 @@ export interface TransactionInput {
   notes?: string | null
 }
 
-const supabase = createClient()
+const supabase = getSupabaseAdmin()
 
 // ==========================================================
 // CREATE

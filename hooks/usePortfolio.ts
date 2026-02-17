@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — usePortfolioAI Hook
+ï»¿/* =========================================================
+   HisabDesk ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â usePortfolioAI Hook
    ---------------------------------------------------------
    CLIENT SIDE ONLY
 
@@ -12,14 +12,14 @@
    - ZERO OpenAI on client
 
    ARCHITECTURE
-     Component → hook → /api/ai/portfolio/rebalance → AI
+     Component ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ hook ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ /api/ai/portfolio/rebalance ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ AI
 
    RULES
-   ✅ thin client
-   ✅ fetch only
-   ❌ no math
-   ❌ no DB
-   ❌ no OpenAI
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ thin client
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ fetch only
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no math
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no DB
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no OpenAI
 
    ========================================================= */
 

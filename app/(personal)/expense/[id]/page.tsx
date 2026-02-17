@@ -1,195 +1,73 @@
 "use client"
 
-/* =========================================================
-   HisabDesk — Expense Edit Page (ENTERPRISE FINAL)
-   ---------------------------------------------------------
-   ✓ load single expense
-   ✓ update
-   ✓ delete
-   ✓ duplicate
-   ✓ API only
-   ✓ mobile first
-   ✓ zero business logic
-========================================================= */
+// ==========================================================
+// HisabDesk ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Recurring Expenses (FIXED)
+// ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ safe fetch
+// ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ no crash if API returns empty
+// ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ consistent with /expense routes
+// ==========================================================
 
 import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { Card } from "@/components/ui/card"
 
-/* ========================================================= */
-
-type Expense = {
-  id: string
-  date: string
+type Row = {
+  merchant: string
+  frequency: string
+  count: number
   amount: number
-  category: string
-  notes?: string
 }
 
-/* ========================================================= */
-
-export default function ExpenseEditPage() {
-  const router = useRouter()
-  const params = useParams()
-
-  const id = params.id as string
-
-  const [row, setRow] = useState<Expense | null>(null)
+export default function RecurringPage() {
+  const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-
-  /* ========================================================
-     LOAD
-  ======================================================== */
 
   async function load() {
-    setLoading(true)
+    try {
+      const res = await fetch("/api/expense/recurring-detect", {
+        cache: "no-store",
+      })
 
-    const res = await fetch(`/api/expenses/${id}`)
-    const json = await res.json()
+      const json = await res.json()
 
-    setRow(json.data)
-    setLoading(false)
+      setRows(json?.data || [])
+    } catch {
+      setRows([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    if (id) load()
-  }, [id])
-
-  /* ========================================================
-     SAVE
-  ======================================================== */
-
-  async function save(formData: FormData) {
-    setSaving(true)
-
-    await fetch("/api/expenses", {
-      method: "PATCH",
-      body: JSON.stringify({
-        id,
-        date: formData.get("date"),
-        amount: Number(formData.get("amount")),
-        category: formData.get("category"),
-        notes: formData.get("notes"),
-      }),
-      headers: { "Content-Type": "application/json" },
-    })
-
-    router.push("/personal/expense")
-  }
-
-  /* ========================================================
-     DELETE
-  ======================================================== */
-
-  async function remove() {
-    const ok = confirm("Delete this expense?")
-    if (!ok) return
-
-    await fetch(`/api/expenses?id=${id}`, {
-      method: "DELETE",
-    })
-
-    router.push("/personal/expense")
-  }
-
-  /* ========================================================
-     DUPLICATE (quick add same expense)
-  ======================================================== */
-
-  async function duplicate() {
-    if (!row) return
-
-    await fetch("/api/expenses", {
-      method: "POST",
-      body: JSON.stringify({
-        date: new Date().toISOString().slice(0, 10),
-        amount: row.amount,
-        category: row.category,
-        notes: row.notes,
-      }),
-      headers: { "Content-Type": "application/json" },
-    })
-
-    router.push("/personal/expense")
-  }
-
-  /* ========================================================
-     UI
-  ======================================================== */
-
-  if (loading || !row) {
-    return (
-      <div className="p-6 text-sm text-muted-foreground">
-        Loading expense...
-      </div>
-    )
-  }
+    load()
+  }, [])
 
   return (
-    <main className="max-w-md mx-auto px-4 py-6 space-y-4">
+    <main className="max-w-3xl mx-auto p-6 space-y-4">
+      <h1 className="text-2xl font-semibold">
+        Recurring Expenses
+      </h1>
 
-      <h1 className="text-xl font-semibold">Edit Expense</h1>
+      {loading && <p>Scanning subscriptions...</p>}
 
-      <form action={save} className="space-y-3">
+      {!loading &&
+        rows.map((r) => (
+          <Card key={r.merchant} className="p-4 flex justify-between">
+            <div>
+              <p className="font-medium capitalize">{r.merchant}</p>
+              <p className="text-xs text-gray-500">
+                {r.frequency} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ {r.count} payments
+              </p>
+            </div>
 
-        <input
-          type="date"
-          name="date"
-          defaultValue={row.date}
-          className="w-full border rounded-lg p-3"
-        />
+            <p className="text-red-600 font-semibold">
+              ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹ {Number(r.amount).toLocaleString("en-IN")}
+            </p>
+          </Card>
+        ))}
 
-        <input
-          type="number"
-          name="amount"
-          defaultValue={row.amount}
-          className="w-full border rounded-lg p-3 text-lg font-medium text-red-600"
-        />
-
-        <input
-          type="text"
-          name="category"
-          defaultValue={row.category}
-          className="w-full border rounded-lg p-3"
-        />
-
-        <textarea
-          name="notes"
-          defaultValue={row.notes}
-          placeholder="Notes"
-          className="w-full border rounded-lg p-3"
-        />
-
-        <button
-          disabled={saving}
-          className="w-full bg-black text-white rounded-lg p-3"
-        >
-          {saving ? "Saving..." : "Save Changes"}
-        </button>
-
-      </form>
-
-
-
-      {/* actions */}
-      <div className="grid grid-cols-2 gap-3">
-
-        <button
-          onClick={duplicate}
-          className="border rounded-lg p-3 text-sm"
-        >
-          Duplicate
-        </button>
-
-        <button
-          onClick={remove}
-          className="border rounded-lg p-3 text-sm text-red-600"
-        >
-          Delete
-        </button>
-
-      </div>
-
+      {!loading && rows.length === 0 && (
+        <p className="text-gray-500">No recurring detected</p>
+      )}
     </main>
   )
 }

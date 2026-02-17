@@ -1,18 +1,12 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export async function POST(req: Request) {
   try {
+    const supabase = getSupabaseAdmin()
+
     const { fileName } = await req.json()
 
-    // ======================
-    // Download file
-    // ======================
     const { data } = await supabase.storage
       .from("documents")
       .download(`bank/${fileName}`)
@@ -23,9 +17,6 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await data.arrayBuffer())
 
-    // ======================
-    // ✅ SAFEST dynamic import (Next 16 compatible)
-    // ======================
     const pdfModule: any = await import("pdf-parse")
     const parsed = await pdfModule.default(buffer)
 
@@ -33,9 +24,6 @@ export async function POST(req: Request) {
 
     const transactions: any[] = []
 
-    // ======================
-    // REGEX PARSE
-    // ======================
     lines.forEach((line: string) => {
       const match = line.match(/(\d{2}\/\d{2}\/\d{2,4}).*?(-?\d+(\.\d+)?)/)
 

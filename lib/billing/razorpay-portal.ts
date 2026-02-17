@@ -1,125 +1,61 @@
-"use server"
-
-/**
- * =========================================================
- * Razorpay Customer Portal Helper
- * HisabDesk – Billing Management Layer
- * =========================================================
- *
- * PURPOSE
- * Central helper to:
- *
- *   ✓ create subscriptions
- *   ✓ generate checkout link
- *   ✓ open Razorpay hosted billing
- *   ✓ manage upgrades/cancellations
- *
- * WHY
- * ---------------------------------------------------------
- * Never scatter Razorpay logic across UI.
- * Keep ALL billing provider logic here.
- *
- * =========================================================
- *
- * ENV REQUIRED
- *
- * RAZORPAY_KEY_ID
- * RAZORPAY_KEY_SECRET
- * RAZORPAY_PRO_PLAN_ID
- *
- * =========================================================
- *
- * USAGE (server action / API)
- *
- * const url = await createCheckout({
- *   userId,
- *   email
- * })
- *
- * redirect(url)
- *
- * =========================================================
- *
- * SAFE
- * - server only
- * - uses secret key
- * =========================================================
- */
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Razorpay Billing Portal
+   Proper Subscription Checkout (SDK Correct Version)
+   ========================================================= */
 
 import Razorpay from "razorpay"
 
 /* =========================================================
    CLIENT
-========================================================= */
+   ========================================================= */
 
-function getRazorpay() {
-  return new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID!,
-    key_secret: process.env.RAZORPAY_KEY_SECRET!,
-  })
-}
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+})
 
 /* =========================================================
    TYPES
-========================================================= */
+   ========================================================= */
 
-type CheckoutInput = {
+interface CheckoutInput {
   userId: string
   email: string
   name?: string
 }
 
 /* =========================================================
-   CREATE CHECKOUT (SUBSCRIPTION)
-========================================================= */
+   CREATE CHECKOUT
+   This creates a Subscription and returns Checkout payload.
+   Frontend will open Razorpay Checkout using this data.
+   ========================================================= */
 
-export async function createCheckout(
-  input: CheckoutInput
-): Promise<string> {
-  const razorpay = getRazorpay()
+export async function createCheckout(input: CheckoutInput) {
+  // -------------------------------------------------------
+  // Create Subscription
+  // -------------------------------------------------------
 
-  const subscription =
-    await razorpay.subscriptions.create({
-      plan_id: process.env.RAZORPAY_PRO_PLAN_ID!,
-      customer_notify: 1,
-      quantity: 1,
-      notes: {
-        userId: input.userId,
-      },
-    })
-
-  /**
-   * Razorpay hosted checkout URL
-   */
-  const url = `https://api.razorpay.com/v1/subscriptions/${subscription.id}/checkout`
-
-  return url
-}
-
-/* =========================================================
-   CREATE PAYMENT LINK (fallback method)
-========================================================= */
-
-export async function createPaymentLink(
-  input: CheckoutInput
-): Promise<string> {
-  const razorpay = getRazorpay()
-
-  const link = await razorpay.paymentLink.create({
-    amount: 49900, // ₹499
-    currency: "INR",
-    description: "HisabDesk Pro Subscription",
-    customer: {
-      email: input.email,
-      name: input.name,
-    },
-    notify: {
-      email: true,
-    },
+  const subscription = await razorpay.subscriptions.create({
+    plan_id: process.env.RAZORPAY_PRO_PLAN_ID!,
+    total_count: 1200, // 100 years (effectively recurring)
+    quantity: 1,
+    customer_notify: 1,
     notes: {
       userId: input.userId,
     },
   })
 
-  return link.short_url
+  // -------------------------------------------------------
+  // Return Checkout Config (NOT a URL)
+  // Frontend opens Razorpay modal using this.
+  // -------------------------------------------------------
+
+  return {
+    key: process.env.RAZORPAY_KEY_ID!,
+    subscriptionId: subscription.id,
+    customer: {
+      name: input.name || "User",
+      email: input.email,
+    },
+  }
 }

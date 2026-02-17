@@ -1,7 +1,7 @@
-/**
+ï»¿/**
  * =========================================
  * PAN Validation Integration Layer
- * HisabDesk – Phase A
+ * HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Phase A
  * Enterprise-grade service wrapper
  * =========================================
  *
@@ -30,7 +30,7 @@ const API_KEY = process.env.PAN_API_KEY!
 const API_SECRET = process.env.PAN_API_SECRET!
 
 /* ========================================================
-   INTERNAL — HMAC SIGNING
+   INTERNAL ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â HMAC SIGNING
 ======================================================== */
 function sign(payload: string) {
   return crypto
@@ -40,7 +40,7 @@ function sign(payload: string) {
 }
 
 /* ========================================================
-   INTERNAL — Secure Fetch Wrapper
+   INTERNAL ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Secure Fetch Wrapper
 ======================================================== */
 async function panFetch<T>(
   path: string,

@@ -1,56 +1,45 @@
-"use client"
+ï»¿"use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+/**
+ * =========================================================
+ * HisabDesk ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â First Time User Guide (Modal)
+ * Safe, UI-only helper
+ * =========================================================
+ */
 
-export default function FirstTimeGuide() {
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
+interface Props {
+  open: boolean
+  onClose: () => void
+}
 
-  useEffect(() => {
-    const seen = localStorage.getItem("hisabdesk_first_time_modal")
-    if (!seen) {
-      setOpen(true)
-      localStorage.setItem("hisabdesk_first_time_modal", "1")
-    }
-  }, [])
-
+export default function FirstTimeGuide({ open, onClose }: Props) {
   if (!open) return null
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
         <h2 className="text-lg font-semibold mb-2">
-          Welcome to HisabDesk 👋
+          Welcome to HisabDesk ??
         </h2>
 
-        <p className="text-sm text-gray-600 mb-4">
-          Track income, manage expenses, and calculate taxes automatically.
-          Let’s set up your workspace in 2 minutes.
+        <p className="text-sm text-muted-foreground mb-4">
+          Track income, control expenses, and grow your wealth with clarity.
         </p>
 
-        <ul className="text-sm space-y-2 mb-6">
-          <li>✅ Add your first income</li>
-          <li>✅ Track expenses</li>
-          <li>✅ Check tax calculation</li>
-          <li>✅ Upgrade to Pro for reports</li>
+        <ul className="text-sm space-y-2 mb-6 list-disc pl-5">
+          <li>Add your first income entry</li>
+          <li>Track expenses daily</li>
+          <li>Visit Reports to see insights</li>
+          <li>Use Wealth Planner to grow net worth</li>
         </ul>
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => {
-              setOpen(false)
-              router.push("/dashboard")
-            }}
-            className="flex-1 bg-black text-white rounded-xl py-2 text-sm"
-          >
-            Start Setup
-          </button>
-
-          <button
-            onClick={() => setOpen(false)}
-            className="flex-1 border rounded-xl py-2 text-sm"
-          >
-            Skip
-          </button>
-        </
+        <button
+          onClick={onClose}
+          className="w-full bg-black text-white rounded-xl py-2 text-sm"
+        >
+          Get Started
+        </button>
+      </div>
+    </div>
+  )
+}

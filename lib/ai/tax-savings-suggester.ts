@@ -1,11 +1,11 @@
-/**
+ï»¿/**
  * =========================================================
  * AI Tax Savings Suggester Engine
- * HisabDesk – Phase B (AI Features)
+ * HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Phase B (AI Features)
  * =========================================================
  *
  * PURE UTILITY MODULE
- * ⚠ DO NOT add "use server" or "use client"
+ * ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â  DO NOT add "use server" or "use client"
  * Must stay directive-free for Next 16 compatibility
  * =========================================================
  */
@@ -87,7 +87,7 @@ export function suggestTaxSavings(
     push(
       suggestions,
       "Invest more under 80C",
-      `Invest ₹${remaining80C.toLocaleString()} more in ELSS/PPF/LIC to fully utilize 80C limit.`,
+      `Invest ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${remaining80C.toLocaleString()} more in ELSS/PPF/LIC to fully utilize 80C limit.`,
       remaining80C * 0.3,
       "80C"
     )
@@ -97,7 +97,7 @@ export function suggestTaxSavings(
     push(
       suggestions,
       "Health insurance deduction",
-      `Buy health insurance for additional ₹${remaining80D.toLocaleString()} deduction.`,
+      `Buy health insurance for additional ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${remaining80D.toLocaleString()} deduction.`,
       remaining80D * 0.3,
       "80D"
     )

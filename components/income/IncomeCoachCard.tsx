@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useState } from "react"
 
@@ -27,7 +27,7 @@ export default function IncomeCoachCard() {
     <div className="p-4 border rounded-2xl bg-indigo-50 space-y-3">
 
       <h3 className="text-sm font-medium">
-        🤖 Income Coach
+        ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ Income Coach
       </h3>
 
       <input

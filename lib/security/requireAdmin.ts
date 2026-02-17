@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { NextRequest, NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { hasRole, Role } from "./permissions"
 
 /*
-  PHASE 17 — Admin Guard (API protection)
+  PHASE 17 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Admin Guard (API protection)
 
   Usage:
 

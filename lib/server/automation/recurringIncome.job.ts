@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "./supabaseAdmin";
+ï»¿import { supabaseAdmin } from "./supabaseAdmin";
 
 export async function runRecurringIncome() {
   const today = new Date().toISOString().slice(0, 10);

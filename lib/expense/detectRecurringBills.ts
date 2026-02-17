@@ -1,9 +1,9 @@
-// ==========================================================
+ï»¿// ==========================================================
 // Detect recurring expenses and convert to Bills
 // Called automatically after expense insert
 // ==========================================================
 
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 const KEYWORDS = [
   "rent",
@@ -30,12 +30,12 @@ export async function detectRecurringBills(
     category?: string
   }
 ) {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const text = (expense.notes || "").toLowerCase()
 
   // --------------------------------------------------------
-  // Rule 1 → keyword match
+  // Rule 1 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ keyword match
   // --------------------------------------------------------
 
   const matched = KEYWORDS.some((k) => text.includes(k))
@@ -43,7 +43,7 @@ export async function detectRecurringBills(
   if (!matched) return
 
   // --------------------------------------------------------
-  // Rule 2 → avoid duplicates
+  // Rule 2 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ avoid duplicates
   // --------------------------------------------------------
 
   const { data: existing } = await supabase

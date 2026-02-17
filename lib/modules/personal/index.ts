@@ -1,5 +1,5 @@
-// ==========================================================
-// HisabDesk — Personal Module Barrel Exports
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Personal Module Barrel Exports
 // ==========================================================
 
 // ----------------------------------------------------------
@@ -30,7 +30,7 @@ export * from "./portfolioAdvisor"
 export * from "./loanAdvisor"
 
 export * from "./goalAdvisor"
-export * from "./documentAdvisor" // ✅ profileAdvisor removed
+export * from "./documentAdvisor" // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ profileAdvisor removed
 
 
 // ----------------------------------------------------------
@@ -64,7 +64,7 @@ export * from "./dashboardContextBuilder"
 
 // ==========================================================
 // ==========================================================
-// BACKWARD COMPATIBILITY EXPORTS (Named — NOT default)
+// BACKWARD COMPATIBILITY EXPORTS (Named ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â NOT default)
 // ==========================================================
 
 export { analyzeCashflow } from "./cashflowAdvisor"

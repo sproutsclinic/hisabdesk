@@ -1,21 +1,20 @@
-"use client"
+ï»¿"use client"
 
 /* =========================================================
-   HisabDesk — Add Income (PERSONAL • PRO • AI ENABLED)
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Add Income (PERSONAL ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ PRO ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ AI ENABLED)
    ---------------------------------------------------------
-   ✓ Manual entry
-   ✓ OCR camera
-   ✓ PDF import
-   ✓ Professional categories
-   ✓ AI insights panel
-   ✓ API only (no DB calls)
-   ✗ no business logic
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Manual entry
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ OCR camera
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ PDF import
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Professional categories
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ AI insights panel
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ API only (no DB calls)
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â no business logic
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Next.js 16 STRICT MODE SAFE
 ========================================================= */
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-
-/* ========================================================= */
 
 export default function Page() {
   const router = useRouter()
@@ -25,7 +24,7 @@ export default function Page() {
   const [aiLoading, setAiLoading] = useState(false)
 
   /* ========================================================
-     CATEGORY MAP (UNCHANGED – YOUR SYSTEM)
+     CATEGORY MAP
   ======================================================== */
 
   const CATEGORY_MAP: Record<string, string[]> = {
@@ -60,19 +59,25 @@ export default function Page() {
     "Wallet",
   ]
 
-  /* ======================================================== */
-
   const [category, setCategory] = useState("Salary")
   const [subcategory, setSubcategory] = useState("Monthly Salary")
   const [payment, setPayment] = useState("Bank Transfer")
 
+  /* ========================================================
+     CATEGORY CHANGE ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â STRICT SAFE
+  ======================================================== */
+
   function handleCategoryChange(value: string) {
     setCategory(value)
-    setSubcategory(CATEGORY_MAP[value][0])
+
+    const subs = CATEGORY_MAP[value] ?? []
+    const first = subs.at(0)
+
+    setSubcategory(first ?? "")
   }
 
   /* ========================================================
-     AI LOAD (NEW)
+     AI LOAD
   ======================================================== */
 
   useEffect(() => {
@@ -85,7 +90,6 @@ export default function Page() {
         })
 
         const json = await res.json()
-
         setAiText(json?.insights ?? null)
       } catch {
         setAiText(null)
@@ -98,10 +102,10 @@ export default function Page() {
   }, [])
 
   /* ========================================================
-     SAVE (API ONLY – CLEAN ARCHITECTURE)
+     SAVE (API ONLY)
   ======================================================== */
 
-  async function createIncome(data: any) {
+  async function createIncome(data: unknown) {
     await fetch("/api/income", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -120,14 +124,14 @@ export default function Page() {
       date,
       amount,
       category: `${category} / ${subcategory}`,
-      notes: `${description} • ${payment}`,
+      notes: `${description} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ ${payment}`,
     })
 
     router.push("/personal/income")
   }
 
   /* ========================================================
-     OCR
+     OCR IMPORT
   ======================================================== */
 
   async function handlePhoto(file: File) {
@@ -157,7 +161,7 @@ export default function Page() {
   }
 
   /* ========================================================
-     PDF
+     PDF IMPORT
   ======================================================== */
 
   async function handlePDF(file: File) {
@@ -178,10 +182,7 @@ export default function Page() {
 
   return (
     <main className="max-w-md mx-auto px-4 py-6 space-y-5">
-
       <h1 className="text-xl font-semibold">Add Income</h1>
-
-      {/* ================= AI CARD (NEW) ================= */}
 
       <div className="p-4 bg-blue-50 border rounded-xl text-sm">
         {aiLoading && "Analyzing income trends..."}
@@ -190,10 +191,7 @@ export default function Page() {
         )}
       </div>
 
-      {/* ================= FORM ================= */}
-
       <form action={handleSubmit} className="space-y-3">
-
         <input
           type="date"
           name="date"
@@ -204,7 +202,7 @@ export default function Page() {
         <input
           type="number"
           name="amount"
-          placeholder="₹ Amount"
+          placeholder="ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ Amount"
           required
           className="w-full border rounded-lg p-3 text-lg font-medium text-green-600"
         />
@@ -232,7 +230,7 @@ export default function Page() {
           onChange={(e) => setSubcategory(e.target.value)}
           className="w-full border rounded-lg p-3"
         >
-          {CATEGORY_MAP[category].map((s) => (
+          {(CATEGORY_MAP[category] ?? []).map((s) => (
             <option key={s}>{s}</option>
           ))}
         </select>
@@ -255,34 +253,34 @@ export default function Page() {
         </button>
       </form>
 
-      {/* ================= OCR / PDF ================= */}
-
       <div className="grid grid-cols-2 gap-3">
-
         <label className="p-4 border rounded-xl text-center cursor-pointer">
-          📸 Scan Slip
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ Scan Slip
           <input
             type="file"
             accept="image/*"
             hidden
-            onChange={(e) =>
-              e.target.files && handlePhoto(e.target.files[0])
-            }
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              handlePhoto(file)
+            }}
           />
         </label>
 
         <label className="p-4 border rounded-xl text-center cursor-pointer">
-          📄 Upload PDF
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ Upload PDF
           <input
             type="file"
             accept=".pdf"
             hidden
-            onChange={(e) =>
-              e.target.files && handlePDF(e.target.files[0])
-            }
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              handlePDF(file)
+            }}
           />
         </label>
-
       </div>
     </main>
   )

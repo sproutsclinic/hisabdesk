@@ -1,37 +1,13 @@
-// ==========================================================
-// HisabDesk — Dashboard Savings Rate API
-// ----------------------------------------------------------
-// PURPOSE
-//   Calculates savings performance metrics
-//
-//   Returns:
-//     ✓ income
-//     ✓ expense
-//     ✓ savings
-//     ✓ savingsRate (%)
-//
-//   savingsRate = (income - expense) / income * 100
-//
-//   Used by:
-//     ✓ Dashboard KPI cards
-//     ✓ Wealth planner
-//     ✓ AI insights context
-//
-//   RULES
-//     ✓ server-side only
-//     ✓ transactions = single source of truth
-//     ✓ NO AI calls
-//     ✓ auth based
-//     ✓ fast aggregation only
-//
+ï»¿// ==========================================================
+// HisabDesk â€” Dashboard Savings Rate API
 // ==========================================================
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
+const supabase = getSupabaseAdmin()
 
 // ==========================================================
 // AUTH
@@ -54,10 +30,6 @@ async function getUser() {
 export async function GET() {
   try {
     const user = await getUser()
-
-    // ------------------------------------------------------
-    // Load transactions
-    // ------------------------------------------------------
 
     const { data } = await supabase
       .from("transactions")
@@ -82,10 +54,6 @@ export async function GET() {
       income > 0
         ? Math.round((savings / income) * 100)
         : 0
-
-    // ------------------------------------------------------
-    // Response
-    // ------------------------------------------------------
 
     return NextResponse.json({
       income,

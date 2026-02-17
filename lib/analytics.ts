@@ -1,4 +1,4 @@
-export const track = (event: string, params?: any) => {
+ï»¿export const track = (event: string, params?: any) => {
   if (typeof window === "undefined") return
 
   // @ts-ignore

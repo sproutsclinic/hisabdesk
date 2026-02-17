@@ -1,11 +1,11 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { useRouter } from "next/navigation"
 
 /*
-  PHASE 17 — Client Admin Guard
+  PHASE 17 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Client Admin Guard
 
   Protects admin pages on client side
   (extra layer in addition to API guards)

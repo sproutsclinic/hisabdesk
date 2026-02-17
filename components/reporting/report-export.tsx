@@ -1,214 +1,83 @@
-"use client"
+ï»¿"use client"
 
 /**
  * =========================================================
- * Report Export Center (CSV / Excel / PDF)
- * HisabDesk – Phase G (Enterprise Reporting Tools)
- * =========================================================
- *
- * PURPOSE
- * Allow users/CA/Admin to export:
- *
- *   ✓ Income
- *   ✓ Expenses
- *   ✓ Profit summary
- *   ✓ Full ledger
- *
- * Formats:
- *   ✓ CSV (fast)
- *   ✓ Excel (.xlsx)
- *   ✓ JSON backup
- *
- * WHY IMPORTANT
+ * Report Export (Personal Mode ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â API Driven)
  * ---------------------------------------------------------
- * Every accounting SaaS MUST provide export.
- *
- * Needed for:
- *   ✓ CA filing
- *   ✓ audits
- *   ✓ sharing
- *   ✓ compliance
- *
- * =========================================================
- *
- * CONNECTS TO
- *   Supabase tables:
- *     income
- *     expenses
- *
- * SAFE
- * - client only
- * - read only
- * - no existing files modified
- *
- * =========================================================
- *
- * USAGE
- *
- * <ReportExport orgId={orgId} />
- *
- * Place on:
- *   ✓ dashboard
- *   ✓ reports page
- *   ✓ admin panel
- *
+ * UI Trigger Only.
+ * Server performs:
+ *   auth ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ query ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ validation ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ formatting ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ file stream
  * =========================================================
  */
 
-import { supabase } from "@/lib/supabase"
+import { useState } from "react"
 
-/* =========================================================
-   MAIN
-========================================================= */
+export default function ReportExport() {
+  const [loading, setLoading] = useState<string | null>(null)
 
-export default function ReportExport({
-  orgId,
-}: {
-  orgId: string
-}) {
-  /* ======================================================
-     EXPORT CSV
-  ====================================================== */
+  async function download(endpoint: string, filename: string) {
+    try {
+      setLoading(filename)
 
-  async function exportCSV() {
-    const rows = await fetchRows()
-
-    const header = Object.keys(rows[0] || {}).join(",")
-
-    const body = rows
-      .map((r) =>
-        Object.values(r)
-          .map((v) => `"${String(v ?? "")}"`)
-          .join(",")
-      )
-      .join("\n")
-
-    downloadFile(
-      `${header}\n${body}`,
-      "hisabdesk-report.csv",
-      "text/csv"
-    )
-  }
-
-  /* ======================================================
-     EXPORT JSON
-  ====================================================== */
-
-  async function exportJSON() {
-    const rows = await fetchRows()
-
-    downloadFile(
-      JSON.stringify(rows, null, 2),
-      "hisabdesk-report.json",
-      "application/json"
-    )
-  }
-
-  /* ======================================================
-     EXPORT EXCEL (simple .xlsx via CSV trick)
-  ====================================================== */
-
-  async function exportExcel() {
-    const rows = await fetchRows()
-
-    const header = Object.keys(rows[0] || {}).join(",")
-
-    const body = rows
-      .map((r) => Object.values(r).join(","))
-      .join("\n")
-
-    downloadFile(
-      `${header}\n${body}`,
-      "hisabdesk-report.xlsx",
-      "application/vnd.ms-excel"
-    )
-  }
-
-  /* ======================================================
-     FETCH DATA
-  ====================================================== */
-
-  async function fetchRows() {
-    const [incomeRes, expenseRes] = await Promise.all([
-      supabase
-        .from("income")
-        .select("*")
-        .eq("org_id", orgId),
-
-      supabase
-        .from("expenses")
-        .select("*")
-        .eq("org_id", orgId),
-    ])
-
-    const income = (incomeRes.data || []).map((r) => ({
-      type: "income",
-      ...r,
-    }))
-
-    const expense = (expenseRes.data || []).map(
-      (r) => ({
-        type: "expense",
-        ...r,
+      const res = await fetch(endpoint, {
+        method: "GET",
+        credentials: "include",
       })
-    )
 
-    return [...income, ...expense].sort((a, b) =>
-      a.created_at.localeCompare(b.created_at)
-    )
+      if (!res.ok) throw new Error("Export failed")
+
+      const blob = await res.blob()
+
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = filename
+      a.click()
+
+      window.URL.revokeObjectURL(url)
+    } catch (e) {
+      console.error("Export error:", e)
+      alert("Failed to export file")
+    } finally {
+      setLoading(null)
+    }
   }
-
-  /* ======================================================
-     UI
-  ====================================================== */
 
   return (
     <div className="flex gap-3">
-      <Button onClick={exportCSV}>CSV</Button>
-      <Button onClick={exportExcel}>Excel</Button>
-      <Button onClick={exportJSON}>JSON</Button>
+      <Button onClick={() => download("/api/reports/export?format=csv", "hisabdesk.csv")} loading={loading === "hisabdesk.csv"}>
+        CSV
+      </Button>
+
+      <Button onClick={() => download("/api/reports/export?format=xlsx", "hisabdesk.xlsx")} loading={loading === "hisabdesk.xlsx"}>
+        Excel
+      </Button>
+
+      <Button onClick={() => download("/api/reports/export?format=json", "hisabdesk.json")} loading={loading === "hisabdesk.json"}>
+        JSON
+      </Button>
     </div>
   )
 }
 
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function downloadFile(
-  content: string,
-  filename: string,
-  type: string
-) {
-  const blob = new Blob([content], { type })
-
-  const url = URL.createObjectURL(blob)
-
-  const a = document.createElement("a")
-  a.href = url
-  a.download = filename
-  a.click()
-
-  URL.revokeObjectURL(url)
-}
-
-/* =========================================================
-   BUTTON
-========================================================= */
+/* ========================================================= */
 
 function Button({
   children,
   onClick,
+  loading,
 }: {
   children: React.ReactNode
   onClick: () => void
+  loading?: boolean
 }) {
   return (
     <button
       onClick={onClick}
-      className="border px-3 py-2 rounded-lg text-sm bg-white hover:bg-gray-50"
+      disabled={loading}
+      className="border px-3 py-2 rounded-lg text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
     >
-      {children}
+      {loading ? "PreparingÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦" : children}
     </button>
   )
 }

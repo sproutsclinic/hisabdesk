@@ -1,5 +1,5 @@
-// ==========================================================
-// HisabDesk — Scheduler Service
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Scheduler Service
 // Central automation runner (cron safe)
 // Executes:
 //   1) Recurring rules
@@ -9,7 +9,7 @@
 // NEVER from client
 // ==========================================================
 
-import { createClient } from "@/lib/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import {
   getDueRecurringRules,
   executeRecurringRule,
@@ -20,7 +20,7 @@ import {
 } from "@/lib/api/bills"
 import { captureCurrentNetWorth } from "@/lib/api/networth"
 
-const supabase = createClient()
+const supabase = getSupabaseAdmin()
 
 // ==========================================================
 // RUN RECURRING RULES

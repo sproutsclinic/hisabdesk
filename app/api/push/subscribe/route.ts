@@ -1,44 +1,20 @@
-/**
+ï»¿/**
  * =========================================================
  * Push Subscribe API
- * HisabDesk – Phase D Mobile
+ * HisabDesk â€” Phase D Mobile
  * =========================================================
  *
  * PURPOSE
  * Save browser push subscription to DB
  *
- * Called by:
- *   components/pwa/push-register.tsx
- *
- * FLOW
- *   Browser → POST subscription
- *   → store in push_subscriptions table
- *
- * SAFE
- * ✓ auth required
- * ✓ server trusted only
- * ✓ idempotent (upsert)
- *
- * CONNECTS TO
- *   lib/pwa/push-notifications.ts
- *
+ * RULE
+ * Always use centralized Supabase gateway.
+ * NEVER instantiate Supabase manually.
  * =========================================================
  */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
-
-/* =========================================================
-   CLIENT (SERVICE ROLE)
-========================================================= */
-
-function getClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-}
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /* =========================================================
    POST
@@ -46,7 +22,7 @@ function getClient() {
 
 export async function POST(req: Request) {
   try {
-    const supabase = getClient()
+    const supabase = getSupabaseAdmin()
 
     const body = await req.json()
     const subscription = body.subscription
@@ -59,27 +35,15 @@ export async function POST(req: Request) {
     }
 
     /* ------------------------------------------------------
-       AUTH USER (from Supabase JWT cookie)
+       AUTH USER (handled by gateway session)
     ------------------------------------------------------ */
-
-    const access =
-      req.headers.get("authorization")?.replace(
-        "Bearer ",
-        ""
-      )
-
-    if (!access) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
-    }
 
     const {
       data: { user },
-    } = await supabase.auth.getUser(access)
+      error,
+    } = await supabase.auth.getUser()
 
-    if (!user) {
+    if (error || !user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -87,7 +51,7 @@ export async function POST(req: Request) {
     }
 
     /* ------------------------------------------------------
-       UPSERT
+       UPSERT SUBSCRIPTION
     ------------------------------------------------------ */
 
     await supabase.from("push_subscriptions").upsert({
@@ -96,7 +60,9 @@ export async function POST(req: Request) {
     })
 
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (err) {
+    console.error("Push subscribe error:", err)
+
     return NextResponse.json(
       { error: "Failed" },
       { status: 500 }

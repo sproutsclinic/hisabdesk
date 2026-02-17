@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -41,7 +41,7 @@ export default function OnboardingChecklist() {
           onClick={() => setOpen(false)}
           className="text-xs text-gray-500"
         >
-          ✕
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢
         </button>
       </div>
 
@@ -53,7 +53,7 @@ export default function OnboardingChecklist() {
           />
         </div>
         <p className="text-xs mt-1 text-gray-600">
-          {done}/{total} completed • {percent}%
+          {done}/{total} completed ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ {percent}%
         </p>
       </div>
 
@@ -68,7 +68,7 @@ export default function OnboardingChecklist() {
                 className="w-full text-left p-2 rounded-lg border hover:bg-gray-50 flex items-start gap-2"
               >
                 <span className="mt-0.5">
-                  {isDone ? "✅" : "⬜"}
+                  {isDone ? "ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦" : "ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ"}
                 </span>
 
                 <div>

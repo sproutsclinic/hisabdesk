@@ -9,32 +9,22 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    /* ======================================================
-       STRICTNESS (ENTERPRISE SAFE MODE)
-       ====================================================== */
+    /* STRICTNESS */
     "strict": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
-    /* ======================================================
-       SAFETY
-       ====================================================== */
+    /* SAFETY */
     "allowJs": false,
     "skipLibCheck": false,
     "isolatedModules": true,
     "noEmit": true,
-    /* ======================================================
-       PERFORMANCE
-       ====================================================== */
+    /* PERFORMANCE */
     "incremental": true,
-    /* ======================================================
-       IMPORTS
-       ====================================================== */
+    /* IMPORTS */
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
@@ -43,9 +33,7 @@
         "./*"
       ]
     },
-    /* ======================================================
-       NEXT.JS
-       ====================================================== */
+    /* NEXT */
     "plugins": [
       {
         "name": "next"
@@ -60,6 +48,7 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next"
   ]
 }

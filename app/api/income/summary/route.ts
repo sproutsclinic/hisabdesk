@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — Income Summary API
+ï»¿/* =========================================================
+   HisabDesk â€“ Income Summary API
    ---------------------------------------------------------
    PURPOSE
    - monthly aggregation
@@ -9,7 +9,7 @@
 ========================================================= */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
@@ -23,7 +23,7 @@ function monthKey(date: string) {
 
 export async function GET() {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },

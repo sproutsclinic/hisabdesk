@@ -1,38 +1,22 @@
-// ==========================================================
-// HisabDesk — AI Client (High-Level Entry for Routes)
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â AI Client (Final Unified Layer)
 // ----------------------------------------------------------
 // PURPOSE
-//   Final clean abstraction for ALL AI calls inside routes
+//   Clean helper wrapper for routes/services.
 //
-//   This sits ABOVE:
-//     safeRunAI()
-//     contextInjector()
-//     prompts
+//   All AI execution MUST flow through safeRunAI().
+//   No system prompts.
+//   No "chat" mode.
+//   Only standardized run types.
 //
-//   So routes only do:
-//
-//     const ai = createAI(user.id)
-//     const text = await ai.module("...", "dashboard-summary")
-//
-//   Benefits:
-//     ✓ zero repeated boilerplate
-//     ✓ auto context injection
-//     ✓ auto guard
-//     ✓ auto logging
-//     ✓ ultra clean routes
-//
-//   This becomes THE ONLY thing routes import
-//
+//   Allowed types:
+//     "cheap"  ? fast utilities
+//     "module" ? page insights
+//     "heavy"  ? deep reasoning
 // ==========================================================
 
 import { safeRunAI } from "./safeRunAI"
 import { injectContext } from "./contextInjector"
-import {
-  FINANCE_SYSTEM_PROMPT,
-  MODULE_INSIGHT_PROMPT,
-  TAX_SYSTEM_PROMPT,
-  PLANNER_SYSTEM_PROMPT,
-} from "./prompts"
 
 import type { AIRunType } from "./types"
 
@@ -47,71 +31,62 @@ export function createAI(userId: string) {
 
   async function execute(params: {
     prompt: string
-    type: AIRunType
+    type?: AIRunType
     module: string
-    system?: string
     inject?: boolean
   }) {
     let prompt = params.prompt
 
-    // auto inject context unless disabled
+    // Inject financial context unless explicitly disabled
     if (params.inject !== false) {
-      prompt = await injectContext(userId, prompt)
+      prompt = await injectContext(prompt)
     }
 
     const result = await safeRunAI({
       userId,
       prompt,
-      type: params.type,
+      type: params.type ?? "cheap",
       module: params.module,
-      system: params.system,
     })
 
     return result.text
   }
 
   // --------------------------------------------------------
-  // PUBLIC HELPERS
+  // PUBLIC API
   // --------------------------------------------------------
 
   return {
-    // cheap summaries
+    /**
+     * Standard module insight (most common)
+     */
     module(prompt: string, module: string) {
       return execute({
-        prompt: `${prompt}\n\n${MODULE_INSIGHT_PROMPT}`,
+        prompt,
         type: "module",
         module,
-        system: FINANCE_SYSTEM_PROMPT,
       })
     },
 
-    // chat assistant
-    chat(prompt: string, module: string) {
-      return execute({
-        prompt,
-        type: "chat",
-        module,
-        system: FINANCE_SYSTEM_PROMPT,
-      })
-    },
-
-    // heavy reasoning (tax/planner)
-    heavy(prompt: string, module: string, system?: string) {
+    /**
+     * Heavy reasoning (planner, projections, tax)
+     */
+    heavy(prompt: string, module: string) {
       return execute({
         prompt,
         type: "heavy",
         module,
-        system: system || PLANNER_SYSTEM_PROMPT,
       })
     },
 
-    // tax specific shortcut
-    tax(prompt: string, module: string) {
+    /**
+     * Ultra-cheap quick helper (rare)
+     */
+    cheap(prompt: string, module: string) {
       return execute({
         prompt,
-        type: "heavy",
+        type: "cheap",
         module,
-        system: TAX_SYSTEM_PROMPT,
       })
     },
   }

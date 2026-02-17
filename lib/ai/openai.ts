@@ -1,124 +1,110 @@
-// ==========================================================
-// HisabDesk — OpenAI Runner (LOW LEVEL ONLY)
-// ----------------------------------------------------------
-// PURPOSE
-//   Single low-level OpenAI executor
-//
-//   ⚠️ IMPORTANT
-//   Routes MUST NOT import this directly.
-//   Use:
-//       safeRunAI()
-//   instead.
-//
-//   This file only:
-//     ✓ selects model
-//     ✓ applies token limits
-//     ✓ applies temperature
-//     ✓ returns normalized result
-//
-// ==========================================================
+ï»¿/**
+ * =========================================================
+ * OpenAI Runner (Core Engine)
+ * HisabDesk AI Layer ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â FINAL
+ * =========================================================
+ *
+ * Pure server utility used by API routes.
+ * NOT a Server Action.
+ */
 
 import OpenAI from "openai"
 
-import {
-  AI_TOKEN_LIMITS,
-  AI_TEMPERATURE,
-  AI_MODELS,
-  AI_DEFAULT_MAX_OUTPUT_TOKENS,
-} from "./constants"
+/* =========================================================
+   TYPES
+========================================================= */
 
-import type {
-  AIRunType,
-  AIResult,
-} from "./types"
+export type AIRunType = "cheap" | "heavy" | "module"
 
-// ==========================================================
-// CLIENT
-// ==========================================================
+type RunAIParams = {
+  prompt: string
+  type?: AIRunType
+  temperature?: number
+}
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
+/* =========================================================
+   MODEL MAP
+========================================================= */
 
-// ==========================================================
-// INTERNAL — SELECT MODEL
-// ==========================================================
+const AI_MODELS: Record<AIRunType, string> = {
+  cheap: "gpt-4o-mini",
+  heavy: "gpt-4o",
+  module: "gpt-4o",
+}
 
-function getModel(type: AIRunType) {
+const MAX_TOKENS: Record<AIRunType, number> = {
+  cheap: 700,
+  heavy: 1800,
+  module: 1200,
+}
+
+/* =========================================================
+   CLIENT
+========================================================= */
+
+function getClient() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY missing")
+  }
+
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+export function getModel(type: AIRunType = "cheap") {
   return AI_MODELS[type]
 }
 
-function getMaxTokens(type: AIRunType) {
-  return AI_TOKEN_LIMITS[type]
+export function getMaxTokens(type: AIRunType = "cheap") {
+  return MAX_TOKENS[type]
 }
 
-// ==========================================================
-// CORE RUNNER
-// ==========================================================
-//
-// DO NOT USE DIRECTLY IN ROUTES
-// Use safeRunAI()
-// ==========================================================
+/* =========================================================
+   MAIN RUNNER
+========================================================= */
 
-export async function runAI(params: {
-  prompt: string
-  type: AIRunType
-  system?: string
-}): Promise<AIResult> {
-  const model = getModel(params.type)
-  const maxTokens = getMaxTokens(params.type)
+export async function runAI(
+  params: RunAIParams
+): Promise<{ text: string; tokens: number }> {
+  const {
+    prompt,
+    type = "cheap",
+    temperature = 0.3,
+  } = params
 
-  const messages = []
+  const client = getClient()
 
-  if (params.system) {
-    messages.push({
-      role: "system",
-      content: params.system,
-    })
-  }
-
-  messages.push({
-    role: "user",
-    content: params.prompt,
-  })
-
-  const response = await client.chat.completions.create({
-    model,
-    messages,
-    temperature: AI_TEMPERATURE,
-    max_tokens: Math.min(
-      maxTokens,
-      AI_DEFAULT_MAX_OUTPUT_TOKENS
-    ),
+  const completion = await client.chat.completions.create({
+    model: getModel(type),
+    temperature,
+    max_tokens: getMaxTokens(type),
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a precise financial assistant. Respond concisely with short actionable insights.",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
   })
 
   const text =
-    response.choices?.[0]?.message?.content?.trim() || ""
+    completion.choices?.[0]?.message?.content ?? ""
+
+  const tokens =
+    completion.usage?.total_tokens ??
+    Math.ceil(text.length / 4)
 
   return {
     text,
-    usage: response.usage,
+    tokens,
   }
-}
-// ==========================================================
-// BACKWARD COMPATIBILITY LAYER
-// ----------------------------------------------------------
-// Many routes still import legacy helpers.
-// We map them safely to runAI so build does not break.
-// This allows gradual migration instead of mass refactor.
-// ==========================================================
-
-export async function runChat(prompt: string) {
-  const res = await runAI({ prompt, type: "chat" })
-  return res.text
-}
-
-export async function runCheapChat(prompt: string) {
-  const res = await runAI({ prompt, type: "module" })
-  return res.text
-}
-
-export async function runChatModel(params: { prompt: string }) {
-  const res = await runAI({ prompt: params.prompt, type: "chat" })
-  return res.text
 }

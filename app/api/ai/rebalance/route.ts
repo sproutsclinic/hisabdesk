@@ -1,151 +1,75 @@
-/* =========================================================
-   HisabDesk — AI Portfolio Rebalance API
-   ---------------------------------------------------------
-   SERVER ONLY (AI ROUTE)
+ï»¿/* =========================================================
+HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Portfolio Rebalance API (PFOS Phase-2)
+-----------------------------------------------------
 
-   PURPOSE
-   - Generate AI-based rebalance advice
-   - Uses:
-       ✓ DB portfolio data
-       ✓ compact context
-       ✓ safeRunAI wrapper
-   - Never trust client numbers
+SERVER ONLY
 
-   ARCHITECTURE
-     client
-       ↓
-     /api/ai/portfolio/rebalance
-       ↓
-     service (DB fetch)
-       ↓
-     contextBuilder
-       ↓
-     safeRunAI (OpenAI server)
-       ↓
-     text response
+PURPOSE
 
-   RULES
-   ✅ server only
-   ✅ OpenAI allowed here
-   ❌ no calculations
-   ❌ no business logic
-   ❌ no client provided portfolio
+* Generate AI rebalance insights from computed portfolio data
+* Uses deterministic engine output (never raw DB rows)
+* AI is interpretation layer only
 
-   ========================================================= */
+ARCHITECTURE
+client ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ route ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ portfolio service ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ portfolio engine ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ safeRun ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ AI
 
-import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+========================================================= */
 
-import { safeRunAI } from "@/lib/ai/safeRunAI"
-import { PORTFOLIO_REBALANCE_PROMPT } from "@/lib/ai/portfolioRebalancePrompt"
-
+import { withAI } from "@/lib/ai/withAI"
 import { getPortfolioOverview } from "@/lib/api/portfolio/service"
-import { buildAIContext } from "@/lib/ai/contextBuilder"
 
-/* =========================================================
-   SERVER CLIENT (session based)
-   ========================================================= */
+export const dynamic = "force-dynamic"
 
-function getServerClient(req: NextRequest) {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
-    {
-      global: {
-        headers: {
-          Authorization: req.headers.get("Authorization") || "",
-        },
-      },
-    },
-  )
+export const POST = withAI(async ({ user, safeRun }) => {
+// -------------------------------------------------------
+// Load computed portfolio (engine output)
+// -------------------------------------------------------
+
+const portfolio = await getPortfolioOverview(user.id)
+
+if (!portfolio.assets.length) {
+return {
+insights: "Add assets to receive portfolio advice.",
+}
 }
 
-/* =========================================================
-   POST /api/ai/portfolio/rebalance
-   ========================================================= */
+// -------------------------------------------------------
+// Build AI context ONLY from guaranteed domain fields
+// -------------------------------------------------------
 
-export async function POST(req: NextRequest) {
-  try {
-    const supabase = getServerClient(req)
+const allocationLines = portfolio.assets
+.map(
+(a) =>
+`asset#${a.id}: alloc=${a.allocationPercent}% return=${a.returnPercent}%`,
+)
+.join("\n")
 
-    /* -----------------------------------------------------
-       AUTH
-       ----------------------------------------------------- */
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser()
+const prompt = `
+Portfolio Value=${portfolio.summary.totalCurrent}
+Total PnL=${portfolio.summary.totalPnL}
 
-    if (error || !user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 },
-      )
-    }
+Holdings:
+${allocationLines}
 
-    /* -----------------------------------------------------
-       LOAD REAL PORTFOLIO (SERVER AUTHORITY)
-       ----------------------------------------------------- */
-    const overview = await getPortfolioOverview(user.id)
+Provide 4 concise insights:
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ concentration risk (if present)
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ diversification suggestion
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ one rebalance action
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ one long-term allocation principle
 
-    if (!overview || !overview.assets?.length) {
-      return NextResponse.json({
-        text: "Add assets to receive portfolio advice.",
-      })
-    }
-
-    /* -----------------------------------------------------
-       BUILD COMPACT CONTEXT
-       ----------------------------------------------------- */
-
-    const baseContext = buildAIContext({
-      assets: overview.summary.totalCurrent,
-      networth: overview.summary.totalCurrent,
-    })
-
-    const portfolioText = overview.assets
-      .map(
-        (a: any) =>
-          `${a.name}:${a.type}:${a.allocationPercent}:${a.returnPercent}`,
-      )
-      .join("\n")
-
-    const userContent = `
-${baseContext}
-
-portfolio:
-${portfolioText}
+Use ONLY supplied numbers.
+Do not assume asset types or categories.
 `
 
-    /* -----------------------------------------------------
-       AI CALL (safe wrapper)
-       ----------------------------------------------------- */
+// -------------------------------------------------------
+// AI Interpretation (standard PFOS call)
+// -------------------------------------------------------
 
-    const text = await safeRunAI({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: PORTFOLIO_REBALANCE_PROMPT,
-        },
-        {
-          role: "user",
-          content: userContent,
-        },
-      ],
-      maxTokens: 250,
-    })
+const result = await safeRun({
+prompt,
+type: "module",
+module: "portfolio-rebalance",
+})
 
-    /* -----------------------------------------------------
-       RESPONSE
-       ----------------------------------------------------- */
-
-    return NextResponse.json({ text })
-  } catch (err) {
-    console.error("Portfolio AI error:", err)
-
-    return NextResponse.json({
-      text: "Portfolio advisor temporarily unavailable.",
-    })
-  }
-}
+return { insights: result.text }
+})

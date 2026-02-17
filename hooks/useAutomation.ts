@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — useAutomation Hook
+ï»¿/* =========================================================
+   HisabDesk ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â useAutomation Hook
    ---------------------------------------------------------
    CLIENT SIDE ONLY
 
@@ -11,14 +11,14 @@
    - ZERO Supabase direct access
 
    ARCHITECTURE
-     Component → hook → /api/automation → service → engine
+     Component ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ hook ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ /api/automation ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ service ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ engine
 
    RULES
-   ✅ thin client
-   ✅ fetch only
-   ❌ no math
-   ❌ no DB
-   ❌ no AI
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ thin client
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ fetch only
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no math
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no DB
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no AI
 
    ========================================================= */
 

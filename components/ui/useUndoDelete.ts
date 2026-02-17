@@ -1,68 +1,37 @@
-"use client"
+ï»¿"use client"
 
 import { useRef } from "react"
 import { useToast } from "@/components/providers/ToastProvider"
 
-/* =================================================
-   UNDO DELETE HOOK — Enterprise Safe
-
-   Fixes:
-   ✅ no NodeJS types (browser safe)
-   ✅ correct ToastProvider import
-   ✅ memory-safe cleanup
-   ✅ prevents double delete
-   ✅ debounced confirmation
-
-   Usage:
-
-   const undoDelete = useUndoDelete()
-
-   const undo = undoDelete({
-     label: "Transaction deleted",
-     onConfirm: () => deleteFromDB(id)
-   })
-
-   // call undo() if user clicks undo
-================================================= */
-
-type UndoOptions = {
-  label?: string
-  delay?: number
-  onConfirm: () => Promise<void> | void
-}
+/* ==========================================================
+   useUndoDelete ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â aligned with ToastProvider.show()
+========================================================== */
 
 export function useUndoDelete() {
-  const toast = useToast()
+  const { show } = useToast()
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const confirmed = useRef(false)
-
-  const run = ({
-    label = "Deleted",
-    delay = 3000,
-    onConfirm,
-  }: UndoOptions) => {
-    confirmed.current = false
-
-    if (timer.current) clearTimeout(timer.current)
-
-    timer.current = setTimeout(async () => {
-      if (confirmed.current) return
-      confirmed.current = true
-      await onConfirm()
+  function scheduleDelete(
+    action: () => void,
+    label: string,
+    delay = 5000
+  ) {
+    timerRef.current = setTimeout(() => {
+      action()
+      timerRef.current = null
     }, delay)
 
-    toast.info(`${label} • Undo?`)
+    // IMPORTANT: template string must remain intact
+    show(`${label} deleted. Undo?`, delay, "info")
 
-    // undo handler
     return () => {
-      confirmed.current = true
-
-      if (timer.current) clearTimeout(timer.current)
-
-      toast.success("Restored")
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+        show(`${label} restored`, 2000, "success")
+      }
     }
   }
 
-  return run
+  return { scheduleDelete }
 }

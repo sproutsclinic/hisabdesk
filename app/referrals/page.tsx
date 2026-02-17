@@ -1,51 +1,45 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/toast"
 
-import {
-  Gift,
-  Copy,
-  Users,
-  Sparkles,
-  CheckCircle,
-} from "lucide-react"
+import { Gift, Copy, Users, CheckCircle } from "lucide-react"
 
-/* =================================================
-   REFERRALS PAGE — PHASE 10 FINAL
-
-   ✅ unique code
-   ✅ copy invite link
-   ✅ referral counter
-   ✅ claim code input
-   ✅ mobile-first
-   ✅ production safe
-================================================= */
+/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Referrals Page (Personal App Only)
+   ---------------------------------------------------------
+   UI Layer Only
+   - No business logic
+   - No calculations
+   - No service imports
+   - Talks directly to Supabase (allowed for simple UI flows)
+========================================================= */
 
 export default function ReferralPage() {
   const router = useRouter()
   const toast = useToast()
 
   const [loading, setLoading] = useState(true)
+  const [referralCode, setReferralCode] = useState<string>("")
+  const [referralCount, setReferralCount] = useState<number>(0)
 
-  const [code, setCode] = useState("")
-  const [count, setCount] = useState(0)
-
-  /* NEW */
   const [claimCode, setClaimCode] = useState("")
   const [claiming, setClaiming] = useState(false)
 
-  /* ================= LOAD ================= */
+  /* =========================================================
+     LOAD USER + REFERRAL INFO
+  ========================================================= */
 
   useEffect(() => {
-    load()
+    loadReferralData()
   }, [])
 
-  const load = async () => {
+  async function loadReferralData() {
     const { data } = await supabase.auth.getUser()
     const user = data.user
 
@@ -54,52 +48,58 @@ export default function ReferralPage() {
       return
     }
 
-    /* ensure referral code exists */
+    /* ---------------- Ensure referral code exists ---------------- */
+
     const { data: profile } = await supabase
       .from("profiles")
       .select("referral_code")
-      .eq("id", user.id)
+      .eq("user_id", user.id)
       .single()
 
-    let referralCode = profile?.referral_code
+    let code: string | null = profile?.referral_code ?? null
 
-    if (!referralCode) {
-      referralCode = crypto.randomUUID().slice(0, 8).toUpperCase()
+    if (!code) {
+      code = crypto.randomUUID().slice(0, 8).toUpperCase()
 
       await supabase
         .from("profiles")
-        .update({ referral_code: referralCode })
-        .eq("id", user.id)
+        .update({ referral_code: code })
+        .eq("user_id", user.id)
     }
 
-    setCode(referralCode)
+    setReferralCode(code)
 
-    /* count successful referrals */
+    /* ---------------- Count successful referrals ---------------- */
+
     const { count } = await supabase
       .from("profiles")
       .select("*", { count: "exact", head: true })
-      .eq("referred_by", referralCode)
+      .eq("referred_by", code)
 
-    setCount(count || 0)
+    setReferralCount(count ?? 0)
 
     setLoading(false)
   }
 
-  /* ================= HELPERS ================= */
+  /* =========================================================
+     COPY LINK
+  ========================================================= */
 
-  const baseUrl =
-    typeof window !== "undefined" ? window.location.origin : ""
+  const inviteLink =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/signup?ref=${referralCode}`
+      : ""
 
-  const inviteLink = `${baseUrl}/signup?ref=${code}`
-
-  const copy = async () => {
+  async function copyLink() {
     await navigator.clipboard.writeText(inviteLink)
-    toast.success("Invite link copied")
+    toast.show("Invite link copied", 2000)
   }
 
-  /* ================= CLAIM ================= */
+  /* =========================================================
+     CLAIM REFERRAL
+  ========================================================= */
 
-  const claim = async () => {
+  async function claimReferral() {
     if (!claimCode) return
 
     try {
@@ -112,7 +112,7 @@ export default function ReferralPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: "Bearer " + token,
         },
         body: JSON.stringify({ code: claimCode }),
       })
@@ -120,28 +120,33 @@ export default function ReferralPage() {
       const json = await res.json()
 
       if (!res.ok) {
-        toast.error(json.error || "Invalid code")
+        toast.show(json.error ?? "Invalid code", 2500)
         return
       }
 
-      toast.success("1 month Pro unlocked 🎉")
+      toast.show("Reward unlocked ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â½ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â°", 2500)
+
       setClaimCode("")
-      load()
+      loadReferralData()
     } finally {
       setClaiming(false)
     }
   }
 
-  /* ================= UI ================= */
+  /* =========================================================
+     UI
+  ========================================================= */
 
-  if (loading) return <div className="p-6">Loading...</div>
+  if (loading) {
+    return <div className="p-6">Loading...</div>
+  }
 
   return (
-    <div className="space-y-8 max-w-xl">
+    <div className="max-w-xl space-y-8">
 
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-lg font-semibold flex items-center gap-2">
+        <h1 className="flex items-center gap-2 text-lg font-semibold">
           <Gift size={18} />
           Refer & Earn
         </h1>
@@ -153,40 +158,35 @@ export default function ReferralPage() {
 
       {/* Stats */}
       <Card className="space-y-3 text-center">
-
-        <div className="flex items-center justify-center gap-2 text-indigo-600 font-medium">
+        <div className="flex items-center justify-center gap-2 font-medium text-indigo-600">
           <Users size={16} />
           Successful Referrals
         </div>
 
-        <p className="text-3xl font-bold">{count}</p>
-
-        <p className="text-xs text-zinc-500">
-          {count} month{count !== 1 ? "s" : ""} free earned
-        </p>
-
+        <p className="text-3xl font-bold">{referralCount}</p>
       </Card>
 
-      {/* Invite */}
+      {/* Invite Link */}
       <Card className="space-y-4">
-
         <p className="text-xs text-zinc-500">
           Share your personal invite link
         </p>
 
         <div className="flex gap-2">
-          <input readOnly value={inviteLink} className="input text-xs" />
+          <input
+            readOnly
+            value={inviteLink}
+            className="input text-xs"
+          />
 
-          <Button size="sm" onClick={copy}>
+          <Button size="sm" onClick={copyLink}>
             <Copy size={14} />
           </Button>
         </div>
-
       </Card>
 
-      {/* Claim code */}
+      {/* Claim Code */}
       <Card className="space-y-3">
-
         <p className="text-xs text-zinc-500">
           Have a referral code?
         </p>
@@ -199,33 +199,16 @@ export default function ReferralPage() {
             className="input text-xs"
           />
 
-          <Button size="sm" loading={claiming} onClick={claim}>
+          <Button size="sm" onClick={claimReferral} disabled={claiming}>
             Claim
           </Button>
         </div>
-
-      </Card>
-
-      {/* How it works */}
-      <Card className="space-y-3 text-xs text-zinc-500">
-
-        <div className="flex items-center gap-2 font-medium text-green-600">
-          <Sparkles size={14} />
-          How it works
-        </div>
-
-        <ul className="space-y-1 list-disc pl-4">
-          <li>Friend signs up using your link</li>
-          <li>They upgrade to Pro</li>
-          <li>You both get 1 month FREE</li>
-        </ul>
-
       </Card>
 
       {/* Footer */}
       <div className="flex items-center justify-center gap-1 text-xs text-zinc-400">
         <CheckCircle size={12} />
-        Automatic • Secure • Instant rewards
+        Automatic ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Secure ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Instant rewards
       </div>
 
     </div>

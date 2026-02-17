@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 
@@ -22,7 +22,7 @@ export default function BudgetCard({
       <div className="flex justify-between text-sm font-medium">
         <span>{category}</span>
         <span>
-          ₹ {spent.toLocaleString("en-IN")} / ₹ {limit.toLocaleString("en-IN")}
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {spent.toLocaleString("en-IN")} / ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {limit.toLocaleString("en-IN")}
         </span>
       </div>
 
@@ -37,7 +37,7 @@ export default function BudgetCard({
 
       {over && (
         <p className="text-xs text-red-600">
-          ⚠ Over budget by ₹ {(spent - limit).toLocaleString("en-IN")}
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â  Over budget by ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {(spent - limit).toLocaleString("en-IN")}
         </p>
       )}
     </Card>

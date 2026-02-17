@@ -1,21 +1,11 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /*
-  PHASE 18 — Per User Activity API
-
-  GET /api/admin/users/activity?userId=xxx
-
-  Returns:
-  - audit logs
-  - analytics events
-  (latest first)
+  PHASE 18 Ã¢â‚¬â€ Per User Activity API
 */
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+const supabase = getSupabaseAdmin()
 
 export async function GET(req: Request) {
   try {

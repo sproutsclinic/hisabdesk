@@ -1,10 +1,10 @@
-/* =========================================================
-   HisabDesk — Wealth Summary API
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Wealth Summary API
    Server route only (SAFE VERSION)
    ========================================================= */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
@@ -15,7 +15,7 @@ export async function GET() {
     /* -----------------------------------------
        Server client (cookie/session aware)
     ----------------------------------------- */
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },

@@ -1,33 +1,27 @@
-// ==========================================================
-// HisabDesk — Expenses Service Layer (UNIVERSAL SAFE)
-// Works in BOTH:
-//   ✓ Client Components
-//   ✓ Server Components
-// NO next/headers
-// NO cookies
-// FREE MODE ready
-// Phase 3 — Production hardening + performance (ADDITIVE ONLY)
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Expenses Service Layer (SUPABASE v2 SAFE)
+// Works in BOTH Client + Server Components
 // ==========================================================
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import type { Database } from "@/types/db"
 
 /* ==========================================================
-   SINGLE UNIVERSAL CLIENT
-   ✅ server-safe config
-   ✅ no session persistence
+   CLIENT FACTORY
 ========================================================== */
 
-const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false, // ✅ additive safety
-    },
-  }
-)
+function getClient() {
+  return createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  )
+}
 
 /* ==========================================================
    TYPES
@@ -42,17 +36,10 @@ type ExpenseInsert =
 type ExpenseUpdate =
   Database["public"]["Tables"]["expenses"]["Update"]
 
-/* ==========================================================
-   CONSTANTS (ADDITIVE SAFETY LIMITS)
-========================================================== */
-
-const MAX_PAGE_SIZE = 100 // prevents heavy accidental fetches
+const MAX_PAGE_SIZE = 100
 
 /* ==========================================================
-   Fetch Expenses (paginated + minimal fields)
-   ✅ pagination
-   ✅ minimal select
-   ✅ overfetch protection
+   Fetch Expenses
 ========================================================== */
 
 export async function getExpenses(
@@ -60,7 +47,8 @@ export async function getExpenses(
   page: number = 1,
   pageSize: number = 20
 ) {
-  // ✅ additive guard rails
+  const supabase = getClient()
+
   const safePage = Math.max(1, page)
   const safeSize = Math.min(Math.max(1, pageSize), MAX_PAGE_SIZE)
 
@@ -69,32 +57,30 @@ export async function getExpenses(
 
   const { data, error, count } = await supabase
     .from("expenses")
-    // only required list fields (performance)
     .select("id,amount,date,category,notes,created_at", {
       count: "exact",
     })
     .eq("user_id", userId)
     .order("date", { ascending: false })
-    .order("created_at", { ascending: false }) // stable order
+    .order("created_at", { ascending: false })
     .range(from, to)
 
   if (error) throw error
 
-  const safe = (data ?? []) as Expense[]
-
   return {
-    expenses: safe,
+    expenses: (data ?? []) as Expense[],
     total: count ?? 0,
     hasMore: (count ?? 0) > safePage * safeSize,
   }
 }
 
 /* ==========================================================
-   Create
-   ✅ return minimal fields only
+   Create Expense
 ========================================================== */
 
 export async function createExpense(payload: ExpenseInsert) {
+  const supabase = getClient()
+
   const { data, error } = await supabase
     .from("expenses")
     .insert(payload)
@@ -107,14 +93,15 @@ export async function createExpense(payload: ExpenseInsert) {
 }
 
 /* ==========================================================
-   Update
-   ✅ minimal select only
+   Update Expense
 ========================================================== */
 
 export async function updateExpense(
   id: string,
   payload: ExpenseUpdate
 ) {
+  const supabase = getClient()
+
   const { data, error } = await supabase
     .from("expenses")
     .update(payload)
@@ -128,10 +115,12 @@ export async function updateExpense(
 }
 
 /* ==========================================================
-   Delete
+   Delete Expense
 ========================================================== */
 
 export async function deleteExpense(id: string) {
+  const supabase = getClient()
+
   const { error } = await supabase
     .from("expenses")
     .delete()
@@ -143,12 +132,12 @@ export async function deleteExpense(id: string) {
 }
 
 /* ==========================================================
-   Summary (lightweight, safe)
-   ✅ minimal select only
-   ✅ safe aggregation
+   Summary
 ========================================================== */
 
 export async function getExpenseSummary(userId: string) {
+  const supabase = getClient()
+
   const { data, error } = await supabase
     .from("expenses")
     .select("amount")

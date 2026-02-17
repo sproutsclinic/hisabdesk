@@ -1,105 +1,65 @@
-/* =========================================================
-   HisabDesk — AI Tax Optimizer API (SERVER SAFE VERSION)
-   ========================================================= */
+ï»¿/* =========================================================
+HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Tax Optimizer API (PFOS Phase-2)
+-----------------------------------------------
 
-import { NextRequest, NextResponse } from "next/server"
+SERVER ONLY
+Uses stored tax computation + governed AI access.
+========================================================= */
 
-/* ✅ CRITICAL FIX — use server wrapper */
-import { createClient } from "@/lib/supabase/server"
-
-import { safeRunAI } from "@/lib/ai/safeRunAI"
-import { TAX_ADVISOR_PROMPT } from "@/lib/ai/prompts"
+import { withAI } from "@/lib/ai/withAI"
 import { buildTaxContext } from "@/lib/ai/contextBuilder"
+import { TAX_ADVISOR_PROMPT } from "@/lib/ai/prompts"
 import { getLatestTaxCalculation } from "@/lib/api/tax/service"
 
 export const dynamic = "force-dynamic"
 
-/* =========================================================
-   POST /api/ai/tax
-   ========================================================= */
+export const POST = withAI(async ({ user, safeRun }) => {
+/* -----------------------------------------------------
+1ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ Resolve Financial Year (server-side deterministic)
+----------------------------------------------------- */
+const currentYear = new Date().getFullYear()
+const financialYear = `${currentYear}-${String(currentYear + 1).slice(2)}`
 
-export async function POST(req: NextRequest) {
-  try {
-    /* ✅ session-aware client */
-    const supabase = createClient()
+/* -----------------------------------------------------
+2ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ Load stored computation
+----------------------------------------------------- */
+const latest = await getLatestTaxCalculation(user.id, financialYear)
 
-    /* -----------------------------------------------------
-       1️⃣ AUTH (server session only)
-       ----------------------------------------------------- */
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+if (!latest) {
+return {
+insights: "Run tax calculator first to receive optimisation advice.",
+}
+}
 
-    if (!user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
-    }
+/* -----------------------------------------------------
+3ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ Build AI context (formatting only)
+----------------------------------------------------- */
+const context = buildTaxContext(latest.result)
 
-    /* -----------------------------------------------------
-       2️⃣ BODY
-       ----------------------------------------------------- */
-    const body = await req.json().catch(() => ({}))
-    const financialYear = body?.financialYear || "2024-25"
+const prompt = `
+${TAX_ADVISOR_PROMPT}
 
-    /* -----------------------------------------------------
-       3️⃣ LOAD SERVER TRUTH
-       ----------------------------------------------------- */
-    const latest = await getLatestTaxCalculation(
-      user.id,
-      financialYear
-    )
-
-    if (!latest) {
-      return NextResponse.json(
-        { error: "Run tax calculator first." },
-        { status: 400 }
-      )
-    }
-
-    /* -----------------------------------------------------
-       4️⃣ CONTEXT
-       ----------------------------------------------------- */
-    const context = buildTaxContext(latest.result)
-
-    /* -----------------------------------------------------
-       5️⃣ SAFE AI CALL
-       ----------------------------------------------------- */
-    const message = await safeRunAI({
-      model: "gpt-4",
-      temperature: 0.2,
-      maxTokens: 700,
-      systemPrompt: TAX_ADVISOR_PROMPT,
-      userMessage: `
 User Tax Snapshot:
-
 ${context}
 
 Give:
-• Best regime reasoning
-• Missed deductions
-• Tax saving strategies
-• Compliance warnings
-• 5 step action plan
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Best regime reasoning
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Missed deductions
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Tax saving strategies
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Compliance warnings
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ 5 step action plan
 
 Be concise and actionable.
-`,
-    })
+`
 
-    /* -----------------------------------------------------
-       6️⃣ RESPONSE
-       ----------------------------------------------------- */
-    return NextResponse.json({
-      success: true,
-      message,
-    })
-  } catch (err) {
-    console.error("AI tax optimizer error:", err)
+/* -----------------------------------------------------
+4ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ Governed AI call
+----------------------------------------------------- */
+const result = await safeRun({
+prompt,
+type: "heavy",
+module: "tax-optimizer",
+})
 
-    return NextResponse.json(
-      { error: "Tax optimizer temporarily unavailable." },
-      { status: 500 }
-    )
-  }
-}
+return { insights: result.text }
+})

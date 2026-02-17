@@ -1,8 +1,8 @@
-import Link from "next/link"
+ï»¿import Link from "next/link"
 import EmailCapture from "@/components/EmailCapture"
 
 export const metadata = {
-  title: "Freelancer Tax Filing Guide India – Step by Step (2026)",
+  title: "Freelancer Tax Filing Guide India ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Step by Step (2026)",
   description:
     "Complete freelancer tax filing guide in India. Learn how to calculate tax, use 44ADA, track expenses and file returns easily without CA dependency.",
   keywords: [
@@ -25,7 +25,7 @@ export default function Page() {
 
       <p className="text-gray-600">
         If you earn from freelancing, consulting, gigs or online work,
-        you don’t need complicated accounting or expensive CAs.
+        you donÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢t need complicated accounting or expensive CAs.
         Filing taxes as a freelancer can be simple if done correctly.
       </p>
 
@@ -33,7 +33,7 @@ export default function Page() {
       {/* INTRO */}
       <section className="space-y-4">
         <p>
-          Many freelancers overpay tax because they don’t understand deductions
+          Many freelancers overpay tax because they donÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢t understand deductions
           or Section 44ADA. With the right method, you can reduce tax legally
           and file returns in minutes.
         </p>
@@ -70,8 +70,8 @@ export default function Page() {
         <div className="bg-gray-50 p-4 rounded-xl">
           <p className="font-medium">Example:</p>
           <ul className="list-disc pl-6 text-sm mt-2">
-            <li>Income = ₹10,00,000</li>
-            <li>Taxable = ₹5,00,000 only</li>
+            <li>Income = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹10,00,000</li>
+            <li>Taxable = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹5,00,000 only</li>
             <li>Massive tax savings</li>
           </ul>
         </div>
@@ -129,7 +129,7 @@ export default function Page() {
           href="/dashboard"
           className="inline-block bg-black text-white px-6 py-3 rounded-xl font-medium hover:opacity-90"
         >
-          Try Free →
+          Try Free ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢
         </Link>
       </section>
 

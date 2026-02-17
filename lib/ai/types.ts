@@ -1,60 +1,49 @@
-// ==========================================================
-// HisabDesk — AI Types (Central Contracts)
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Types (FINAL ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Unified Contract)
 // ----------------------------------------------------------
 // PURPOSE
-//   Single source of truth for ALL AI-related types
+//   Single source of truth for ALL AI-related types.
 //
-//   Prevents:
-//     ❌ duplicate type definitions
-//     ❌ inconsistent AI calls
-//     ❌ magic strings across routes
+//   This file reflects the FINAL architecture:
 //
-//   All AI files should import types from here.
-//
-//   Example:
-//     import { AIRunType, AIResult } from "@/lib/ai/types"
+//     runAI() ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ returns { text, tokens }
+//     safeRunAI() wraps runAI()
+//     Routes NEVER see OpenAI raw response.
 //
 // ==========================================================
 
 // ==========================================================
-// MODEL POLICY
+// EXECUTION MODES
 // ----------------------------------------------------------
-// module  → cheap (GPT-3.5 class)
-// chat    → medium tokens (assistant conversations)
-// heavy   → GPT-4 (planner/tax only)
+// cheap   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ fast lightweight calls (micro insights)
+// module  ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ normal app intelligence (default)
+// heavy   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ deep reasoning (planner / tax / analysis)
 // ==========================================================
 
-export type AIRunType = "module" | "chat" | "heavy"
+export type AIRunType = "cheap" | "module" | "heavy"
 
 // ==========================================================
-// CORE OPENAI RESULT
+// STANDARD RESULT RETURNED BY ENGINE
 // ==========================================================
-
-export interface AIUsage {
-  prompt_tokens?: number
-  completion_tokens?: number
-  total_tokens?: number
-}
 
 export interface AIResult {
   text: string
-  usage?: AIUsage
+  tokens: number
 }
 
 // ==========================================================
-// SAFE RUN PARAMS
+// SAFE RUN PARAMS (used internally by safeRunAI)
 // ==========================================================
 
 export interface SafeRunParams {
   userId: string
   prompt: string
-  type: AIRunType
-  system?: string
+  type?: AIRunType
   module: string
 }
 
 // ==========================================================
-// CONTEXT TYPES (used by context builder)
+// OPTIONAL CONTEXT TYPES (for context injector)
 // ==========================================================
 
 export interface AIContextNumbers {
@@ -72,7 +61,7 @@ export interface AIContextPayload {
 }
 
 // ==========================================================
-// ROUTE RESPONSE STANDARD (recommended)
+// ROUTE RESPONSE SHAPES (UI helpers)
 // ==========================================================
 
 export interface AIResponse {

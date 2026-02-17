@@ -1,120 +1,50 @@
-// ==========================================================
-// HisabDesk — AI Portfolio Advice Route
-// ----------------------------------------------------------
-// PURPOSE
-//   AI insights for Portfolio / Investments page
-//
-// FLOW
-//   DB → assets → portfolioAdvisor → compact prompt → AI
-//
-// RULES
-//   ✓ server-side only
-//   ✓ GPT-3.5 (module type, cheap)
-//   ✓ short bullets only
-//   ✓ token efficient
-//   ✓ logs usage
-// ==========================================================
-
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
-import { listAssets } from "@/lib/api/assets"
-import { analyzePortfolio } from "@/lib/modules/personal"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { runAI } from "@/lib/ai/openai"
 
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
-
-// ==========================================================
-// AUTH
-// ==========================================================
-
-async function getUser() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) throw new Error("Unauthorized")
-
-  return user
-}
-
-// ==========================================================
-// POST
-// ==========================================================
-
 export async function POST() {
   try {
-    const user = await getUser()
+    const supabase = getSupabaseAdmin()
 
-    // ------------------------------------------------------
-    // Fetch assets
-    // ------------------------------------------------------
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    const assets = await listAssets(user.id)
+    if (!user)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const mapped = assets.map((a: any) => ({
-      assetClass: a.asset_class,
-      value: a.current_value,
-    }))
+    const { data: holdings } = await supabase
+      .from("portfolio")
+      .select("value")
+      .eq("user_id", user.id)
 
-    // ------------------------------------------------------
-    // Analyze allocation
-    // ------------------------------------------------------
-
-    const analysis = analyzePortfolio(mapped, "medium")
-
-    const equity =
-      analysis.allocation.find((a) => a.assetClass === "equity")
-        ?.percent ?? 0
-
-    const debt =
-      analysis.allocation.find((a) => a.assetClass === "debt")
-        ?.percent ?? 0
-
-    const topDiff = analysis.rebalance
-      .sort((a, b) => Math.abs(b.differencePercent) - Math.abs(a.differencePercent))[0]
-
-    // ------------------------------------------------------
-    // Prompt (compact)
-    // ------------------------------------------------------
+    const totalValue = (holdings || []).reduce(
+      (s: number, h: any) => s + Number(h.value || 0),
+      0
+    )
 
     const prompt = `
-Portfolio Metrics:
-total=${analysis.totalValue}
-equity=${equity}
-debt=${debt}
-imbalance=${topDiff?.differencePercent ?? 0}
+Portfolio Snapshot:
+value=${Math.round(totalValue)}
 
-Give 4 short bullet allocation or rebalance tips.
+Give 4 short portfolio improvement suggestions.
 `
-
-    // ------------------------------------------------------
-    // AI call
-    // ------------------------------------------------------
 
     const result = await runAI({
       prompt,
       type: "module",
     })
 
-    // ------------------------------------------------------
-    // Log usage
-    // ------------------------------------------------------
-
     await supabase.from("ai_logs").insert({
       user_id: user.id,
       module: "portfolio-advice",
-      tokens: result.usage?.total_tokens ?? 0,
+      tokens: result.tokens,
     })
 
-    return NextResponse.json({
-      insights: result.text,
-    })
+    return NextResponse.json({ advice: result.text })
   } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }

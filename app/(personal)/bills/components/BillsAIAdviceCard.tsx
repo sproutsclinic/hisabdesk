@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 import { useBillsAI } from "@/hooks/useBillsAI"

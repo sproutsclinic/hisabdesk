@@ -1,34 +1,19 @@
-/* =========================================================
-   Expense Budgets API
-   ---------------------------------------------------------
-   ✓ list budgets
-   ✓ create/update budget
-   ✓ delete
-   ✓ per user
-========================================================= */
-
-import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { NextRequest, NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
-
-/* ========================================================= */
 
 function bad(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status })
 }
 
 /* =========================================================
-   GET → LIST
+   GET â€” LIST
 ========================================================= */
-
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) return bad("Unauthorized", 401)
 
   const { data, error } = await supabase
@@ -42,16 +27,12 @@ export async function GET() {
 }
 
 /* =========================================================
-   POST → UPSERT
+   POST â€” UPSERT
 ========================================================= */
-
 export async function POST(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) return bad("Unauthorized", 401)
 
   const body = await req.json()
@@ -74,20 +55,20 @@ export async function POST(req: NextRequest) {
 /* =========================================================
    DELETE
 ========================================================= */
-
 export async function DELETE(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) return bad("Unauthorized", 401)
 
-  const { searchParams } = new URL(req.url)
-  const id = searchParams.get("id")
+  const id = new URL(req.url).searchParams.get("id")
+  if (!id) return bad("id required")
 
-  await supabase.from("expense_budgets").delete().eq("id", id)
+  await supabase
+    .from("expense_budgets")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id)
 
   return NextResponse.json({ success: true })
 }

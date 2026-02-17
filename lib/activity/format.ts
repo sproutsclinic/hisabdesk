@@ -1,5 +1,5 @@
-/*
-  PHASE 18 — Activity Format Helpers
+ï»¿/*
+  PHASE 18 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Activity Format Helpers
 
   Central place to normalize activity rows
   so UI stays clean

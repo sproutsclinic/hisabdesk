@@ -1,28 +1,13 @@
-/* =========================================================
-   HisabDesk — Portfolio Engine (PURE)
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Portfolio Engine (PURE)
    ---------------------------------------------------------
    BUSINESS / COMPUTATION LAYER ONLY
 
-   PURPOSE
-   - All portfolio math lives here
-   - Deterministic
-   - Testable
-   - Reusable by:
-       ✓ service
-       ✓ API routes
-       ✓ AI context
-       ✓ reports
+   Deterministic financial math (ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ safe)
+   No floating point drift.
+   Strict-mode hardened.
 
-   RULES
-   ✅ pure functions only
-   ✅ no DB
-   ✅ no fetch
-   ✅ no OpenAI
-   ✅ no side effects
-
-   ARCHITECTURE
-     route → service → engine (THIS FILE)
-
+   route ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ service ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ engine (THIS FILE)
    ========================================================= */
 
 import type {
@@ -33,15 +18,26 @@ import type {
 } from "./types"
 
 /* =========================================================
-   HELPERS
+   PRECISION MODEL
+   ---------------------------------------------------------
+   All math done in paise (ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ * 100) to avoid FP drift.
    ========================================================= */
 
-function clamp(n: number): number {
-  return Math.max(0, Number(n || 0))
+const SCALE = 100
+
+function toPaise(value: unknown): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return 0
+  if (value <= 0) return 0
+  return Math.round(value * SCALE)
 }
 
-function round(n: number): number {
-  return Number(n.toFixed(2))
+function fromPaise(value: number): number {
+  return Number((value / SCALE).toFixed(2))
+}
+
+function safeDivide(a: number, b: number): number {
+  if (b === 0) return 0
+  return a / b
 }
 
 /* =========================================================
@@ -50,33 +46,33 @@ function round(n: number): number {
 
 export function computeAsset(
   asset: AssetRow,
-  portfolioTotalCurrent: number,
+  portfolioTotalCurrentPaise: number,
 ): PortfolioAssetComputed {
-  const quantity = clamp(asset.quantity)
-  const buyPrice = clamp(asset.buy_price)
-  const currentPrice = clamp(asset.current_price)
+  const quantity = toPaise(asset.quantity)
+  const buyPrice = toPaise(asset.buy_price)
+  const currentPrice = toPaise(asset.current_price)
 
-  const investedValue = quantity * buyPrice
-  const currentValue = quantity * currentPrice
+  // qty already scaled ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ remove one SCALE during multiply
+  const investedPaise = Math.round((quantity * buyPrice) / SCALE)
+  const currentPaise = Math.round((quantity * currentPrice) / SCALE)
 
-  const profitLoss = currentValue - investedValue
+  const pnlPaise = currentPaise - investedPaise
 
   const returnPercent =
-    investedValue > 0 ? (profitLoss / investedValue) * 100 : 0
+    safeDivide(pnlPaise, investedPaise) * 100
 
   const allocationPercent =
-    portfolioTotalCurrent > 0
-      ? (currentValue / portfolioTotalCurrent) * 100
-      : 0
+    safeDivide(currentPaise, portfolioTotalCurrentPaise) * 100
 
   return {
     ...asset,
 
-    investedValue: round(investedValue),
-    currentValue: round(currentValue),
-    profitLoss: round(profitLoss),
-    returnPercent: round(returnPercent),
-    allocationPercent: round(allocationPercent),
+    investedValue: fromPaise(investedPaise),
+    currentValue: fromPaise(currentPaise),
+    profitLoss: fromPaise(pnlPaise),
+
+    returnPercent: Number(returnPercent.toFixed(2)),
+    allocationPercent: Number(allocationPercent.toFixed(2)),
   }
 }
 
@@ -87,26 +83,24 @@ export function computeAsset(
 export function computeSummary(
   assets: PortfolioAssetComputed[],
 ): PortfolioSummary {
-  const totalInvested = assets.reduce(
-    (a, b) => a + b.investedValue,
-    0,
-  )
+  let investedTotalPaise = 0
+  let currentTotalPaise = 0
 
-  const totalCurrent = assets.reduce(
-    (a, b) => a + b.currentValue,
-    0,
-  )
+  for (const a of assets) {
+    investedTotalPaise += toPaise(a.investedValue)
+    currentTotalPaise += toPaise(a.currentValue)
+  }
 
-  const totalPnL = totalCurrent - totalInvested
+  const pnlPaise = currentTotalPaise - investedTotalPaise
 
   const totalReturnPercent =
-    totalInvested > 0 ? (totalPnL / totalInvested) * 100 : 0
+    safeDivide(pnlPaise, investedTotalPaise) * 100
 
   return {
-    totalInvested: round(totalInvested),
-    totalCurrent: round(totalCurrent),
-    totalPnL: round(totalPnL),
-    totalReturnPercent: round(totalReturnPercent),
+    totalInvested: fromPaise(investedTotalPaise),
+    totalCurrent: fromPaise(currentTotalPaise),
+    totalPnL: fromPaise(pnlPaise),
+    totalReturnPercent: Number(totalReturnPercent.toFixed(2)),
   }
 }
 
@@ -117,14 +111,17 @@ export function computeSummary(
 export function computePortfolioOverview(
   rows: AssetRow[],
 ): PortfolioOverview {
-  /* First pass: compute total current for allocation calc */
-  const totalCurrent = rows.reduce(
-    (sum, a) => sum + clamp(a.quantity) * clamp(a.current_price),
-    0,
-  )
+  /* FIRST PASS ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â deterministic total current */
+  let totalCurrentPaise = 0
 
-  const assetsComputed = rows.map((a) =>
-    computeAsset(a, totalCurrent),
+  for (const r of rows) {
+    const qty = toPaise(r.quantity)
+    const price = toPaise(r.current_price)
+    totalCurrentPaise += Math.round((qty * price) / SCALE)
+  }
+
+  const assetsComputed = rows.map((r) =>
+    computeAsset(r, totalCurrentPaise),
   )
 
   const summary = computeSummary(assetsComputed)

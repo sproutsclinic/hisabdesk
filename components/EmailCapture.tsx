@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useState } from "react"
 
@@ -25,7 +25,7 @@ export default function EmailCapture() {
   if (done) {
     return (
       <div className="bg-green-50 border p-4 rounded-xl text-sm">
-        ✅ Thanks! We’ll send tax tips & updates.
+        ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Thanks! WeÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ll send tax tips & updates.
       </div>
     )
   }
@@ -33,7 +33,7 @@ export default function EmailCapture() {
   return (
     <div className="border rounded-2xl p-6 bg-gray-50 space-y-3">
       <p className="font-medium">
-        📩 Get free tax saving tips & updates
+        ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© Get free tax saving tips & updates
       </p>
 
       <div className="flex gap-2">

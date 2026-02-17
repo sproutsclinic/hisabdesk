@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 
@@ -17,7 +17,7 @@ export default function IncomeAutoSaveCard() {
     <div className="p-4 border rounded-2xl bg-emerald-50 space-y-2">
 
       <h3 className="text-sm font-medium">
-        💰 Smart Auto-Save
+        ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â° Smart Auto-Save
       </h3>
 
       <p className="text-xs text-muted-foreground">
@@ -25,11 +25,11 @@ export default function IncomeAutoSaveCard() {
       </p>
 
       <p className="text-xl font-semibold text-emerald-700">
-        ₹ {data.suggested.toLocaleString("en-IN")}
+        ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {data.suggested.toLocaleString("en-IN")}
       </p>
 
       <p className="text-xs text-muted-foreground">
-        From ₹ {data.total.toLocaleString("en-IN")} income
+        From ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {data.total.toLocaleString("en-IN")} income
       </p>
 
     </div>

@@ -1,128 +1,77 @@
-"use client"
-
-/**
- * =========================================================
- * Reports Hub (All-in-One Enterprise Reporting Screen)
- * HisabDesk – Phase G FINAL+
- * =========================================================
- *
- * PURPOSE
- * Single component that combines EVERYTHING:
- *
- *   ✓ KPI Dashboard
- *   ✓ Tax Summary
- *   ✓ Filters
- *   ✓ Export buttons
- *   ✓ Transactions ledger
- *
- * This becomes:
- *   "complete accountant workspace"
- *
- * WHY
- * ---------------------------------------------------------
- * Instead of manually placing:
- *   ❌ 5 separate components
- *
- * Use:
- *   ✓ <ReportsHub orgId={orgId} />
- *
- * Clean architecture.
- *
- * =========================================================
- *
- * CONNECTS TO
- *   KPIDashboard
- *   TaxSummaryCard
- *   AdvancedFilters
- *   ReportExport
- *   TransactionsTable
- *
- * SAFE
- * - wrapper only
- * - no logic duplication
- * - plug & play
- *
- * =========================================================
- *
- * USAGE (recommended)
- *
- * app/reports/page.tsx
- *
- * <ReportsHub orgId={orgId} />
- *
- * =========================================================
- */
+ï»¿"use client"
 
 import { useMemo, useState } from "react"
+import { useReports } from "@/hooks/useReports"
 
 import KPIDashboard from "@/components/reporting/kpi-dashboard"
 import TaxSummaryCard from "@/components/reporting/tax-summary-card"
-import AdvancedFilters, {
-  ReportFilters,
-} from "@/components/reporting/advanced-filters"
+import AdvancedFilters, { ReportFilters } from "@/components/reporting/advanced-filters"
 import ReportExport from "@/components/reporting/report-export"
 import TransactionsTable from "@/components/reporting/transactions-table"
 
-/* =========================================================
-   MAIN
-========================================================= */
+/**
+ * PERSONAL MODE ADAPTER
+ * --------------------------------------------------
+ * ReportsHub reuses enterprise UI components.
+ * Some of them require orgId even in personal mode.
+ *
+ * We pass a stable pseudo-orgId so typing + contracts remain intact.
+ * This DOES NOT create multi-tenant behaviour.
+ */
+const PERSONAL_ORG_ID = "personal"
 
-export default function ReportsHub({
-  orgId,
-}: {
-  orgId: string
-}) {
-  const [filters, setFilters] =
-    useState<ReportFilters>({
-      type: "all",
-    })
+export default function ReportsHub() {
+  const { data, loading, error } = useReports({ range: "30d" })
 
-  const [profit, setProfit] = useState(0)
+  const [filters, setFilters] = useState<ReportFilters>({
+    type: "all",
+  })
 
-  /* ------------------------------------------------------
-     Derive profit from filters later if needed
-     For now summary based on ledger calculations
-  ------------------------------------------------------ */
+  const profit = useMemo(() => {
+    if (!data) return 0
+    return data.kpis.netCashflow ?? 0
+  }, [data])
 
-  const summaryProfit = useMemo(() => {
-    return profit
-  }, [profit])
+  if (loading) {
+    return <div className="text-sm text-muted-foreground">Loading reportsÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦</div>
+  }
 
-  /* ======================================================
-     UI
-  ====================================================== */
+  if (error || !data) {
+    return <div className="text-sm text-red-500">Failed to load reports</div>
+  }
 
   return (
     <div className="space-y-8">
-      {/* HEADER + EXPORT */}
+      {/* HEADER */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">
-          Reports & Insights
-        </h1>
-
-        <ReportExport orgId={orgId} />
+        <h1 className="text-2xl font-semibold">Reports & Insights</h1>
+        <ReportExport />
       </div>
 
       {/* KPI + TAX */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <KPIDashboard orgId={orgId} />
+          <KPIDashboard
+            data={{
+              totals: {
+                income: data.kpis.income,
+                expense: data.kpis.expense,
+                profit: data.kpis.netCashflow,
+                count: 0, // not applicable in personal mode
+              },
+              points: [], // no comparison series in personal mode
+            }}
+          />
         </div>
 
-        <TaxSummaryCard profit={summaryProfit} />
+        <TaxSummaryCard profit={profit} />
       </div>
 
       {/* FILTERS */}
-      <AdvancedFilters
-        value={filters}
-        onChange={setFilters}
-      />
+      <AdvancedFilters value={filters} onChange={setFilters} />
 
-      {/* TABLE */}
-      <TransactionsTable
-        orgId={orgId}
-        filters={filters}
-      />
+      {/* TRANSACTIONS TABLE (enterprise component reused safely) */}
+      <TransactionsTable orgId={PERSONAL_ORG_ID} filters={filters} />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 import type { ProfileRow, UpdateProfileRequest } from "@/lib/api/profile/types"

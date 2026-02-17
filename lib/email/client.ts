@@ -1,4 +1,4 @@
-type EmailType = "welcome" | "payment_success" | "renewal"
+ï»¿type EmailType = "welcome" | "payment_success" | "renewal"
 
 type SendEmailOptions = {
   type: EmailType

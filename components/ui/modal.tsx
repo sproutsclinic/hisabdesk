@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import * as React from "react"
 import { createPortal } from "react-dom"
@@ -6,16 +6,7 @@ import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /* ==========================================================
-   MODAL SYSTEM — Fintech Grade (Enterprise Safe)
-
-   Goals:
-   • clean accounting UI
-   • centered dialog
-   • ESC close
-   • backdrop click close
-   • mobile safe
-   • no animation noise
-   • accessible
+   MODAL SYSTEM ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Fintech Grade (Enterprise Safe)
 ========================================================== */
 
 interface ModalProps {
@@ -46,6 +37,7 @@ export default function Modal({
     const handle = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
     }
+
     window.addEventListener("keydown", handle)
     return () => window.removeEventListener("keydown", handle)
   }, [onClose])
@@ -54,7 +46,6 @@ export default function Modal({
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center">
-
       {/* ===== Backdrop ===== */}
       <div
         className="absolute inset-0 bg-black/40"
@@ -78,23 +69,24 @@ export default function Modal({
           className
         )}
       >
-        {/* Header */}
-        {(title || onClose) && (
-          <div className="flex items-center justify-between mb-4">
-            {title && (
-              <h3 className="text-sm font-semibold">{title}</h3>
-            )}
+        {/* ===== Header (always rendered ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â TS safe) ===== */}
+        <div className="flex items-center justify-between mb-4">
+          {title ? (
+            <h3 className="text-sm font-semibold">{title}</h3>
+          ) : (
+            <span />
+          )}
 
-            <button
-              onClick={onClose}
-              className="p-1 rounded-md hover:bg-zinc-100"
-            >
-              <X size={16} />
-            </button>
-          </div>
-        )}
+          <button
+            onClick={onClose}
+            className="p-1 rounded-md hover:bg-zinc-100"
+            aria-label="Close"
+          >
+            <X size={16} />
+          </button>
+        </div>
 
-        {/* Content */}
+        {/* ===== Content ===== */}
         <div className="space-y-4">
           {children}
         </div>

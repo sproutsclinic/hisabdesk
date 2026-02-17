@@ -1,8 +1,8 @@
-import Link from "next/link"
+ï»¿import Link from "next/link"
 import EmailCapture from "@/components/EmailCapture"
 
 export const metadata = {
-  title: "44ADA Tax Calculator – Freelancers, Doctors & Professionals (India)",
+  title: "44ADA Tax Calculator ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Freelancers, Doctors & Professionals (India)",
   description:
     "Free 44ADA tax calculator for freelancers, doctors and consultants. Calculate taxable income instantly and save maximum tax legally under Section 44ADA.",
   keywords: [
@@ -33,7 +33,7 @@ export default function Page() {
       <section className="space-y-4">
         <p>
           If you are a freelancer, consultant, doctor, architect, designer or other professional,
-          you don’t need complicated accounting to file taxes.
+          you donÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢t need complicated accounting to file taxes.
           Section <strong>44ADA of the Income Tax Act</strong> allows you to pay tax on only
           <strong> 50% of your income</strong>.
         </p>
@@ -56,9 +56,9 @@ export default function Page() {
         <div className="bg-gray-50 p-4 rounded-xl">
           <p className="font-medium">Example:</p>
           <ul className="list-disc pl-6 text-sm mt-2">
-            <li>Total income = ₹20,00,000</li>
-            <li>Expense assumed = ₹10,00,000</li>
-            <li>Taxable income = ₹10,00,000</li>
+            <li>Total income = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹20,00,000</li>
+            <li>Expense assumed = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹10,00,000</li>
+            <li>Taxable income = ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹10,00,000</li>
           </ul>
         </div>
       </section>
@@ -128,7 +128,7 @@ export default function Page() {
           href="/dashboard"
           className="inline-block bg-black text-white px-6 py-3 rounded-xl font-medium hover:opacity-90"
         >
-          Try Free Calculator →
+          Try Free Calculator ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢
         </Link>
       </section>
 
@@ -138,7 +138,7 @@ export default function Page() {
         <h2 className="text-xl font-semibold">Frequently Asked Questions</h2>
 
         <p><strong>Is 44ADA better than normal tax?</strong><br />
-          Yes, most professionals save 30–50% tax.</p>
+          Yes, most professionals save 30ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“50% tax.</p>
 
         <p><strong>Is audit required under 44ADA?</strong><br />
           No, audit is not required.</p>

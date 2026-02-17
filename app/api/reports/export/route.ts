@@ -1,9 +1,9 @@
-// ==========================================================
+ï»¿// ==========================================================
 // Reports Export API
 // Route: /api/reports/export
 //
 // Server authority only
-// Thin transport → service → engine
+// Thin transport ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ service ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ engine
 //
 // Responsibilities:
 // - auth guard
@@ -12,13 +12,13 @@
 // - return file
 //
 // NO:
-// ❌ DB logic
-// ❌ calculations
-// ❌ business math
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ DB logic
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ calculations
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ business math
 // ==========================================================
 
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { getReportsService } from "@/lib/api/reports/reports.service"
 
 /* =========================================================
@@ -27,7 +27,7 @@ GET /api/reports/export?format=csv
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     // ------------------------------------------------------
     // Auth guard
@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
 }
 
 /* =========================================================
-Helpers (formatting only — NOT business logic)
+Helpers (formatting only ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â NOT business logic)
 ========================================================= */
 
 function buildCSV(report: Awaited<ReturnType<ReturnType<typeof getReportsService>["getReports"]>>) {

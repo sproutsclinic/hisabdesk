@@ -1,4 +1,4 @@
-export type OnboardingStep = {
+ï»¿export type OnboardingStep = {
   id: string
   title: string
   description: string

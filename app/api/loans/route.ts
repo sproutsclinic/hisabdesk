@@ -1,40 +1,27 @@
-/* =========================================================
-   HisabDesk — Loans API
-   Thin server only
-   ========================================================= */
-
-import { NextRequest, NextResponse } from "next/server"
-
-/* ✅ FIX — use shared server client */
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { NextRequest, NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 import {
   getLoansOverview,
   createLoan,
   updateLoan,
-  deleteLoan,
+  deleteLoan
 } from "@/lib/api/loans/service"
 
 import type {
   CreateLoanRequest,
-  UpdateLoanRequest,
+  UpdateLoanRequest
 } from "@/lib/api/loans/types"
-
-/* ========================================================= */
 
 const bad = (message: string, status = 400) =>
   NextResponse.json({ error: message }, { status })
 
-/* =========================================================
-   GET — overview
-   ========================================================= */
-
 export async function GET() {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
-      data: { user },
+      data: { user }
     } = await supabase.auth.getUser()
 
     if (!user) return bad("Unauthorized", 401)
@@ -48,16 +35,12 @@ export async function GET() {
   }
 }
 
-/* =========================================================
-   POST — create
-   ========================================================= */
-
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
-      data: { user },
+      data: { user }
     } = await supabase.auth.getUser()
 
     if (!user) return bad("Unauthorized", 401)
@@ -73,16 +56,12 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/* =========================================================
-   PATCH — update
-   ========================================================= */
-
 export async function PATCH(req: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
-      data: { user },
+      data: { user }
     } = await supabase.auth.getUser()
 
     if (!user) return bad("Unauthorized", 401)
@@ -100,16 +79,12 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-/* =========================================================
-   DELETE — remove
-   ========================================================= */
-
 export async function DELETE(req: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
-      data: { user },
+      data: { user }
     } = await supabase.auth.getUser()
 
     if (!user) return bad("Unauthorized", 401)

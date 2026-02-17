@@ -1,9 +1,9 @@
-/* =========================================================
-   Bills API Route (FIXED — uses central Supabase server client)
+ï»¿/* =========================================================
+   Bills API Route (FIXED â€” uses Supabase Gateway ONLY)
    ========================================================= */
 
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 import {
   getBillsOverview,
@@ -27,7 +27,7 @@ const bad = (msg: string, s = 400) =>
    ========================================================= */
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
@@ -45,7 +45,7 @@ export async function GET() {
    ========================================================= */
 
 export async function POST(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
    ========================================================= */
 
 export async function PATCH(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
@@ -87,7 +87,7 @@ export async function PATCH(req: NextRequest) {
    ========================================================= */
 
 export async function DELETE(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },

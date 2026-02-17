@@ -1,10 +1,10 @@
-"use client"
+ï»¿"use client"
 
 // ==========================================================
-// HisabDesk — Expense List UI (Graphical Dashboard Version)
-// Client only • charts + numbers + categories
-// Phase 5 — ADD BUTTONS + IMPORT + RECEIPT UPLOAD
-// Phase 3.2 — Performance hardening + pagination safety (ADDITIVE ONLY)
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Expense List UI (Graphical Dashboard Version)
+// Client only ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ charts + numbers + categories
+// Phase 5 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ADD BUTTONS + IMPORT + RECEIPT UPLOAD
+// Phase 3.2 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Performance hardening + pagination safety (ADDITIVE ONLY)
 // ==========================================================
 
 import { useMemo, useState, useDeferredValue } from "react"
@@ -38,8 +38,8 @@ const MAX_CLIENT_ROWS = 300
 interface Props {
   initialExpenses: Expense[]
   total: number
-  page?: number // ✅ additive (from server)
-  pageSize?: number // ✅ additive (from server)
+  page?: number // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ additive (from server)
+  pageSize?: number // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ additive (from server)
 }
 
 const COLORS = [
@@ -77,13 +77,13 @@ export default function ExpenseListClient({
   const [search, setSearch] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("")
 
-  // ✅ smoother typing performance on large lists
+  // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ smoother typing performance on large lists
   const deferredSearch = useDeferredValue(search)
 
   /* ========================================================== */
 
   const format = (n: number) =>
-    `₹ ${Number(n || 0).toLocaleString("en-IN")}`
+    `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ ${Number(n || 0).toLocaleString("en-IN")}`
 
   const extractUrl = (notes?: string | null) => {
     if (!notes) return null
@@ -235,14 +235,14 @@ export default function ExpenseListClient({
             href="/expense/import"
             className="px-4 py-2 rounded-xl border text-sm"
           >
-            📥 Import Statement
+            ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¥ Import Statement
           </Link>
 
           <Link
             href="/expense/add"
             className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm"
           >
-            ➕ Add Expense
+            ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Add Expense
           </Link>
 
         </div>
@@ -275,7 +275,7 @@ export default function ExpenseListClient({
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(v: number) => format(v)} />
+              <Tooltip formatter={(v) => format(typeof v === "number" ? v : Number(v) || 0)} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -287,7 +287,7 @@ export default function ExpenseListClient({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip formatter={(v: number) => format(v)} />
+              <Tooltip formatter={(v) => format(typeof v === "number" ? v : Number(v) || 0)} />
               <Line dataKey="amount" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
@@ -325,12 +325,12 @@ export default function ExpenseListClient({
                     target="_blank"
                     className="px-3 py-2 rounded-xl border text-sm"
                   >
-                    📎 View
+                    ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â½ View
                   </a>
                 )}
 
                 <label className="px-3 py-2 rounded-xl border text-sm cursor-pointer">
-                  {uploadingId === e.id ? "Uploading..." : "⬆ Upload"}
+                  {uploadingId === e.id ? "Uploading..." : "ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â  Upload"}
                   <input
                     hidden
                     type="file"

@@ -1,118 +1,50 @@
-// ==========================================================
-// HisabDesk — AI Profile Advice Route
-// ----------------------------------------------------------
-// PURPOSE
-//   AI insights for Profile / Financial Preferences page
-//
-//   Helps user:
-//     • savings target
-//     • emergency fund
-//     • investment split
-//     • risk alignment
-//
-// FLOW
-//   DB → financial_profile → profileAdvisor → compact prompt → AI
-//
-// RULES
-//   ✓ server-side only
-//   ✓ cheap model (module → GPT-3.5)
-//   ✓ short bullets only
-//   ✓ token efficient
-//   ✓ logs usage
-// ==========================================================
-
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
-
-import { getFinancialProfile } from "@/lib/api/profile"
-import { analyzeProfile } from "@/lib/modules/personal"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { runAI } from "@/lib/ai/openai"
 
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
-
-// ==========================================================
-// AUTH
-// ==========================================================
-
-async function getUser() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) throw new Error("Unauthorized")
-
-  return user
-}
-
-// ==========================================================
-// POST
-// ==========================================================
-
 export async function POST() {
   try {
-    const user = await getUser()
+    const supabase = getSupabaseAdmin()
 
-    // ------------------------------------------------------
-    // Fetch profile
-    // ------------------------------------------------------
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    const profile = await getFinancialProfile(user.id)
+    if (!user)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    // ------------------------------------------------------
-    // Analyze
-    // ------------------------------------------------------
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("monthly_income, monthly_expense")
+      .eq("id", user.id)
+      .single()
 
-    const advice = analyzeProfile({
-      monthlyIncome: profile.monthly_income,
-      monthlyExpense: profile.monthly_expense,
-      dependents: profile.dependents,
-      riskLevel: profile.risk_level,
-      age: profile.age,
-    })
-
-    // ------------------------------------------------------
-    // Prompt (compact)
-    // ------------------------------------------------------
+    const income = Number(profile?.monthly_income || 0)
+    const expense = Number(profile?.monthly_expense || 0)
 
     const prompt = `
-Profile Metrics:
-savingsTarget=${advice.recommendedSavingsRate}
-monthlySave=${advice.monthlySavingsTarget}
-emergencyFund=${advice.emergencyFundTarget}
-equity=${advice.recommendedInvestmentSplit.equity}
-debt=${advice.recommendedInvestmentSplit.debt}
+User Profile Snapshot:
+income=${Math.round(income)}
+expense=${Math.round(expense)}
 
-Give 4 short bullet financial habit or planning tips.
+Give 3 short lifestyle or budgeting improvements.
 `
-
-    // ------------------------------------------------------
-    // AI call (cheap)
-    // ------------------------------------------------------
 
     const result = await runAI({
       prompt,
       type: "module",
     })
 
-    // ------------------------------------------------------
-    // Log usage
-    // ------------------------------------------------------
-
     await supabase.from("ai_logs").insert({
       user_id: user.id,
       module: "profile-advice",
-      tokens: result.usage?.total_tokens ?? 0,
+      tokens: result.tokens,
     })
 
-    return NextResponse.json({
-      insights: result.text,
-    })
+    return NextResponse.json({ advice: result.text })
   } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }

@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import React from "react"
 import { AlertTriangle, RefreshCcw } from "lucide-react"
@@ -7,14 +7,14 @@ import { AlertTriangle, RefreshCcw } from "lucide-react"
    ENTERPRISE ERROR BOUNDARY (Production Hardened)
 
    Improvements:
-   ✅ catches all render/runtime errors
-   ✅ no infinite reload loops
-   ✅ retry without page refresh
-   ✅ optional auto-reset on route change
-   ✅ production logging safe
-   ✅ accessibility compliant
-   ✅ fintech fallback UI
-   ✅ retry spam protection
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ catches all render/runtime errors
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ no infinite reload loops
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ retry without page refresh
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ optional auto-reset on route change
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ production logging safe
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ accessibility compliant
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ fintech fallback UI
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ retry spam protection
 ========================================================== */
 
 type Props = {
@@ -49,10 +49,10 @@ export default class ErrorBoundary extends React.Component<Props, State> {
 
   /* ======================================================
      LOGGING (safe for prod)
-     Later → connect to Sentry / LogRocket
+     Later ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ connect to Sentry / LogRocket
   ====================================================== */
 
-  componentDidCatch(error: unknown, info: unknown) {
+  override componentDidCatch(error: unknown, info: unknown) {
     if (process.env.NODE_ENV !== "production") {
       console.error("APP_ERROR_BOUNDARY:", error, info)
     } else {
@@ -72,7 +72,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
 
     this.setState({ retrying: true })
 
-    // small delay → smoother UX
+    // small delay ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ smoother UX
     setTimeout(() => {
       this.setState({
         hasError: false,
@@ -85,7 +85,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
      UI
   ====================================================== */
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         <div
@@ -123,7 +123,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
 
             {/* Message */}
             <p className="text-xs text-zinc-500">
-              Don’t worry — your financial data is safe. Please retry.
+              DonÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢t worry ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â your financial data is safe. Please retry.
             </p>
 
             {/* Action */}
@@ -151,3 +151,5 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     return this.props.children
   }
 }
+
+

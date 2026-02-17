@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 type Props = {
   hasIncome: boolean
@@ -33,7 +33,7 @@ export default function ProgressChecklist({
         {items.map((item, i) => (
           <div key={i} className="flex items-center gap-2">
             <span>
-              {item.done ? "✅" : "⬜"}
+              {item.done ? "ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦" : "ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ"}
             </span>
             <span className={item.done ? "line-through text-gray-400" : ""}>
               {item.label}

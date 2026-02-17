@@ -1,145 +1,73 @@
-/* =========================================================
-   HisabDesk — AI Income Summary Route (HARDENED)
-   ---------------------------------------------------------
-   ✓ server only
-   ✓ per-request client
-   ✓ guard based auth
-   ✓ thin controller
-   ✓ compact prompt
-   ✓ cheap model
-========================================================= */
+ï»¿/**
 
-import { NextRequest, NextResponse } from "next/server"
+* =========================================================
+* HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Income Summary (PFOS-Compliant)
+* ---
+* Thin adapter over Reports Domain Intelligence.
+*
+* NO:
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ No Supabase access
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ No transaction queries
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ No math / analytics here
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ No direct OpenAI calls
+*
+* YES:
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Uses Reports Service (Phase-2 engine output)
+* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Uses withAI ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ safeRun guardrail
+* =========================================================
+  */
 
-import { createClient } from "@/lib/supabase/server"
-import { requireUser } from "@/lib/security/guards"
-
-
-import { runAI } from "@/lib/ai/openai"
+import { withAI } from "@/lib/ai/withAI"
+import { getReportsService } from "@/lib/api/reports/reports.service"
 
 export const dynamic = "force-dynamic"
 
 /* =========================================================
-Helpers
+POST /api/ai/income-summary
 ========================================================= */
 
-function monthKey(date: string) {
-  return date.slice(0, 7)
-}
+export const POST = withAI(async ({ user, safeRun }) => {
+const reportsService = getReportsService()
 
-/* =========================================================
-POST
-========================================================= */
+// Pull already-computed intelligence (last 6 months)
+const reports = await reportsService.getReports({
+userId: user.id,
+range: "6m",
+})
 
-export async function POST(req: NextRequest) {
-  try {
-    /* -----------------------------------------------------
-       Auth (centralized guard)
-    ----------------------------------------------------- */
+const income = reports.kpis.income
+const monthly = reports.monthlySeries
+const sources = reports.incomeByCategory.slice(0, 5)
 
-    const user = await requireUser()
+const prompt = `
+Income Snapshot (Last 6 Months)
 
-    /* -----------------------------------------------------
-       Supabase (per request)
-    ----------------------------------------------------- */
+Total Income: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${income}
 
-    const supabase = createClient()
+Monthly Pattern:
+${monthly.map(m => `${m.month}: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${m.income}`).join("\n")}
 
-    /* -----------------------------------------------------
-       Date range (last 6 months)
-    ----------------------------------------------------- */
+Top Sources:
+${sources.map(s => `${s.category}: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${s.amount}`).join("\n")}
 
-    const today = new Date()
+Provide 4 concise insights:
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Stability of income
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Variability risk (if any)
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Concentration risk
+ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ One improvement suggestion
 
-    const start = new Date(
-      today.getFullYear(),
-      today.getMonth() - 5,
-      1,
-    )
-      .toISOString()
-      .split("T")[0]
-
-    const end = today.toISOString().split("T")[0]
-
-    /* -----------------------------------------------------
-       Fetch transactions
-    ----------------------------------------------------- */
-
-    const tx = await getTransactionsByRange(
-      user.id,
-      start,
-      end,
-      "income",
-    )
-
-    /* -----------------------------------------------------
-       Analytics (engine-level math only)
-    ----------------------------------------------------- */
-
-    const total = tx.reduce((s: number, t: any) => s + t.amount, 0)
-
-    const monthMap: Record<string, number> = {}
-
-    for (const t of tx) {
-      const m = monthKey(t.date)
-      monthMap[m] = (monthMap[m] || 0) + t.amount
-    }
-
-    const monthly = Object.values(monthMap)
-    const months = monthly.length || 1
-
-    const avg = total / months
-
-    const variance =
-      monthly.reduce((s, v) => s + Math.pow(v - avg, 2), 0) /
-      months
-
-    const volatility = Math.sqrt(variance)
-
-    /* -----------------------------------------------------
-       Prompt (token efficient)
-    ----------------------------------------------------- */
-
-    const prompt = `
-Income Metrics:
-total=${Math.round(total)}
-avgMonthly=${Math.round(avg)}
-months=${months}
-volatility=${Math.round(volatility)}
-
-Give 4 short bullet tips for improving income stability or growth.
+Use only the provided data.
+Do not assume anything.
+Keep short.
 `
 
-    /* -----------------------------------------------------
-       AI call (cheap)
-    ----------------------------------------------------- */
+const result = await safeRun({
+prompt,
+type: "module",
+module: "income-summary",
+})
 
-    const result = await runAI({
-      prompt,
-      type: "module",
-    })
-
-    /* -----------------------------------------------------
-       Log usage
-    ----------------------------------------------------- */
-
-    await supabase.from("ai_logs").insert({
-      user_id: user.id,
-      module: "income-summary",
-      tokens: result.usage?.total_tokens ?? 0,
-    })
-
-    /* -----------------------------------------------------
-       IMPORTANT: match UI contract
-    ----------------------------------------------------- */
-
-    return NextResponse.json({
-      advice: result.text, // ← UI expects advice
-    })
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message || "AI failed" },
-      { status: 401 },
-    )
-  }
+return {
+advice: result.text, // preserve UI contract
 }
+})

@@ -1,16 +1,16 @@
-/**
+ï»¿/**
  * =========================================================
  * Backup & Restore Service (Enterprise Safety Layer)
- * HisabDesk – Disaster Recovery Engine
+ * HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Disaster Recovery Engine
  * =========================================================
  *
  * PURE SERVER UTILITY (NOT A SERVER ACTION)
- * ⚠ DO NOT add "use server" or "use client"
+ * ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â  DO NOT add "use server" or "use client"
  * Must stay directive-free for Next 16 compatibility
  * =========================================================
  */
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /* =========================================================
    CLIENT
@@ -78,7 +78,7 @@ export async function exportWorkspace(
 
 /* =========================================================
    RESTORE
-   (DANGEROUS → use admin only)
+   (DANGEROUS ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ use admin only)
 ========================================================= */
 
 export async function restoreWorkspace(

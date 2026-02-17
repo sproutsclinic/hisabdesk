@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — useLoansAI Hook
+ï»¿/* =========================================================
+   HisabDesk ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â useLoansAI Hook
    ---------------------------------------------------------
    CLIENT SIDE ONLY
 
@@ -12,15 +12,15 @@
    - ZERO OpenAI calls
 
    ARCHITECTURE
-     Component → hook → /api/ai/loans → server → OpenAI
+     Component ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ hook ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ /api/ai/loans ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ server ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ OpenAI
 
    RULES
-   ✅ thin client
-   ✅ fetch only
-   ❌ no math
-   ❌ no DB
-   ❌ no OpenAI
-   ❌ no prompt logic
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ thin client
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ fetch only
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no math
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no DB
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no OpenAI
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no prompt logic
 
    ========================================================= */
 

@@ -1,21 +1,32 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
-import { markAllRead } from "@/lib/api/notifications/service"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
-export async function POST(req: NextRequest) {
-  const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
-  )
+export const dynamic = "force-dynamic"
+
+/* =========================================================
+   GET â€” Fetch Notifications
+========================================================= */
+
+export async function GET(req: NextRequest) {
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user)
-    return NextResponse.json({ error: "Unauthorized" })
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
-  await markAllRead(user.id)
+  const { data, error } = await supabase
+    .from("notifications")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
 
-  return NextResponse.json({ success: true })
+  if (error) {
+    return NextResponse.json({ error: "Failed to load" }, { status: 500 })
+  }
+
+  return NextResponse.json({ data: data ?? [] })
 }

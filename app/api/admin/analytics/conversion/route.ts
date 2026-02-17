@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /*
-  PHASE 16 — Conversion Stats
+  PHASE 16 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Conversion Stats
 
   GET /api/admin/analytics/conversion
 
@@ -14,10 +14,7 @@ import { createClient } from "@supabase/supabase-js"
   }
 */
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+const supabase = getSupabaseAdmin()
 
 export async function GET() {
   try {
@@ -51,3 +48,5 @@ export async function GET() {
     )
   }
 }
+
+

@@ -1,15 +1,14 @@
-"use client"
+ï»¿"use client"
 
 // ==========================================================
-// HisabDesk — Add Expense (FINAL CLEAN + AI AUTO CATEGORY)
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Add Expense (FINAL CLEAN + AI AUTO CATEGORY)
 // Mobile first
 // Auto categorization on merchant input
 // ==========================================================
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createExpense } from "@/lib/api/expenses"
-
+import { expensesClient } from "@/lib/api/expense/expenses.client"
 export default function Page() {
   const router = useRouter()
 
@@ -45,14 +44,14 @@ export default function Page() {
     setLoading(true)
 
     try {
-      await createExpense({
-        date: String(formData.get("date")),
-        amount: Number(formData.get("amount")),
-        category,
-        notes: String(formData.get("notes") || ""),
-      })
+      await expensesClient.create({
+  date: String(formData.get("date")),
+  amount: Number(formData.get("amount")),
+  category,
+  notes: String(formData.get("notes") || ""),
+})
 
-      router.push("/expense") // ✅ matches your actual route
+      router.push("/expense") // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ matches your actual route
     } finally {
       setLoading(false)
     }
@@ -79,7 +78,7 @@ export default function Page() {
         <input
           type="number"
           name="amount"
-          placeholder="₹ Amount"
+          placeholder="ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ Amount"
           required
           className="w-full border rounded-lg p-3 text-red-600 text-lg font-medium"
         />

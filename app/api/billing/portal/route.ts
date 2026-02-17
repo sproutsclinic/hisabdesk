@@ -1,43 +1,17 @@
-/**
+ï»¿/**
  * =========================================================
  * Billing Portal API (Customer Self-Serve Management)
- * HisabDesk – Subscription Management Endpoint
- * =========================================================
- *
- * ROUTE
- *   POST /api/billing/portal
- *
- * PURPOSE
- * Opens Razorpay hosted subscription page so user can:
- *   ✓ cancel
- *   ✓ update card
- *   ✓ manage subscription
- *
- * FLOW
- *   UI → call API → returns URL → redirect
- *
- * NOTE
- * Razorpay does not have a full portal like Stripe,
- * so we redirect to subscription checkout/manage URL.
- *
+ * HisabDesk â€” Subscription Management Endpoint
  * =========================================================
  */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import Razorpay from "razorpay"
 
 /* =========================================================
-   CLIENTS
+   RAZORPAY CLIENT
 ========================================================= */
-
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-}
 
 function getRazorpay() {
   return new Razorpay({
@@ -52,13 +26,10 @@ function getRazorpay() {
 
 export async function POST(req: Request) {
   try {
-    const supabase = getSupabase()
+    const supabase = getSupabaseAdmin()
 
     const token =
-      req.headers.get("authorization")?.replace(
-        "Bearer ",
-        ""
-      )
+      req.headers.get("authorization")?.replace("Bearer ", "")
 
     if (!token) {
       return NextResponse.json(
@@ -108,10 +79,6 @@ export async function POST(req: Request) {
       )
     }
 
-    /**
-     * Razorpay manage URL
-     * (hosted page)
-     */
     const url = `https://dashboard.razorpay.com/app/subscriptions/${sub.id}`
 
     return NextResponse.json({ url })

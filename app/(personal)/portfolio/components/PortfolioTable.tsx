@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — PortfolioTable
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â PortfolioTable
    ---------------------------------------------------------
    UI ONLY COMPONENT
 
@@ -11,18 +11,12 @@
    - No calculations
    - Receives computed values from server/engine
 
-   ARCHITECTURE
-     page → usePortfolio → API → engine → computed rows
-                                           ↓
-                                       this table
-
    RULES
-   ✅ UI only
-   ❌ no math
-   ❌ no hooks calling APIs
-   ❌ no supabase
-   ❌ no AI
-
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ UI only
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ no math
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ no hooks calling APIs
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ no supabase
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ no AI
    ========================================================= */
 
 "use client"
@@ -43,10 +37,7 @@ interface Props {
    COMPONENT
    ========================================================= */
 
-export default function PortfolioTable({
-  rows,
-  onDelete,
-}: Props) {
+export default function PortfolioTable({ rows, onDelete }: Props) {
   if (!rows?.length) {
     return (
       <Card className="p-6 text-sm text-muted-foreground">
@@ -61,7 +52,7 @@ export default function PortfolioTable({
         <table className="w-full text-sm">
           {/* ------------------------------------------------
              HEADER
-             ------------------------------------------------ */}
+          ------------------------------------------------ */}
           <thead className="border-b bg-muted/40">
             <tr className="text-left">
               <Th>Name</Th>
@@ -72,34 +63,29 @@ export default function PortfolioTable({
               <Th>P/L</Th>
               <Th>Return %</Th>
               <Th>Allocation %</Th>
-              <Th />
+              <Th /> {/* action column */}
             </tr>
           </thead>
 
           {/* ------------------------------------------------
              BODY
-             ------------------------------------------------ */}
+          ------------------------------------------------ */}
           <tbody>
             {rows.map((a) => (
-              <tr
-                key={a.id}
-                className="border-b hover:bg-muted/30"
-              >
+              <tr key={a.id} className="border-b hover:bg-muted/30">
                 <Td className="font-medium">{a.name}</Td>
                 <Td>{a.type}</Td>
                 <Td>{a.quantity}</Td>
 
-                <Td>₹ {Math.round(a.investedValue)}</Td>
-                <Td>₹ {Math.round(a.currentValue)}</Td>
+                <Td>ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {Math.round(a.investedValue)}</Td>
+                <Td>ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {Math.round(a.currentValue)}</Td>
 
                 <Td
                   className={
-                    a.profitLoss >= 0
-                      ? "text-green-600"
-                      : "text-red-600"
+                    a.profitLoss >= 0 ? "text-green-600" : "text-red-600"
                   }
                 >
-                  ₹ {Math.round(a.profitLoss)}
+                  ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {Math.round(a.profitLoss)}
                 </Td>
 
                 <Td>{a.returnPercent}%</Td>
@@ -131,11 +117,11 @@ export default function PortfolioTable({
 function Th({
   children,
 }: {
-  children: React.ReactNode
+  children?: React.ReactNode   // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ FIX ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â now optional (Next.js 16 strict-safe)
 }) {
   return (
     <th className="px-4 py-3 font-medium text-muted-foreground">
-      {children}
+      {children ?? null}
     </th>
   )
 }
@@ -147,9 +133,5 @@ function Td({
   children: React.ReactNode
   className?: string
 }) {
-  return (
-    <td className={`px-4 py-3 ${className}`}>
-      {children}
-    </td>
-  )
+  return <td className={`px-4 py-3 ${className}`}>{children}</td>
 }

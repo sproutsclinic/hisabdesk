@@ -1,30 +1,54 @@
-/* =========================================================
-   Income → SIP Suggestions Engine
-   ---------------------------------------------------------
-   PURPOSE
-   ✓ convert surplus into smart investment allocation
-   ✓ rule-based (fast + free)
-   ✓ no AI (math only)
-
-   LOGIC
-   autosave → split by risk profile
-
+ï»¿/* =========================================================
+Income â†’ SIP Suggestions Engine
+---------------------------------------------------------
+PURPOSE
+âœ” convert surplus into smart investment allocation
+âœ” rule-based (fast + free)
+âœ” no AI (math only)
 ========================================================= */
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
+/* =========================================================
+DOMAIN TYPES (must be OUTSIDE handler)
+========================================================= */
+
+type RiskLevel = "conservative" | "moderate" | "aggressive"
+
+type Allocation = {
+  equity: number
+  debt: number
+  gold: number
+}
+
+/**
+ * Wrapped in function so Next.js doesn't freeze literal type.
+ * Later this will read from user profile table.
+ */
+function getRiskProfile(): RiskLevel {
+  return "moderate"
+}
+
+/* =========================================================
+ROUTE
+========================================================= */
+
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
+  }
 
   /* ---------------- income total ---------------- */
 
@@ -40,33 +64,18 @@ export async function GET() {
 
   const autosave = Math.round(total * 0.2)
 
-  /* ---------------- risk profile ----------------
-     default = moderate
-     (later you can fetch from profile table)
-  ------------------------------------------------ */
+  /* ---------------- risk profile ---------------- */
 
-  const risk = "moderate"
+  const risk = getRiskProfile()
 
-  let allocation: any
+  let allocation: Allocation
 
   if (risk === "conservative") {
-    allocation = {
-      equity: 0.3,
-      debt: 0.6,
-      gold: 0.1,
-    }
+    allocation = { equity: 0.3, debt: 0.6, gold: 0.1 }
   } else if (risk === "aggressive") {
-    allocation = {
-      equity: 0.8,
-      debt: 0.15,
-      gold: 0.05,
-    }
+    allocation = { equity: 0.8, debt: 0.15, gold: 0.05 }
   } else {
-    allocation = {
-      equity: 0.6,
-      debt: 0.3,
-      gold: 0.1,
-    }
+    allocation = { equity: 0.6, debt: 0.3, gold: 0.1 }
   }
 
   /* ---------------- calculation ---------------- */

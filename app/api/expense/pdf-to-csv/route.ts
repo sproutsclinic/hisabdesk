@@ -1,19 +1,25 @@
-// ==========================================================
-// Expense PDF → Text Extract API
+ï»¿// ==========================================================
+// Expense PDF ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Text Extract API
 // Server side only (pdf-parse)
-// Next.js 16 compatible (dynamic import fix)
+// Next.js 16 + Turbopack SAFE version
 // ==========================================================
 
 import { NextResponse } from "next/server"
 
-export const runtime = "nodejs"   // ✅ REQUIRED for pdf-parse
+export const runtime = "nodejs"          // REQUIRED (pdf-parse cannot run on Edge)
+export const dynamic = "force-dynamic"   // avoid caching issues
 
 // ----------------------------------------------------------
-// pdf-parse MUST be dynamically imported in Next 16
-// (because it is CommonJS, not ESM)
+// pdf-parse must be dynamically imported in Next 16
+// It is now ESM-compatible but export shape varies by bundler
+// This normalizes the function safely.
 // ----------------------------------------------------------
 async function parsePdf(buffer: Buffer) {
-  const pdfParse = (await import("pdf-parse")).default
+  const mod = await import("pdf-parse")
+
+  // Turbopack / Node may expose function differently
+  const pdfParse: any = (mod as any).default ?? mod
+
   return pdfParse(buffer)
 }
 
@@ -23,7 +29,7 @@ async function parsePdf(buffer: Buffer) {
 export async function POST(req: Request) {
   try {
     const form = await req.formData()
-    const file = form.get("file") as File
+    const file = form.get("file") as File | null
 
     if (!file) {
       return NextResponse.json(
@@ -37,7 +43,7 @@ export async function POST(req: Request) {
     const data = await parsePdf(buffer)
 
     return NextResponse.json({
-      text: data.text,
+      text: data?.text ?? "",
     })
   } catch (err) {
     console.error("PDF parse failed:", err)

@@ -1,12 +1,11 @@
-// ==========================================================
-// HisabDesk — Vault (Document Locker)
+ï»¿// ==========================================================
+// HisabDesk Ã¢â‚¬â€ Vault (Document Locker)
 // SERVER COMPONENT (safe)
+// Uses unified Supabase client (FINAL ARCHITECTURE)
 // ==========================================================
 
 import { Card } from "@/components/ui/card"
-
-/* ✅ SERVER CLIENT (correct) */
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseClient } from "@/lib/supabase"
 
 export const dynamic = "force-dynamic"
 
@@ -28,7 +27,7 @@ interface DocumentRow {
 // ==========================================================
 
 async function loadDocuments(): Promise<DocumentRow[]> {
-  const supabase = createClient()
+  const supabase = getSupabaseClient()
 
   const {
     data: { user },
@@ -42,7 +41,7 @@ async function loadDocuments(): Promise<DocumentRow[]> {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
 
-  return data || []
+  return data ?? []
 }
 
 // ==========================================================
@@ -62,15 +61,8 @@ export default async function VaultPage() {
         </p>
       </div>
 
-      {/* ================================================= */}
       {/* UPLOAD */}
-      {/* ================================================= */}
-
-      <form
-        action="/api/vault/upload"
-        method="POST"
-        encType="multipart/form-data"
-      >
+      <form action="/api/vault/upload" method="POST" encType="multipart/form-data">
         <Card className="p-5 space-y-4">
           <p className="text-sm font-medium">Upload document</p>
 
@@ -94,10 +86,7 @@ export default async function VaultPage() {
         </Card>
       </form>
 
-      {/* ================================================= */}
       {/* DOCUMENT LIST */}
-      {/* ================================================= */}
-
       <Card className="p-5 space-y-4">
         <p className="text-sm font-medium">Stored Documents</p>
 
@@ -112,9 +101,8 @@ export default async function VaultPage() {
               >
                 <div>
                   <p className="font-medium">{d.name}</p>
-
                   <p className="text-xs text-gray-500">
-                    {d.category} • {(d.size / 1024).toFixed(1)} KB
+                    {d.category} Ã¢â‚¬Â¢ {(d.size / 1024).toFixed(1)} KB
                   </p>
                 </div>
 

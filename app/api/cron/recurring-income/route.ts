@@ -1,8 +1,8 @@
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { NextResponse } from "next/server"
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const today = new Date().toISOString().slice(0, 10)
 

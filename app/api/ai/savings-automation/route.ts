@@ -1,75 +1,38 @@
-// ==========================================================
-// HisabDesk — AI Savings Automation
-// PURPOSE
-//   Suggest automatic savings transfer amount
-// ==========================================================
-
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { runAI } from "@/lib/ai/openai"
 
 export const dynamic = "force-dynamic"
 
-// ==========================================================
-
 export async function POST() {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },
-      error,
     } = await supabase.auth.getUser()
 
-    if (error || !user)
+    if (!user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const since = new Date()
-    since.setMonth(since.getMonth() - 3)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("monthly_income, monthly_expense")
+      .eq("id", user.id)
+      .single()
 
-    const date = since.toISOString().slice(0, 10)
+    const income = Number(profile?.monthly_income || 0)
+    const expense = Number(profile?.monthly_expense || 0)
 
-    // ------------------------------------------------------
-    // Fetch income
-    // ------------------------------------------------------
-
-    const { data: incomeRows } = await supabase
-      .from("incomes")
-      .select("amount")
-      .eq("user_id", user.id)
-      .gte("date", date)
-
-    const { data: expenseRows } = await supabase
-      .from("expenses")
-      .select("amount")
-      .eq("user_id", user.id)
-      .gte("date", date)
-
-    const income =
-      incomeRows?.reduce((s, r) => s + Number(r.amount), 0) || 0
-
-    const expense =
-      expenseRows?.reduce((s, r) => s + Number(r.amount), 0) || 0
-
-    const avgIncome = income / 3
-    const avgExpense = expense / 3
-
-    const safeSavings = Math.max(avgIncome - avgExpense, 0)
-
-    const suggested = Math.round(safeSavings * 0.7)
-
-    // ------------------------------------------------------
-    // AI advice
-    // ------------------------------------------------------
+    const surplus = income - expense
 
     const prompt = `
-Income=${Math.round(avgIncome)}
-Expense=${Math.round(avgExpense)}
-SafeSavings=${Math.round(safeSavings)}
-Suggested=${suggested}
+Savings Automation Snapshot:
+income=${Math.round(income)}
+expense=${Math.round(expense)}
+surplus=${Math.round(surplus)}
 
-Give short savings advice.
-Include 1 line telling user how much to auto-transfer monthly.
+Give 4 short automated saving strategies.
 `
 
     const result = await runAI({
@@ -77,10 +40,13 @@ Include 1 line telling user how much to auto-transfer monthly.
       type: "module",
     })
 
-    return NextResponse.json({
-      amount: suggested,
-      advice: result.text,
+    await supabase.from("ai_logs").insert({
+      user_id: user.id,
+      module: "savings-automation",
+      tokens: result.tokens,
     })
+
+    return NextResponse.json({ advice: result.text })
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 })
   }

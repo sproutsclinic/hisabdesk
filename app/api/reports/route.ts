@@ -1,7 +1,7 @@
-// ==========================================================
+ï»¿// ==========================================================
 // Reports API Route
 // Server authority only
-// Thin transport layer → service
+// Thin transport layer ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ service
 //
 // Responsibilities:
 // - auth guard
@@ -10,14 +10,14 @@
 // - return JSON
 //
 // NO:
-// ❌ business logic
-// ❌ calculations
-// ❌ DB queries here
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ business logic
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ calculations
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ DB queries here
 // ==========================================================
 
 import { NextRequest, NextResponse } from "next/server"
 
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { getReportsService } from "@/lib/api/reports/reports.service"
 
 /* =========================================================
@@ -26,7 +26,7 @@ GET /api/reports
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     // ------------------------------------------------------
     // Auth guard

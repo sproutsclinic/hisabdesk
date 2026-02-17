@@ -1,53 +1,33 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
+
+export const dynamic = "force-dynamic"
 
 /* =================================================
-   AUTO REMINDER ENGINE — SAFE VERSION
-
-   Improvements:
-   ✅ user scoped (NOT all users)
-   ✅ secure auth token required
-   ✅ idempotent
-   ✅ batch insert (fast)
-   ✅ safe to run repeatedly
-
-   Trigger:
-   fetch("/api/reminders/auto", { method: "POST" })
-
+   AUTO REMINDER ENGINE â€” FINAL (Gateway Based)
+   Uses shared server client (NO createClient anywhere)
 ================================================= */
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
-    /* ================= AUTH ================= */
+    const supabase = getSupabaseAdmin()
 
-    const authHeader = req.headers.get("authorization")
-
-    if (!authHeader) {
-      return NextResponse.json({ ok: false }, { status: 401 })
-    }
-
-    const token = authHeader.replace("Bearer ", "")
-
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!, // server only
-      { auth: { persistSession: false } }
-    )
+    /* ================= AUTH (server session) ================= */
 
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser(token)
+    } = await supabase.auth.getUser()
 
     if (!user || error) {
       return NextResponse.json({ ok: false }, { status: 401 })
     }
 
-    /* ================= FETCH USER ITEMS ONLY ================= */
+    /* ================= FETCH USER ITEMS ================= */
 
     const { data: items } = await supabase
       .from("vault_items")
-      .select("id,category,metadata")
+      .select("id, category, metadata")
       .eq("user_id", user.id)
 
     if (!items?.length) {
@@ -61,7 +41,6 @@ export async function POST(req: Request) {
     for (const item of items) {
       const m = item.metadata || {}
 
-      /* Insurance premium */
       if (item.category === "insurance" && m.due_date) {
         inserts.push({
           user_id: user.id,
@@ -72,7 +51,6 @@ export async function POST(req: Request) {
         })
       }
 
-      /* Loan EMI */
       if (item.category === "loans" && m.emi_date) {
         inserts.push({
           user_id: user.id,
@@ -83,7 +61,6 @@ export async function POST(req: Request) {
         })
       }
 
-      /* Investment maturity */
       if (item.category === "tax" && m.maturity_date) {
         inserts.push({
           user_id: user.id,
@@ -99,7 +76,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true })
     }
 
-    /* ================= REMOVE DUPLICATES ================= */
+    /* ================= IDEMPOTENT INSERT ================= */
 
     for (const r of inserts) {
       const { data: exists } = await supabase
@@ -116,7 +93,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true })
-  } catch {
-    return NextResponse.json({ ok: false })
+  } catch (e) {
+    console.error(e)
+    return NextResponse.json({ ok: false }, { status: 500 })
   }
 }

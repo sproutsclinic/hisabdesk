@@ -1,20 +1,21 @@
-import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { NextRequest, NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
 /* ======================================================== */
-/* GET → list recurring                                     */
+/* GET â†’ list recurring                                     */
 /* ======================================================== */
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { data } = await supabase
     .from("recurring_income")
@@ -26,15 +27,18 @@ export async function GET() {
 }
 
 /* ======================================================== */
-/* POST → create                                            */
+/* POST â†’ create                                            */
 /* ======================================================== */
 
 export async function POST(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  if (!user)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const body = await req.json()
 
@@ -42,7 +46,7 @@ export async function POST(req: NextRequest) {
     .from("recurring_income")
     .insert({
       ...body,
-      user_id: user?.id,
+      user_id: user.id,
     })
     .select()
     .single()

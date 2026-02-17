@@ -1,39 +1,14 @@
-// ==========================================================
-// HisabDesk — AI Layer Barrel Exports
-// ----------------------------------------------------------
-// PURPOSE
-//   Single import entrypoint for ALL AI infrastructure
-//
-//   Instead of:
-//
-//     import { runAI } from "@/lib/ai/openai"
-//     import { guardAI } from "@/lib/ai/guard"
-//     import { safeRunAI } from "@/lib/ai/safeRun"
-//
-//   Use:
-//
-//     import { safeRunAI } from "@/lib/ai"
-//
-//   Benefits:
-//     ✓ clean imports
-//     ✓ prevents wrong direct OpenAI usage
-//     ✓ enforces safeRunAI pattern
-//     ✓ enterprise maintainability
-//
-// RULE:
-//   Routes should primarily use safeRunAI()
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â AI Public Exports (Clean Barrel)
 // ==========================================================
 
-// ----------------------------------------------------------
-// Core runner (ONLY one routes should use)
-// ----------------------------------------------------------
+// High-level safe runner (MAIN ENTRY)
+export { safeRunAI } from "./safeRunAI"
+export type { AIRunType } from "./safeRunAI"
 
-export * from "./safeRunAI"
+// Low-level OpenAI adapter (internal use if needed)
+export { runAI } from "./openai"
 
-// ----------------------------------------------------------
-// Lower level utilities (rarely needed directly)
-// ----------------------------------------------------------
-
+// Guard + prompts (pure utilities)
 export * from "./guard"
-export * from "./openai"
 export * from "./prompts"

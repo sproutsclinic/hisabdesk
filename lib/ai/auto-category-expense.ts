@@ -1,78 +1,32 @@
-"use server"
+ï»¿"use server"
 
 /**
  * =========================================================
  * Auto Category Expense (AI Integration Layer)
- * HisabDesk – Phase B (AI Features – Integration)
+ * FINAL ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Schema Aligned Version
  * =========================================================
  *
  * PURPOSE
- * Automatically apply category BEFORE saving expense.
+ * Auto-detect category BEFORE saving expense.
  *
  * IMPORTANT
- * ---------------------------------------------------------
- * This DOES NOT replace your:
- *   lib/ai/expense-categoriser.ts
- *
- * It simply USES it.
- *
- * Architecture:
- *
- *   UI → saveExpense()
- *            ↓
- *      autoCategoryExpense()
- *            ↓
- *      Supabase insert
- *
- * =========================================================
- *
- * WHY THIS FILE EXISTS
- *
- * Keep:
- *   categorizeExpense()  → pure logic
- *
- * Add:
- *   autoCategoryExpense() → DB integration
- *
- * Separation of concerns = enterprise clean design
- *
- * =========================================================
- *
- * USAGE (recommended everywhere)
- *
- * import { saveExpenseAuto } from "@/lib/ai/auto-category-expense"
- *
- * await saveExpenseAuto({
- *   org_id,
- *   description,
- *   vendor,
- *   amount
- * })
- *
- * =========================================================
- *
- * SAFE
- * ✓ server only
- * ✓ service role
- * ✓ no existing file changes
- * ✓ uses your existing categoriser
- * =========================================================
+ * This file MUST match the real Supabase schema.
+ * Do NOT add columns here.
  */
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import {
   categorizeExpense,
   type ExpenseInput,
 } from "@/lib/ai/expense-categoriser"
 
 /* =========================================================
-   TYPES
+   TYPES ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â aligned to real DB
 ========================================================= */
 
 export type SaveExpenseInput = ExpenseInput & {
-  org_id: string
   user_id?: string
-  note?: string
+  notes?: string
   date?: string
 }
 
@@ -91,40 +45,27 @@ function getClient() {
 }
 
 /* =========================================================
-   MAIN SAVE FUNCTION
+   SINGLE SAVE
 ========================================================= */
 
-export async function saveExpenseAuto(
-  input: SaveExpenseInput
-) {
+export async function saveExpenseAuto(input: SaveExpenseInput) {
   const supabase = getClient()
 
-  /* ------------------------------------------------------
-     1️⃣ AUTO CATEGORY (uses your engine)
-  ------------------------------------------------------ */
-
+  // 1ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ Categorize using your AI logic
   const category = categorizeExpense({
     description: input.description,
-    vendor: input.vendor,
     amount: input.amount,
   })
 
-  /* ------------------------------------------------------
-     2️⃣ INSERT
-  ------------------------------------------------------ */
-
+  // 2ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£ Insert ONLY real columns
   const { data, error } = await supabase
     .from("expenses")
     .insert({
-      org_id: input.org_id,
       user_id: input.user_id ?? null,
-      description: input.description ?? null,
-      vendor: input.vendor ?? null,
-      note: input.note ?? null,
       amount: input.amount ?? 0,
       category,
-      created_at:
-        input.date ?? new Date().toISOString(),
+      notes: input.notes ?? input.description ?? null,
+      date: input.date ?? new Date().toISOString(),
     })
     .select()
     .single()
@@ -135,19 +76,21 @@ export async function saveExpenseAuto(
 }
 
 /* =========================================================
-   BULK SAVE (imports / CSV / bank statements)
+   BULK SAVE (CSV / imports)
 ========================================================= */
 
 export async function saveExpensesBulkAuto(
-  orgId: string,
+  userId: string,
   rows: SaveExpenseInput[]
 ) {
   const supabase = getClient()
 
   const payload = rows.map((r) => ({
-    ...r,
-    org_id: orgId,
+    user_id: userId,
+    amount: r.amount ?? 0,
     category: categorizeExpense(r),
+    notes: r.notes ?? r.description ?? null,
+    date: r.date ?? new Date().toISOString(),
   }))
 
   const { data, error } = await supabase

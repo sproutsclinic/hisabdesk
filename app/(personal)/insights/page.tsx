@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
@@ -155,8 +155,8 @@ export default function InsightsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Metric title="Savings Rate" value={`${savingsRate}%`} />
         <Metric title="Burn Rate" value={`${burnRate}%`} />
-        <Metric title="Avg Expense" value={`₹ ${avgExpense}`} />
-        <Metric title="Net Savings" value={`₹ ${savings.toLocaleString("en-IN")}`} />
+        <Metric title="Avg Expense" value={`ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ ${avgExpense}`} />
+        <Metric title="Net Savings" value={`ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ ${savings.toLocaleString("en-IN")}`} />
       </div>
 
       {loading && (
@@ -167,18 +167,18 @@ export default function InsightsPage() {
 
       {alerts.length > 0 && (
         <Card className="p-5 bg-red-50 space-y-2 text-sm">
-          {alerts.map((a, i) => <p key={i}>⚠️ {a}</p>)}
+          {alerts.map((a, i) => <p key={i}>ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â {a}</p>)}
         </Card>
       )}
 
       {tips.length > 0 && (
         <Card className="p-5 bg-amber-50 space-y-2 text-sm">
-          {tips.map((t, i) => <p key={i}>💡 {t}</p>)}
+          {tips.map((t, i) => <p key={i}>ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ {t}</p>)}
         </Card>
       )}
 
       <Card className="p-5 bg-green-50 space-y-2 text-sm">
-        {positives.map((p, i) => <p key={i}>✅ {p}</p>)}
+        {positives.map((p, i) => <p key={i}>ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ {p}</p>)}
       </Card>
 
       {/* AI */}

@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 import { getSupabaseClient } from "@/lib/supabase"
@@ -12,11 +12,11 @@ import {
 } from "lucide-react"
 
 /* =================================================
-   VAULT STATS — Fast + Lightweight
+   VAULT STATS ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Fast + Lightweight
    Top summary bar for Grahalakshmi Vault
    FIX:
-   ✅ uses getSupabaseClient()
-   ✅ no invalid supabase import
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ uses getSupabaseClient()
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ no invalid supabase import
 ================================================= */
 
 export default function VaultStats() {
@@ -117,7 +117,7 @@ export default function VaultStats() {
       <Card className="text-center space-y-1">
         <Landmark size={14} className="mx-auto text-indigo-600" />
         <p className="text-sm font-semibold">
-          ₹ {assets.toLocaleString("en-IN")}
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {assets.toLocaleString("en-IN")}
         </p>
         <p className="text-xs text-zinc-500">Assets</p>
       </Card>

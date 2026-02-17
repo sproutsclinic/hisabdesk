@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — usePortfolioFilters
+ï»¿/* =========================================================
+   HisabDesk ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â usePortfolioFilters
    ---------------------------------------------------------
    CLIENT SIDE ONLY
 
@@ -21,15 +21,15 @@
 
    ARCHITECTURE
      page
-       → usePortfolio()
-       → usePortfolioFilters(rows)
+       ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ usePortfolio()
+       ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ usePortfolioFilters(rows)
 
    RULES
-   ✅ UI convenience only
-   ❌ no fetch
-   ❌ no supabase
-   ❌ no AI
-   ❌ no calculations
+   ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ UI convenience only
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no fetch
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no supabase
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no AI
+   ÃƒÂ¢Ã‚ÂÃ…â€™ no calculations
 
    ========================================================= */
 

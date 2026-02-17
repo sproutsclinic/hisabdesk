@@ -1,4 +1,4 @@
-import { runAutomation } from "@/lib/server/automation/runner";
+ï»¿import { runAutomation } from "@/lib/server/automation/runner";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {

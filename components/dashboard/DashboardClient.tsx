@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useMemo } from "react"
 import {
@@ -34,7 +34,7 @@ export default function DashboardClient({
   ========================================================== */
 
   const format = (n: number) =>
-    `₹ ${Number(n || 0).toLocaleString("en-IN")}`
+    `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ ${Number(n || 0).toLocaleString("en-IN")}`
 
   /* ==========================================================
      CALCULATIONS
@@ -119,16 +119,16 @@ export default function DashboardClient({
     const list: string[] = []
 
     if (net < 0)
-      list.push("⚠ Expenses exceed income. Reduce discretionary spend.")
+      list.push("ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â  Expenses exceed income. Reduce discretionary spend.")
 
     if (gstPayable > 10000)
-      list.push(`🧾 High GST payable: ${format(gstPayable)}`)
+      list.push(`ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¾ High GST payable: ${format(gstPayable)}`)
 
     const top = categoryData.sort((a, b) => b.value - a.value)[0]
 
     if (top)
       list.push(
-        `💡 Highest expense category: ${top.name} (${format(top.value)})`
+        `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ Highest expense category: ${top.name} (${format(top.value)})`
       )
 
     return list

@@ -1,7 +1,7 @@
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /*
-  PHASE 17 — Audit Logs
+  PHASE 17 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Audit Logs
 
   Table required:
 

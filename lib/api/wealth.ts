@@ -1,4 +1,4 @@
-"use server"
+ï»¿"use server"
 
 // ==========================================================
 // Wealth Goals API (Supabase)

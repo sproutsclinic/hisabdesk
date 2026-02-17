@@ -1,7 +1,7 @@
-/**
+ï»¿/**
  * =========================================================
- * HISABDESK — E2E SMOKE TESTS
- * Phase D — Day 27
+ * HISABDESK ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â E2E SMOKE TESTS
+ * Phase D ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Day 27
  *
  * Tool: Playwright
  *
@@ -9,17 +9,17 @@
  * Validate FULL critical flows before launch
  *
  * Covers:
- * ✓ login
- * ✓ dashboard load
- * ✓ create client org
- * ✓ add income/expense
- * ✓ GST page load
- * ✓ AIS page load
- * ✓ CA clients page
- * ✓ billing page
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ login
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ dashboard load
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ create client org
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ add income/expense
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ GST page load
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ AIS page load
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ CA clients page
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ billing page
  *
  * WHY
- * If this file passes → app is launch-safe
+ * If this file passes ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ app is launch-safe
  *
  * Run:
  * npx playwright test
@@ -74,7 +74,7 @@ async function login(page: any) {
 
 test.describe("HisabDesk Smoke Suite", () => {
   /* --------------------------------------------------- */
-  test("Login → Dashboard loads", async ({ page }) => {
+  test("Login ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Dashboard loads", async ({ page }) => {
     await login(page)
 
     await expect(

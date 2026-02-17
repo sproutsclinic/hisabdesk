@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 
@@ -61,7 +61,7 @@ export default function RecurringIncomePage() {
 
             <p className="font-medium">{r.title}</p>
             <p className="text-sm text-gray-500">Next: {r.next_run}</p>
-            <p className="text-green-600">₹ {r.amount}</p>
+            <p className="text-green-600">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {r.amount}</p>
 
           </div>
         ))}

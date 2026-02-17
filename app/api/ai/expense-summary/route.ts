@@ -1,18 +1,12 @@
-/* =========================================================
-   HisabDesk — AI Expense Summary Route
-========================================================= */
-
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { runAI } from "@/lib/ai/openai"
 
 export const dynamic = "force-dynamic"
 
-/* ========================================================= */
-
 export async function POST() {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },
@@ -35,28 +29,21 @@ export async function POST() {
 
     for (const t of tx) {
       const m = t.date.slice(0, 7)
-
       monthsMap[m] = (monthsMap[m] || 0) + Number(t.amount)
-      catMap[t.category] =
-        (catMap[t.category] || 0) + Number(t.amount)
+      catMap[t.category] = (catMap[t.category] || 0) + Number(t.amount)
     }
 
     const monthly = Object.values(monthsMap)
     const months = monthly.length || 1
-
     const avg = total / months
 
     const variance =
-      monthly.reduce(
-        (s, v) => s + Math.pow(v - avg, 2),
-        0
-      ) / months
+      monthly.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / months
 
     const volatility = Math.sqrt(variance)
 
     const topCategory =
-      Object.entries(catMap).sort((a, b) => b[1] - a[1])[0]?.[0] ||
-      "None"
+      Object.entries(catMap).sort((a, b) => b[1] - a[1])[0]?.[0] || "None"
 
     const prompt = `
 Expense Metrics:

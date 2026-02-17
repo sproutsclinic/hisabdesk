@@ -1,5 +1,5 @@
-/*
-  PHASE 16 — Analytics Events Engine
+ï»¿/*
+  PHASE 16 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Analytics Events Engine
   Lightweight internal tracking (no external SDK)
 
   Usage:

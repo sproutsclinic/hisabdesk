@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase"
+ï»¿import { getSupabaseServer } from "@/lib/supabase"
 
 /* ========================================
    CHECK PRO STATUS (SERVER SAFE)

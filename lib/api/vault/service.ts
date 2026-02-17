@@ -1,9 +1,9 @@
-/* =========================================================
+ï»¿/* =========================================================
    Vault Service
    SERVER ONLY
    ========================================================= */
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import type { VaultFileRow } from "./types"
 
 const supabase = createClient(

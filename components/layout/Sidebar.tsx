@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -12,7 +12,7 @@ import {
   BarChart3,
   Send,
   Settings,
-  Wallet, // ✅ ADDED (Budget icon)
+  Wallet, // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ ADDED (Budget icon)
 } from "lucide-react"
 
 const items = [
@@ -21,7 +21,7 @@ const items = [
   { href: "/expense", label: "Expense", icon: Receipt },
 
   // ======================================================
-  // ✅ ADDED — Budget Planner (no changes to existing items)
+  // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ ADDED ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Budget Planner (no changes to existing items)
   // ======================================================
   { href: "/budget", label: "Budget", icon: Wallet },
 
@@ -88,7 +88,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto px-3 pt-6 text-xs text-zinc-400">
-        Secure • Encrypted • Private
+        Secure ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Encrypted ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Private
       </div>
     </aside>
   )

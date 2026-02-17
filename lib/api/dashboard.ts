@@ -1,12 +1,12 @@
-// ==========================================================
-// HisabDesk — Dashboard Service Layer (FINAL STABLE)
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Dashboard Service Layer (FINAL STABLE)
 // Next 16 safe
 // No cookies() usage here
 // Uses service client only
-// Phase 3 — Production hardening + performance
+// Phase 3 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Production hardening + performance
 // ==========================================================
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /* ==========================================================
    SERVER SUPABASE (NO cookies, NO auth dependency)
@@ -18,12 +18,12 @@ function getSupabase() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       auth: {
-        persistSession: false, // ✅ additive: no memory/session overhead on server
+        persistSession: false, // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ additive: no memory/session overhead on server
         autoRefreshToken: false,
       },
       global: {
         headers: {
-          "x-application-name": "hisabdesk-dashboard", // ✅ additive: tracing/debug
+          "x-application-name": "hisabdesk-dashboard", // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ additive: tracing/debug
         },
       },
     }
@@ -31,7 +31,7 @@ function getSupabase() {
 }
 
 /* ==========================================================
-   PERFORMANCE CONSTANTS (ADDITIVE ONLY — SAFE LIMITS)
+   PERFORMANCE CONSTANTS (ADDITIVE ONLY ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â SAFE LIMITS)
    Prevents overfetching + protects dashboard render time
 ========================================================== */
 
@@ -65,8 +65,8 @@ export async function loadDashboardData(userId: string) {
 
     // ======================================================
     // Income (ordered for chart correctness)
-    // ✅ column-only select
-    // ✅ row limit to avoid huge payloads
+    // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ column-only select
+    // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ row limit to avoid huge payloads
     // ======================================================
     supabase
       .from("incomes")
@@ -77,8 +77,8 @@ export async function loadDashboardData(userId: string) {
 
     // ======================================================
     // Expense (ordered for chart correctness)
-    // ✅ column-only select
-    // ✅ row limit
+    // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ column-only select
+    // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ row limit
     // ======================================================
     supabase
       .from("expenses")
@@ -112,7 +112,7 @@ export async function loadDashboardData(userId: string) {
 
     // ======================================================
     // Vault (minimal fields only)
-    // ✅ capped to prevent heavy metadata loads
+    // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ capped to prevent heavy metadata loads
     // ======================================================
     supabase
       .from("vault_items")

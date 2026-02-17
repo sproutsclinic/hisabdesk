@@ -1,57 +1,50 @@
-// ==========================================================
-// Bills Service (CLEAN + SIMPLE)
-// CRUD + Cron Hook Placeholder
+ï»¿// ==========================================================
+// Bills Service ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â PFOS Aligned
+// Layer: Service (DB only)
+// No business logic here.
 // ==========================================================
 
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
+import type {
+  BillRow,
+  CreateBillRequest,
+  UpdateBillRequest,
+} from "./types"
 
 /* =========================================================
-TYPES
+GET OVERVIEW
 ========================================================= */
 
-export type CreateBillRequest = {
-  title: string
-  amount: number
-  category?: string
-  frequency: string
-  next_due_at: string
-  remind_days_before?: number
-}
-
-export type UpdateBillRequest = Partial<CreateBillRequest> & {
-  id: string
-}
-
-/* =========================================================
-CRUD — USED BY APP
-========================================================= */
-
-export async function getBillsOverview(userId: string) {
-  const supabase = createClient()
+export async function getBillsOverview(userId: string): Promise<BillRow[]> {
+  const supabase = getSupabaseAdmin()
 
   const { data, error } = await supabase
     .from("bills")
     .select("*")
     .eq("user_id", userId)
-    .order("next_due_at", { ascending: true })
+    .order("due_day", { ascending: true })
 
   if (error) throw new Error(error.message)
 
-  return data || []
+  return data ?? []
 }
+
+/* =========================================================
+CREATE
+========================================================= */
 
 export async function createBill(
   userId: string,
   body: CreateBillRequest
-) {
-  const supabase = createClient()
+): Promise<BillRow> {
+  const supabase = getSupabaseAdmin()
 
   const { data, error } = await supabase
     .from("bills")
     .insert({
       ...body,
       user_id: userId,
-      is_active: true,
+      active: true,
     })
     .select()
     .single()
@@ -61,11 +54,15 @@ export async function createBill(
   return data
 }
 
+/* =========================================================
+UPDATE
+========================================================= */
+
 export async function updateBill(
   userId: string,
   body: UpdateBillRequest
-) {
-  const supabase = createClient()
+): Promise<BillRow> {
+  const supabase = getSupabaseAdmin()
 
   const { id, ...updates } = body
 
@@ -82,8 +79,15 @@ export async function updateBill(
   return data
 }
 
-export async function deleteBill(userId: string, id: string) {
-  const supabase = createClient()
+/* =========================================================
+DELETE
+========================================================= */
+
+export async function deleteBill(
+  userId: string,
+  id: string
+): Promise<boolean> {
+  const supabase = getSupabaseAdmin()
 
   const { error } = await supabase
     .from("bills")
@@ -97,16 +101,9 @@ export async function deleteBill(userId: string, id: string) {
 }
 
 /* =========================================================
-CRON HOOK (Required by automation runner)
-Currently acts as SAFE NO-OP until reminder engine is built.
+CRON PLACEHOLDER
 ========================================================= */
 
 export async function runBillsReminders(): Promise<number> {
-  // Intentionally empty.
-  // Future version will:
-  // - find upcoming bills
-  // - generate reminders
-  // - push notifications
-
   return 0
 }

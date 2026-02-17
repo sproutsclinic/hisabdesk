@@ -1,34 +1,31 @@
-/* =========================================================
-   HisabDesk — Tax Export API
+ï»¿/* =========================================================
+   HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Tax Export API
    ---------------------------------------------------------
    PURPOSE
    - Export latest tax calculation
    - CSV download
-   - PDF download (NEW)
+   - PDF download
 
    ARCHITECTURE
-     Client → /api/tax/export
-            → service (DB fetch)
-            → report/pdf builder
-            → file response
+     Client ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ /api/tax/export
+            ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ service (DB fetch)
+            ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ report/pdf builder
+            ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ file response
 
    RULES
-   ✅ Server only
-   ✅ No calculations here
-   ✅ No AI
-   ✅ No business logic
-   ❌ No client trust
-   ❌ No OpenAI
-
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Server only
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ No calculations here
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ No AI
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ No business logic
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ No client trust
+   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ No OpenAI
    ========================================================= */
 
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 import { getLatestTaxCalculation } from "@/lib/api/tax/service"
 import { buildTaxCSV } from "@/lib/api/tax/report"
-
-/* ✅ NEW */
 import { buildTaxPDF } from "@/lib/api/tax/pdf"
 
 /* =========================================================
@@ -45,7 +42,7 @@ function getServerClient(req: NextRequest) {
           Authorization: req.headers.get("Authorization") || "",
         },
       },
-    },
+    }
   )
 }
 
@@ -57,9 +54,7 @@ export async function GET(req: NextRequest) {
   try {
     const supabase = getServerClient(req)
 
-    /* -----------------------------------------------------
-       AUTH
-       ----------------------------------------------------- */
+    /* ---------------- AUTH ---------------- */
     const {
       data: { user },
       error,
@@ -69,67 +64,67 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    /* -----------------------------------------------------
-       QUERY
-       ----------------------------------------------------- */
+    /* ---------------- QUERY ---------------- */
     const { searchParams } = new URL(req.url)
 
     const financialYear = searchParams.get("fy") || "2024-25"
     const type = searchParams.get("type") || "csv"
 
-    /* -----------------------------------------------------
-       LOAD LATEST RESULT
-       ----------------------------------------------------- */
+    /* ---------------- LOAD RESULT ---------------- */
     const latest = await getLatestTaxCalculation(user.id, financialYear)
 
     if (!latest) {
       return NextResponse.json(
         { error: "No tax calculation found" },
-        { status: 404 },
+        { status: 404 }
       )
     }
 
     /* =====================================================
-       CSV EXPORT (unchanged)
+       CSV EXPORT
        ===================================================== */
+
     if (type === "csv") {
       const csv = buildTaxCSV(latest.result)
 
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv",
-          "Content-Disposition": `attachment; filename="tax-${financialYear}.csv"`,
+          "Content-Disposition": "attachment; filename=tax-" + financialYear + ".csv",
         },
       })
     }
 
     /* =====================================================
-       ✅ PDF EXPORT (NEW)
+       PDF EXPORT (Next.js 16 binary fix)
        ===================================================== */
+
     if (type === "pdf") {
       const pdfBuffer = buildTaxPDF(latest.result, financialYear)
 
-      return new NextResponse(pdfBuffer, {
+      // Convert Node Buffer ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Web-compatible binary
+      const body = new Uint8Array(pdfBuffer)
+
+      return new NextResponse(body, {
         headers: {
           "Content-Type": "application/pdf",
-          "Content-Disposition": `attachment; filename="tax-${financialYear}.pdf"`,
+          "Content-Disposition": "attachment; filename=tax-" + financialYear + ".pdf",
         },
       })
     }
 
-    /* -----------------------------------------------------
-       INVALID TYPE
-       ----------------------------------------------------- */
+    /* ---------------- INVALID TYPE ---------------- */
+
     return NextResponse.json(
       { error: "Unsupported export type" },
-      { status: 400 },
+      { status: 400 }
     )
   } catch (err) {
     console.error("Tax export error:", err)
 
     return NextResponse.json(
       { error: "Export failed" },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

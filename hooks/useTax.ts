@@ -1,5 +1,5 @@
-/* =========================================================
-   HisabDesk — useTaxAI Hook
+ï»¿/* =========================================================
+   HisabDesk ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â useTaxAI Hook
    ---------------------------------------------------------
    CLIENT SIDE ONLY
 
@@ -12,11 +12,11 @@
    - ZERO Supabase
 
    Architecture:
-     Component → useTaxAI → /api/ai/tax → safeRunAI → GPT-4
+     Component ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ useTaxAI ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ /api/ai/tax ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ safeRunAI ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ GPT-4
 
    WHY SEPARATE FROM useTax?
    - clear separation of concerns
-   - calculation ≠ AI advice
+   - calculation ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â  AI advice
    - independent loading states
    - avoids re-render coupling
 

@@ -1,4 +1,4 @@
-import { getSupabaseClient } from "@/lib/supabase"
+ï»¿import { getSupabaseClient } from "@/lib/supabase"
 
 const TABLE = "wealth_goals"
 

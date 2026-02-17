@@ -1,21 +1,18 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase"
 
 /*
-  PHASE 18 — Activity History
+  PHASE 18 Ã¢â‚¬â€ Activity History
 
   Returns latest audit logs for admin UI
 
   GET /api/admin/activity
 */
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export async function GET() {
   try {
+    const supabase = getSupabaseAdmin()
+
     const { data, error } = await supabase
       .from("audit_logs")
       .select("id, action, user_id, meta, created_at")
@@ -26,7 +23,7 @@ export async function GET() {
 
     return NextResponse.json(data || [])
   } catch (err) {
-    console.error(err)
+    console.error("Activity API Error:", err)
     return NextResponse.json([], { status: 500 })
   }
 }

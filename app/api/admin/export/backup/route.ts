@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 /*
-  PHASE 18 — Export Backup (Admin)
+  PHASE 18 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Export Backup (Admin)
 
   Exports full JSON backup of:
   - users
@@ -15,10 +15,7 @@ import { createClient } from "@supabase/supabase-js"
   GET /api/admin/export/backup
 */
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+const supabase = getSupabaseAdmin()
 
 export async function GET() {
   try {
@@ -59,3 +56,4 @@ export async function GET() {
     return NextResponse.json({ error: "Export failed" }, { status: 500 })
   }
 }
+

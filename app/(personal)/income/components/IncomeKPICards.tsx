@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 
@@ -40,7 +40,7 @@ function Kpi({
       <p className="text-xs text-gray-500">{label}</p>
       <p className={`text-lg font-semibold ${color}`}>
         {typeof value === "number"
-          ? `₹ ${value.toLocaleString("en-IN")}`
+          ? `ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ ${value.toLocaleString("en-IN")}`
           : value}
       </p>
     </Card>

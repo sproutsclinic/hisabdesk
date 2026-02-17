@@ -1,9 +1,9 @@
-"use client"
+ï»¿"use client"
 
 import AdminGuard from "./AdminGuards"
 
 /*
-  PHASE 17 — Admin Root Wrapper
+  PHASE 17 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Admin Root Wrapper
 
   Use this to wrap any admin page:
 
@@ -12,7 +12,7 @@ import AdminGuard from "./AdminGuards"
   </AdminRoot>
 
   Provides:
-  ✓ client admin protection
+  ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ client admin protection
 */
 
 export default function AdminRoot({

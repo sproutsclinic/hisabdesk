@@ -1,192 +1,56 @@
+ï»¿// ==========================================================
+// HisabDesk ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Insights Summary (PFOS-Compliant)
 // ==========================================================
-// HisabDesk — AI Insights Summary Route (Intelligence Hub)
-// Next.js 16 + New Service Architecture Compatible
-// ==========================================================
 
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
-
-import { listTransactions } from "@/lib/api/transactions"
-import { listAssets } from "@/lib/api/assets"
-import { listLiabilities } from "@/lib/api/liabilities"
-import { listGoals } from "@/lib/api/goals"
-
-import {
-  analyzeCashflow,
-  analyzeNetworth,
-  analyzeGoals,
-  aggregateMetrics,
-  buildFinancialHealthSnapshot,
-  buildAIContext,
-} from "@/lib/modules/personal"
-
-import { runAI } from "@/lib/ai/openai"
+import { withAI } from "@/lib/ai/withAI"
+import { getReportsService } from "@/lib/api/reports/reports.service"
+import { getPortfolioOverview } from "@/lib/api/portfolio/service"
 
 export const dynamic = "force-dynamic"
 
-const supabase = createClient()
+export const POST = withAI(async ({ user, safeRun }) => {
+  const reportsService = getReportsService()
 
-// ==========================================================
-// AUTH
-// ==========================================================
+  const [reports, portfolio] = await Promise.all([
+    reportsService.getReports({ userId: user.id, range: "90d" }),
+    getPortfolioOverview(user.id),
+  ])
 
-async function getUser() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const income = reports.kpis.income
+  const expense = reports.kpis.expense
+  const savingsRate = reports.kpis.savingsRate
 
-  if (!user) throw new Error("Unauthorized")
+  const monthly = reports.monthlySeries
+  const categories = reports.expenseByCategory.slice(0, 5)
 
-  return user
-}
+  const networth = portfolio.summary.totalCurrent
+  const pnl = portfolio.summary.totalPnL
 
-// ==========================================================
-// POST
-// ==========================================================
+  const prompt = `
+Financial Insights Snapshot (Last 90 Days)
 
-export async function POST() {
-  try {
-    const user = await getUser()
+Income: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${income}
+Expense: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${expense}
+Savings Rate: ${savingsRate}%
+Net Worth: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${networth}
+Portfolio P&L: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${pnl}
 
-    const today = new Date()
+Monthly Trend:
+${monthly.map(m => `${m.month}: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${m.savings}`).join("\n")}
 
-    const start = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      1
-    )
+Top Spending:
+${categories.map(c => `${c.category}: ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹${c.amount}`).join("\n")}
 
-    // ------------------------------------------------------
-    // Fetch data using NEW transaction API
-    // ------------------------------------------------------
-
-    const [transactions, assets, liabilities, goals] =
-      await Promise.all([
-        listTransactions(user.id, {
-          startDate: start.toISOString(),
-          endDate: today.toISOString(),
-        }),
-        listAssets(user.id),
-        listLiabilities(user.id),
-        listGoals(user.id),
-      ])
-
-    // Split income vs expense (new system stores unified tx)
-    const incomeTx = transactions.filter(t => t.type === "income")
-    const expenseTx = transactions.filter(t => t.type === "expense")
-
-    // ------------------------------------------------------
-    // Cashflow
-    // ------------------------------------------------------
-
-    const income = incomeTx.reduce((s, t) => s + t.amount, 0)
-    const expense = expenseTx.reduce((s, t) => s + t.amount, 0)
-
-    const liquid = assets.reduce(
-      (s, a: any) => s + (a.current_value ?? 0),
-      0
-    )
-
-    const cashflow = analyzeCashflow(
-      [
-        {
-          month: start.toISOString().slice(0, 7),
-          income,
-          expense,
-        },
-      ],
-      liquid
-    )
-
-    // ------------------------------------------------------
-    // Net Worth
-    // ------------------------------------------------------
-
-    const networth = analyzeNetworth({
-      accounts: 0,
-      assets: liquid,
-      liabilities: liabilities.reduce(
-        (s: number, l: any) => s + (l.principal_amount ?? 0),
-        0
-      ),
-      monthlyExpense: expense || 1,
-    })
-
-    // ------------------------------------------------------
-    // Goals
-    // ------------------------------------------------------
-
-    const goalSummary = analyzeGoals(goals)
-
-    // ------------------------------------------------------
-    // Aggregate Metrics
-    // ------------------------------------------------------
-
-    const metrics = aggregateMetrics({
-      cashflow,
-      networth,
-      goals: goalSummary,
-    })
-
-    // ------------------------------------------------------
-    // Health Snapshot
-    // ------------------------------------------------------
-
-    const health = buildFinancialHealthSnapshot({
-      metrics,
-    })
-
-    // ------------------------------------------------------
-    // Build AI Context
-    // ------------------------------------------------------
-
-    const ctx = buildAIContext({
-      income: metrics.income,
-      expense: metrics.expense,
-      savingsRate: metrics.savingsRate,
-      burnRisk: metrics.burnRisk as any,
-      runwayMonths: metrics.runwayMonths,
-      networth: metrics.networth,
-      networthTrend: metrics.networthTrend,
-      goalsBehind: metrics.goalsBehind,
-      alertCount: health.alerts.length,
-    })
-
-    const prompt = `
-Financial Snapshot:
-${ctx.summary}
-score=${health.score.score}
-
-Give 5 short actionable insights only.
+Provide 5 concise behavioural insights only.
+Use only supplied data.
+Keep concise.
 `
 
-    // ------------------------------------------------------
-    // AI Call
-    // ------------------------------------------------------
+  const result = await safeRun({
+    prompt,
+    type: "module",
+    module: "insights-summary",
+  })
 
-    const result = await runAI({
-      prompt,
-      type: "module",
-    })
-
-    // ------------------------------------------------------
-    // Log Usage
-    // ------------------------------------------------------
-
-    await supabase.from("ai_logs").insert({
-      user_id: user.id,
-      module: "insights-summary",
-      tokens: result.usage?.total_tokens ?? 0,
-    })
-
-    return NextResponse.json({
-      insights: result.text,
-      score: health.score,
-    })
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message },
-      { status: 401 }
-    )
-  }
-}
+  return { insights: result.text }
+})

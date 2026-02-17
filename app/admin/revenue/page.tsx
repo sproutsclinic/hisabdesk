@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -28,7 +28,7 @@ export default function AdminRevenuePage() {
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [totalUsers, setTotalUsers] = useState(0)
 
-  /* ✅ configurable price */
+  /* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ configurable price */
   const PRICE = Number(process.env.NEXT_PUBLIC_PRO_PRICE || 499)
 
   /* ================= LOAD ================= */
@@ -122,7 +122,7 @@ export default function AdminRevenuePage() {
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold">Revenue Analytics</h1>
 
-        {/* ✅ refresh added */}
+        {/* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ refresh added */}
         <Button size="sm" variant="outline" onClick={loadRevenue}>
           <RefreshCcw
             size={14}
@@ -149,7 +149,7 @@ export default function AdminRevenuePage() {
             Total Revenue
           </p>
           <p className="text-2xl font-bold">
-            ₹ {totalRevenue.toLocaleString("en-IN")}
+            ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {totalRevenue.toLocaleString("en-IN")}
           </p>
         </Card>
 
@@ -177,7 +177,7 @@ export default function AdminRevenuePage() {
                 <tr key={r.month} className="border-b">
                   <td className="py-2">{r.month}</td>
                   <td>{r.users}</td>
-                  <td>₹ {r.revenue.toLocaleString("en-IN")}</td>
+                  <td>ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {r.revenue.toLocaleString("en-IN")}</td>
                 </tr>
               ))}
             </tbody>

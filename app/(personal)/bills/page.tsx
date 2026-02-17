@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { Card } from "@/components/ui/card"
 import { useBills } from "@/hooks/useBills"
@@ -36,14 +36,14 @@ export default function BillsPage() {
             </div>
 
             <div className="flex gap-4">
-              ₹ {Math.round(b.amount)}
+              ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {Math.round(b.amount)}
               <button onClick={() => remove(b.id)}>Delete</button>
             </div>
           </div>
         ))}
       </Card>
 
-      {loading && <div>Loading…</div>}
+      {loading && <div>LoadingÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦</div>}
       {error && <div className="text-red-500">{error}</div>}
     </div>
   )
@@ -54,7 +54,7 @@ export default function BillsPage() {
 function Stat({
   label,
   value,
-  prefix = "₹ ",
+  prefix = "ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ ",
 }: {
   label: string
   value: number

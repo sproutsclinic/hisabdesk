@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useEffect, useState } from "react"
 
@@ -18,7 +18,7 @@ export default function IncomeInvestmentCard() {
       <div className="flex justify-between text-sm">
         <span>{label}</span>
         <span className="font-medium">
-          ₹ {value.toLocaleString("en-IN")}
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {value.toLocaleString("en-IN")}
         </span>
       </div>
     )
@@ -28,11 +28,11 @@ export default function IncomeInvestmentCard() {
     <div className="p-4 border rounded-2xl bg-violet-50 space-y-3">
 
       <h3 className="text-sm font-medium">
-        📈 Smart SIP Suggestions
+        ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Â¹ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â  Smart SIP Suggestions
       </h3>
 
       <p className="text-xs text-muted-foreground">
-        From ₹ {data.autosave.toLocaleString("en-IN")} surplus
+        From ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ {data.autosave.toLocaleString("en-IN")} surplus
       </p>
 
       {Row("Equity / Mutual Funds", data.equity)}
@@ -40,7 +40,7 @@ export default function IncomeInvestmentCard() {
       {Row("Gold", data.gold)}
 
       <button className="w-full bg-black text-white rounded-lg p-2 text-sm mt-2">
-        Start Investing →
+        Start Investing ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢
       </button>
 
     </div>

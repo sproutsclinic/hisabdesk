@@ -1,51 +1,23 @@
-// ==========================================================
-// HisabDesk — Income Service Layer (PRODUCTION SAFE)
-// FIX: removed non-existent columns (category/subcategory)
-// Phase 3 — Query safety + performance hardening (ADDITIVE ONLY)
+ï»¿// ==========================================================
+// HisabDesk â€” Income Service Layer (HARDENED VERSION)
+// Uses ONLY gateway access (NO createClient)
 // ==========================================================
 
-import { createClient } from "@supabase/supabase-js"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import type { Database } from "@/types/db"
-
-/* ==========================================================
-   SINGLETON SUPABASE (server-safe config — additive only)
-========================================================== */
-
-const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  {
-    auth: {
-      persistSession: false, // ✅ prevents memory/session overhead
-      autoRefreshToken: false,
-    },
-  }
-)
 
 /* ==========================================================
    TYPES
 ========================================================== */
 
-type Income =
-  Database["public"]["Tables"]["incomes"]["Row"]
+type Income = Database["public"]["Tables"]["incomes"]["Row"]
+type IncomeInsert = Database["public"]["Tables"]["incomes"]["Insert"]
+type IncomeUpdate = Database["public"]["Tables"]["incomes"]["Update"]
 
-type IncomeInsert =
-  Database["public"]["Tables"]["incomes"]["Insert"]
-
-type IncomeUpdate =
-  Database["public"]["Tables"]["incomes"]["Update"]
+const MAX_PAGE_SIZE = 100
 
 /* ==========================================================
-   CONSTANTS (ADDITIVE SAFETY LIMITS)
-========================================================== */
-
-const MAX_PAGE_SIZE = 100 // prevents accidental heavy fetches
-
-/* ==========================================================
-   Fetch Income (SAFE — only real columns)
-   ✅ pagination
-   ✅ column selection
-   ✅ overfetch protection
+   Fetch Income
 ========================================================== */
 
 export async function getIncome(
@@ -53,7 +25,8 @@ export async function getIncome(
   page: number = 1,
   pageSize: number = 20
 ) {
-  // ✅ additive guard rails
+  const supabase = getSupabaseAdmin()
+
   const safePage = Math.max(1, page)
   const safeSize = Math.min(Math.max(1, pageSize), MAX_PAGE_SIZE)
 
@@ -62,10 +35,7 @@ export async function getIncome(
 
   const { data, error, count } = await supabase
     .from("incomes")
-    // ✅ only columns that truly exist in DB
-    .select("id,amount,date,notes,created_at", {
-      count: "exact",
-    })
+    .select("id,amount,date,notes,created_at", { count: "exact" })
     .eq("user_id", userId)
     .order("date", { ascending: false })
     .order("created_at", { ascending: false })
@@ -81,11 +51,12 @@ export async function getIncome(
 }
 
 /* ==========================================================
-   Create
-   ✅ return minimal columns only (avoid overfetch)
+   Create Income
 ========================================================== */
 
 export async function createIncome(payload: IncomeInsert) {
+  const supabase = getSupabaseAdmin()
+
   const { data, error } = await supabase
     .from("incomes")
     .insert(payload)
@@ -97,14 +68,12 @@ export async function createIncome(payload: IncomeInsert) {
 }
 
 /* ==========================================================
-   Update
-   ✅ minimal select
+   Update Income
 ========================================================== */
 
-export async function updateIncome(
-  id: string,
-  payload: IncomeUpdate
-) {
+export async function updateIncome(id: string, payload: IncomeUpdate) {
+  const supabase = getSupabaseAdmin()
+
   const { data, error } = await supabase
     .from("incomes")
     .update(payload)
@@ -117,10 +86,12 @@ export async function updateIncome(
 }
 
 /* ==========================================================
-   Delete
+   Delete Income
 ========================================================== */
 
 export async function deleteIncome(id: string) {
+  const supabase = getSupabaseAdmin()
+
   const { error } = await supabase
     .from("incomes")
     .delete()
@@ -131,14 +102,12 @@ export async function deleteIncome(id: string) {
 }
 
 /* ==========================================================
-   Summary
-   ✅ PERFORMANCE HARDENED
-   - select only amount
-   - head request for count (cheap)
-   - safe aggregation
+   Income Summary
 ========================================================== */
 
 export async function getIncomeSummary(userId: string) {
+  const supabase = getSupabaseAdmin()
+
   const { data, error } = await supabase
     .from("incomes")
     .select("amount")

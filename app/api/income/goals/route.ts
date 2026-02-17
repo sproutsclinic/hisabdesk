@@ -1,14 +1,14 @@
-/* =========================================================
+ï»¿/* =========================================================
    Income Goals API
    ---------------------------------------------------------
-   ✓ monthly target
-   ✓ progress calc
-   ✓ KPI metrics
-   ✓ server side only
+   âœ“ monthly target
+   âœ“ progress calc
+   âœ“ KPI metrics
+   âœ“ server side only
 ========================================================= */
 
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 
 export const dynamic = "force-dynamic"
 
@@ -19,11 +19,11 @@ function monthKey(date = new Date()) {
 }
 
 /* =========================================================
-   GET → fetch goal + metrics
+   GET â†’ fetch goal + metrics
 ========================================================= */
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
@@ -92,22 +92,25 @@ export async function GET() {
 }
 
 /* =========================================================
-   POST → set goal
+   POST â†’ set goal
 ========================================================= */
 
 export async function POST(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = getSupabaseAdmin()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  if (!user)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { target } = await req.json()
 
   const month = monthKey()
 
   await supabase.from("income_goals").upsert({
-    user_id: user?.id,
+    user_id: user.id,
     month,
     target,
   })

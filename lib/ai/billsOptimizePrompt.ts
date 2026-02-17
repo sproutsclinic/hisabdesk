@@ -1,4 +1,4 @@
-export const BILLS_OPTIMIZE_PROMPT = `
+ï»¿export const BILLS_OPTIMIZE_PROMPT = `
 You are a personal finance optimizer.
 
 Analyze recurring bills and suggest:

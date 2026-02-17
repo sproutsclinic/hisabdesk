@@ -1,7 +1,7 @@
-"use client"
+ï»¿"use client"
 
 /*
-  PHASE 16 — Simple React Hooks for Analytics
+  PHASE 16 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Simple React Hooks for Analytics
 
   Usage anywhere in UI:
 

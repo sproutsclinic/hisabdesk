@@ -1,4 +1,4 @@
-"use client"
+ï»¿"use client"
 
 import { useProfile } from "@/hooks/useProfile"
 

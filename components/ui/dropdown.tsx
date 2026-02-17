@@ -1,45 +1,17 @@
-"use client"
+ï»¿"use client"
 
 import * as React from "react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 
 /* ==========================================================
-   DROPDOWN SYSTEM — Fintech Grade (Enterprise Safe)
-
-   Purpose:
-   • action menus
-   • filters
-   • row actions (edit/delete)
-   • profile menu
-
-   Features:
-   ✅ no deps
-   ✅ SSR safe
-   ✅ click outside close
-   ✅ keyboard escape close
-   ✅ portal (no overflow issues)
-   ✅ clean fintech UI
-   ✅ composable API
-
-   Usage:
-
-   <Dropdown>
-     <DropdownTrigger>
-       <Button size="sm">Actions</Button>
-     </DropdownTrigger>
-
-     <DropdownContent>
-       <DropdownItem onClick={...}>Edit</DropdownItem>
-       <DropdownItem danger onClick={...}>Delete</DropdownItem>
-     </DropdownContent>
-   </Dropdown>
+   DROPDOWN SYSTEM ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Enterprise Safe
 ========================================================== */
 
 type Ctx = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  triggerRef: React.RefObject<HTMLElement>
+  triggerRef: React.RefObject<HTMLElement | null> // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ FIXED TYPE
 }
 
 const DropdownContext = React.createContext<Ctx | null>(null)
@@ -60,12 +32,12 @@ export function Dropdown({
   children: React.ReactNode
 }) {
   const [open, setOpen] = React.useState(false)
-  const triggerRef = React.useRef<HTMLElement>(null)
+
+  // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ must allow null during lifecycle
+  const triggerRef = React.useRef<HTMLElement | null>(null)
 
   return (
-    <DropdownContext.Provider
-      value={{ open, setOpen, triggerRef }}
-    >
+    <DropdownContext.Provider value={{ open, setOpen, triggerRef }}>
       <div className="relative inline-block">{children}</div>
     </DropdownContext.Provider>
   )
@@ -82,12 +54,16 @@ export function DropdownTrigger({
 }) {
   const { open, setOpen, triggerRef } = useDropdown()
 
-  return React.cloneElement(children, {
-    ref: triggerRef,
-    onClick: () => setOpen(!open),
-  })
+  return (
+    <span
+      ref={triggerRef}
+      onClick={() => setOpen(!open)}
+      style={{ display: "inline-block" }}
+    >
+      {children}
+    </span>
+  )
 }
-
 /* ========================================================== */
 /* CONTENT */
 /* ========================================================== */
@@ -101,19 +77,20 @@ export function DropdownContent({
 }) {
   const { open, setOpen, triggerRef } = useDropdown()
   const [mounted, setMounted] = React.useState(false)
-  const contentRef = React.useRef<HTMLDivElement>(null)
+  const contentRef = React.useRef<HTMLDivElement | null>(null)
 
   React.useEffect(() => setMounted(true), [])
 
-  /* close on outside click */
+  /* Close on outside click */
   React.useEffect(() => {
     if (!open) return
 
     const handle = (e: MouseEvent) => {
-      const t = e.target as Node
+      const target = e.target as Node
+
       if (
-        !contentRef.current?.contains(t) &&
-        !triggerRef.current?.contains(t)
+        !contentRef.current?.contains(target) &&
+        !triggerRef.current?.contains(target)
       ) {
         setOpen(false)
       }
@@ -123,7 +100,7 @@ export function DropdownContent({
     return () => window.removeEventListener("mousedown", handle)
   }, [open, setOpen, triggerRef])
 
-  /* escape key */
+  /* Escape key closes */
   React.useEffect(() => {
     if (!open) return
 
@@ -142,10 +119,9 @@ export function DropdownContent({
   const style: React.CSSProperties = {
     position: "fixed",
     top: (rect?.bottom ?? 0) + 6,
-    left:
-      align === "right"
-        ? (rect?.right ?? 0) - 180
-        : rect?.left ?? 0,
+    left: align === "right"
+      ? (rect?.right ?? 0) - 180
+      : rect?.left ?? 0,
   }
 
   return createPortal(

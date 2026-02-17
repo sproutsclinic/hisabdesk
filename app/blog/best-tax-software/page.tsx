@@ -1,4 +1,4 @@
-import Link from "next/link"
+ï»¿import Link from "next/link"
 import EmailCapture from "@/components/EmailCapture"
 
 export const metadata = {
@@ -80,7 +80,7 @@ export default function Page() {
 
         <p>
           HisabDesk combines accounting + tax + AI guidance into one simple app.
-          You don’t need multiple tools or spreadsheets.
+          You donÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢t need multiple tools or spreadsheets.
         </p>
 
         <ul className="list-disc pl-6">
@@ -100,7 +100,7 @@ export default function Page() {
           href="/dashboard"
           className="inline-block bg-black text-white px-6 py-3 rounded-xl font-medium hover:opacity-90"
         >
-          Start Free →
+          Start Free ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢
         </Link>
       </section>
 
@@ -113,7 +113,7 @@ export default function Page() {
           Yes. It automates calculations and reduces mistakes.</p>
 
         <p><strong>Can freelancers use tax software?</strong><br />
-          Absolutely. It’s ideal for freelancers and consultants.</p>
+          Absolutely. ItÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s ideal for freelancers and consultants.</p>
 
         <p><strong>Does HisabDesk support 44ADA?</strong><br />
           Yes. It automatically calculates tax under 44ADA.</p>

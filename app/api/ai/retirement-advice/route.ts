@@ -1,28 +1,37 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { runAI } from "@/lib/ai/openai"
 
 export const dynamic = "force-dynamic"
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },
     } = await supabase.auth.getUser()
 
-    if (!user) throw new Error("Unauthorized")
+    if (!user)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const body = await req.json()
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("age, monthly_income, savings")
+      .eq("id", user.id)
+      .single()
+
+    const age = Number(profile?.age || 0)
+    const income = Number(profile?.monthly_income || 0)
+    const savings = Number(profile?.savings || 0)
 
     const prompt = `
-Retirement metrics:
-years=${body.years}
-futureCorpus=${body.corpus}
-realCorpus=${body.realCorpus}
+Retirement Snapshot:
+age=${age}
+income=${Math.round(income)}
+savings=${Math.round(savings)}
 
-Give 3 short tips to improve retirement readiness.
+Give 4 short retirement planning suggestions.
 `
 
     const result = await runAI({
@@ -33,13 +42,11 @@ Give 3 short tips to improve retirement readiness.
     await supabase.from("ai_logs").insert({
       user_id: user.id,
       module: "retirement-advice",
-      tokens: result.usage?.total_tokens ?? 0,
+      tokens: result.tokens,
     })
 
-    return NextResponse.json({
-      insights: result.text,
-    })
+    return NextResponse.json({ advice: result.text })
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 401 })
+    return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }

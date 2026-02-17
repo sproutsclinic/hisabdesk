@@ -1,27 +1,12 @@
-// ==========================================================
-// HisabDesk — AI Budget Suggestions
-// PURPOSE
-//   Analyze 3 months spending
-//   Suggest smart category limits
-// ==========================================================
-
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+ï»¿import { NextResponse } from "next/server"
+import { getSupabaseAdmin } from "@/lib/supabase/gateway"
 import { runAI } from "@/lib/ai/openai"
 
 export const dynamic = "force-dynamic"
 
-// ==========================================================
-
-function monthKey(date: string) {
-  return date.slice(0, 7)
-}
-
-// ==========================================================
-
 export async function POST() {
   try {
-    const supabase = createClient()
+    const supabase = getSupabaseAdmin()
 
     const {
       data: { user },
@@ -31,10 +16,6 @@ export async function POST() {
     if (error || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-
-    // ------------------------------------------------------
-    // Fetch last 3 months expenses
-    // ------------------------------------------------------
 
     const since = new Date()
     since.setMonth(since.getMonth() - 3)
@@ -51,29 +32,18 @@ export async function POST() {
       })
     }
 
-    // ------------------------------------------------------
-    // Aggregate category spend
-    // ------------------------------------------------------
-
     const categoryMap: Record<string, number> = {}
 
     for (const r of rows) {
-      categoryMap[r.category] =
-        (categoryMap[r.category] || 0) + Number(r.amount)
+      const key = r.category ?? "Other"
+      categoryMap[key] = (categoryMap[key] || 0) + Number(r.amount)
     }
 
     const categories = Object.entries(categoryMap)
       .map(([k, v]) => `${k}:${Math.round(v)}`)
       .join(",")
 
-    const total = Object.values(categoryMap).reduce(
-      (a, b) => a + b,
-      0
-    )
-
-    // ------------------------------------------------------
-    // Compact AI prompt (cheap + fast)
-    // ------------------------------------------------------
+    const total = Object.values(categoryMap).reduce((a, b) => a + b, 0)
 
     const prompt = `
 Total=${Math.round(total)}
@@ -91,20 +61,16 @@ Short bullets only.
       type: "module",
     })
 
-    // log usage
     await supabase.from("ai_logs").insert({
       user_id: user.id,
       module: "budget-suggestions",
-      tokens: result.usage?.total_tokens ?? 0,
+      tokens: result.tokens,
     })
 
     return NextResponse.json({
       suggestions: result.text,
     })
   } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }
